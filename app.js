@@ -158,12 +158,11 @@ const SLANGS = [
     officeSafe: "caution",
     explicit: false,
     meaning: {
-      hinglish:
-        "North India/Bhojpuri slang for young guy. Doston ke beech casual ho sakta hai, lekin strangers ke saath thoda rude lag sakta hai.",
+      // ❗ Notice: no hinglish here on purpose, so it will fall back to English
       en: "North Indian/Bhojpuri slang for a young guy; friendly among friends, but can sound crude with strangers."
     },
     example: {
-      hinglish: "“Woh launda mast gaata hai.”"
+      en: '"Woh launda mast gaata hai."'
     },
     origin: "Bhojpuri & North Indian youth slang, cinema & music."
   },
@@ -193,7 +192,7 @@ const SLANGS = [
     explicit: false,
     meaning: {
       hinglish:
-        "Locha matlab problem ya complication – jab lagta hai ki kuch gड़बड़ hai.",
+        "Locha matlab problem ya complication – jab lagta hai ki kuch गड़बड़ hai.",
       en: "Mumbai/Gujarati-influenced slang for a problem or complication."
     },
     example: {
@@ -388,28 +387,32 @@ function langTagLabel(lang) {
   }
 }
 
+/**
+ * Meaning selection logic:
+ * 1. Try requested language (settings.explainLang)
+ * 2. If missing -> try Hinglish
+ * 3. If still missing -> try English
+ * 4. Else -> first available meaning
+ */
 function getMeaningInLang(item, langKey) {
-  if (item.meaning[langKey]) return item.meaning[langKey];
-  if (item.meaning.hinglish) return item.meaning.hinglish;
-  return Object.values(item.meaning)[0] || "";
-}
-
-function getExampleInLang(item, langKey) {
-  if (item.example && item.example[langKey]) return item.example[langKey];
-  if (item.example && item.example.hinglish) return item.example.hinglish;
-  const vals = item.example ? Object.values(item.example) : [];
+  const m = item.meaning || {};
+  if (m[langKey]) return m[langKey];
+  if (m.hinglish) return m.hinglish;
+  if (m.en) return m.en;
+  const vals = Object.values(m);
   return vals[0] || "";
 }
 
-// NEW: short preview so meaning doesn't repeat twice
-function getShortPreview(item) {
-  const full = getMeaningInLang(item, settings.explainLang || "hinglish");
-  if (!full) return "";
-  const limit = 160; // characters
-  if (full.length <= limit) return full;
-  // cut at last space before limit to avoid chopping words
-  const cutIndex = full.lastIndexOf(" ", limit);
-  return full.slice(0, cutIndex > 0 ? cutIndex : limit) + "…";
+/**
+ * Same idea for examples.
+ */
+function getExampleInLang(item, langKey) {
+  const e = item.example || {};
+  if (e[langKey]) return e[langKey];
+  if (e.hinglish) return e.hinglish;
+  if (e.en) return e.en;
+  const vals = Object.values(e);
+  return vals[0] || "";
 }
 
 function matchesFilters(item, filters) {
@@ -429,21 +432,21 @@ function matchesFilters(item, filters) {
 function renderCards(container, data, { mode = "normal" } = {}) {
   container.innerHTML = "";
   if (!data.length) {
-  const msgColour = "#374151";
-  container.innerHTML =
-    `<p style="grid-column:1 / -1; color:${msgColour};">Koi result nahi mila. Filters ya spelling change karke try karo.</p>`;
-  // if helper from app.html exists, show "Ask SlangAdda" section
-  if (window._updateAskMeaningLink) {
-    const term = (document.getElementById("searchInput")?.value || "").trim();
-    window._updateAskMeaningLink(term);
+    const msgColour = "#374151";
+    container.innerHTML =
+      `<p style="grid-column:1 / -1; color:${msgColour};">Koi result nahi mila. Filters ya spelling change karke try karo.</p>`;
+    // show Ask SlangAdda link if helper exists
+    if (window._updateAskMeaningLink) {
+      const term = (document.getElementById("searchInput")?.value || "").trim();
+      window._updateAskMeaningLink(term);
+    }
+    return;
   }
-  return;
-}
 
-// if we do have results, hide ask-meaning section
-if (window._updateAskMeaningLink) {
-  window._updateAskMeaningLink("");
-}
+  // if we have results, hide ask-meaning section
+  if (window._updateAskMeaningLink) {
+    window._updateAskMeaningLink("");
+  }
 
   data.forEach((item) => {
     const card = document.createElement("article");
@@ -455,11 +458,9 @@ if (window._updateAskMeaningLink) {
     const favClass = isFav ? "fav-btn faved" : "fav-btn";
 
     const fullMeaning = getMeaningInLang(item, settings.explainLang);
-    const shortPreview = getShortPreview(item);
     const example = getExampleInLang(item, settings.explainLang);
 
     let extraContent = "";
-    // show full meaning only inside the expanded area (avoid duplicate)
     extraContent += `<p><span class="card-label">Meaning:</span> ${fullMeaning}</p>`;
     extraContent += `<p><span class="card-label">Example:</span> ${example}</p>`;
     if (item.origin) {
@@ -476,7 +477,7 @@ if (window._updateAskMeaningLink) {
         <h3 class="card-title">${item.word}</h3>
         <span class="card-tag">${tagLabel}</span>
       </div>
-      <p class="card-short">${shortPreview}</p>
+      <p class="card-short">Click / tap karke meaning aur example dekho.</p>
       <div class="card-extra">
         ${extraContent}
         <div class="card-footer-row">

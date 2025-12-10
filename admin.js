@@ -1,11 +1,14 @@
 // admin.js
 
 // --- 1) SLANGS DATA SOURCE ------------------------------------
-// TODO: Har baar jab real update karna ho, app.js se latest
-// `const SLANGS = [...]` yahan copy-paste kar dena.
-// Abhi main sample data daal raha hoon (same structure):
+// IMPORTANT:
+// Har baar jab real update karna ho, app.js se latest
+// `const SLANGS = [...]` copy karke niche wale SLANGS = [...] ke
+// andar paste kar dena. Yahan sirf sample hai:
+
 let SLANGS = [
   {
+    numId: 1,
     id: "adulting",
     word: "Adulting",
     lang: "en",
@@ -25,6 +28,7 @@ let SLANGS = [
       "Millennial internet slang, popular on Instagram & Twitter for describing everyday responsibilities."
   },
   {
+    numId: 2,
     id: "fomo",
     word: "FOMO",
     lang: "en",
@@ -40,9 +44,10 @@ let SLANGS = [
       hinglish:
         "“Main actually trip pe jaana nahi chahta, bas FOMO ho raha hai sab ja rahe hain.”"
     },
-    origin: "Popular internet acronym; widely used in social life, investing and career decisions."
+    origin:
+      "Popular internet acronym; widely used in social life, investing and career decisions."
   }
-  // ... yahan baaki words add honge jab tum app.js se copy karoge
+  // <- yahan tum app.js se full SLANGS array paste karoge
 ];
 
 // --- 2) DOM REFERENCES ----------------------------------------
@@ -53,6 +58,7 @@ const statOfficeSafe = document.getElementById("statOfficeSafe");
 const statExplicit = document.getElementById("statExplicit");
 const statDesi = document.getElementById("statDesi");
 
+const fieldNumId = document.getElementById("fieldNumId");
 const fieldId = document.getElementById("fieldId");
 const fieldWord = document.getElementById("fieldWord");
 const fieldLang = document.getElementById("fieldLang");
@@ -71,9 +77,39 @@ const newWordBtn = document.getElementById("newWordBtn");
 const exportArea = document.getElementById("exportArea");
 const refreshExportBtn = document.getElementById("refreshExportBtn");
 
+const downloadSampleBtn = document.getElementById("downloadSampleBtn");
+const uploadFileInput = document.getElementById("uploadFile");
+const uploadFileBtn = document.getElementById("uploadFileBtn");
+const bulkStatusEl = document.getElementById("bulkStatus");
+
 let currentIndex = null;
 
-// --- 3) TABLE & FORM RENDERING -------------------------------
+// --- 3) HELPERS -----------------------------------------------
+function getNextNumId() {
+  const maxId = SLANGS.reduce((max, item) => {
+    const n = typeof item.numId === "number" ? item.numId : 0;
+    return Math.max(max, n);
+  }, 0);
+  return maxId + 1;
+}
+
+function normalizeIdFromWord(word) {
+  return (word || "")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_]+/g, "_")
+    .replace(/^_+|_+$/g, "") || "word_" + Date.now();
+}
+
+function keyForWord(item) {
+  // for duplicate detection (word+lang)
+  return `${(item.word || "").toLowerCase().trim()}__${(item.lang || "en")
+    .toLowerCase()
+    .trim()}`;
+}
+
+// --- 4) TABLE & FORM RENDERING -------------------------------
 function renderStats() {
   const total = SLANGS.length;
   const officeSafeCount = SLANGS.filter((w) => w.officeSafe === "yes").length;
@@ -95,6 +131,7 @@ function renderTable() {
   sorted.forEach((item) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
+      <td>${item.numId ?? ""}</td>
       <td>${item.word || ""}</td>
       <td>${item.lang || ""}</td>
       <td>${item.category || ""}</td>
@@ -117,6 +154,7 @@ function renderTable() {
 
 function clearForm() {
   currentIndex = null;
+  fieldNumId.value = "";
   fieldId.value = "";
   fieldWord.value = "";
   fieldLang.value = "en";
@@ -130,6 +168,7 @@ function clearForm() {
 }
 
 function loadWordIntoForm(item) {
+  fieldNumId.value = item.numId ?? "";
   fieldId.value = item.id || "";
   fieldWord.value = item.word || "";
   fieldLang.value = item.lang || "en";
@@ -142,18 +181,25 @@ function loadWordIntoForm(item) {
   fieldOrigin.value = item.origin || "";
 }
 
-// --- 4) SAVE / DELETE / EXPORT -------------------------------
+// --- 5) SAVE / DELETE / EXPORT -------------------------------
 function saveWordFromForm() {
-  const id = fieldId.value.trim();
-  const word = fieldWord.value.trim() || id;
+  let numId = parseInt(fieldNumId.value, 10);
+  if (!Number.isFinite(numId)) {
+    numId = getNextNumId();
+  }
 
-  if (!id) {
-    alert("ID zaroori hai (a-z, numbers, underscores).");
+  const idRaw = fieldId.value.trim();
+  const wordRaw = fieldWord.value.trim();
+  if (!wordRaw && !idRaw) {
+    alert("Word ya ID mein se kam se kam ek to hona hi chahiye.");
     return;
   }
 
-  const existingIndex = SLANGS.findIndex((w) => w.id === id);
+  const word = wordRaw || idRaw;
+  const id = idRaw || normalizeIdFromWord(word);
+
   const payload = {
+    numId,
     id,
     word,
     lang: fieldLang.value,
@@ -170,6 +216,7 @@ function saveWordFromForm() {
     origin: fieldOrigin.value.trim()
   };
 
+  const existingIndex = SLANGS.findIndex((w) => w.id === id);
   if (existingIndex !== -1) {
     SLANGS[existingIndex] = payload;
     currentIndex = existingIndex;
@@ -179,6 +226,7 @@ function saveWordFromForm() {
   }
 
   renderTable();
+  loadWordIntoForm(payload);
   alert("Word saved/updated (remember to copy export text into app.js).");
 }
 
@@ -204,12 +252,223 @@ function refreshExportText() {
   exportArea.value = exportSlangsAsJs();
 }
 
-// --- 5) EVENT LISTENERS --------------------------------------
+// --- 6) SAMPLE CSV DOWNLOAD ----------------------------------
+function downloadSampleCsv() {
+  const header = [
+    "numId",
+    "word",
+    "lang",
+    "category",
+    "officeSafe",
+    "explicit",
+    "meaning_hinglish",
+    "meaning_en",
+    "example_hinglish",
+    "origin"
+  ];
+
+  const sampleRows = [
+    [
+      "",
+      "Adulting",
+      "en",
+      "life",
+      "yes",
+      "false",
+      "Boring but important bade log wale kaam.",
+      "Doing responsible grown-up tasks.",
+      "Kal raat party nahi gayi, pura din adulting chal raha tha.",
+      "Millennial internet slang."
+    ],
+    [
+      "",
+      "Scene kya hai",
+      "hi",
+      "desi",
+      "caution",
+      "false",
+      "Plan ya situation kya chal rahi hai.",
+      "Casual way to ask what's the plan.",
+      "Kal office ke baad kuch scene hai?"
+    ]
+  ];
+
+  const lines = [header.join(",")].concat(sampleRows.map((r) =>
+    r.map((cell) => {
+      const v = (cell ?? "").toString().replace(/"/g, '""');
+      return `"${v}"`;
+    }).join(",")
+  ));
+
+  const csv = lines.join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "slangadda_sample.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// --- 7) BULK UPLOAD (EXCEL/CSV) ------------------------------
+function parseUploadedFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const data = e.target.result;
+      let workbook;
+
+      try {
+        if (file.name.endsWith(".csv")) {
+          // CSV → sheet
+          const ws = XLSX.read(data, { type: "binary" }).Sheets.Sheet1;
+          const json = XLSX.utils.sheet_to_json(ws);
+          resolve(json);
+        } else {
+          workbook = XLSX.read(data, { type: "binary" });
+          const firstSheetName = workbook.SheetNames[0];
+          const ws = workbook.Sheets[firstSheetName];
+          const json = XLSX.utils.sheet_to_json(ws);
+          resolve(json);
+        }
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsBinaryString(file);
+  });
+}
+
+async function handleUploadFile() {
+  const file = uploadFileInput.files[0];
+  if (!file) {
+    alert("Pehle file select karo (CSV ya Excel).");
+    return;
+  }
+
+  bulkStatusEl.textContent = "Reading file…";
+
+  try {
+    const rows = await parseUploadedFile(file);
+    if (!rows.length) {
+      bulkStatusEl.textContent = "File empty lag rahi hai.";
+      return;
+    }
+
+    // Index existing by word+lang
+    const indexByKey = new Map();
+    SLANGS.forEach((item, idx) => {
+      indexByKey.set(keyForWord(item), idx);
+    });
+
+    let added = 0;
+    let updated = 0;
+    let skipped = 0;
+
+    for (const row of rows) {
+      const word = (row.word || row.Word || "").toString().trim();
+      if (!word) {
+        skipped++;
+        continue;
+      }
+
+      const lang =
+        (row.lang || row.language || row.Language || "en")
+          .toString()
+          .trim()
+          .toLowerCase() || "en";
+
+      const category =
+        (row.category || row.Category || "life").toString().trim().toLowerCase() ||
+        "life";
+
+      const officeSafe =
+        (row.officeSafe || row.office || "yes").toString().trim().toLowerCase() ||
+        "yes";
+
+      const explicitVal =
+        (row.explicit || row["18plus"] || row["18+"] || "false")
+          .toString()
+          .trim()
+          .toLowerCase();
+      const explicit = explicitVal === "true" || explicitVal === "1" || explicitVal === "yes";
+
+      const meaning_hinglish =
+        (row.meaning_hinglish ||
+          row.meaningHinglish ||
+          row.meaning ||
+          "").toString();
+
+      const meaning_en =
+        (row.meaning_en || row.meaningEn || "").toString();
+
+      const example_hinglish =
+        (row.example_hinglish || row.example || "").toString();
+
+      const origin = (row.origin || "").toString();
+
+      let numId = parseInt(row.numId, 10);
+      if (!Number.isFinite(numId)) {
+        numId = getNextNumId();
+      }
+
+      const tempItem = { word, lang };
+      const k = keyForWord(tempItem);
+
+      const basePayload = {
+        numId,
+        id: normalizeIdFromWord(word),
+        word,
+        lang,
+        category,
+        officeSafe,
+        explicit,
+        meaning: {
+          hinglish: meaning_hinglish.trim(),
+          en: meaning_en.trim()
+        },
+        example: {
+          hinglish: example_hinglish.trim()
+        },
+        origin: origin.trim()
+      };
+
+      if (indexByKey.has(k)) {
+        // update existing
+        const existingIdx = indexByKey.get(k);
+        SLANGS[existingIdx] = {
+          ...SLANGS[existingIdx],
+          ...basePayload
+        };
+        updated++;
+      } else {
+        SLANGS.push(basePayload);
+        indexByKey.set(k, SLANGS.length - 1);
+        added++;
+      }
+    }
+
+    renderTable();
+    bulkStatusEl.textContent = `Upload complete: ${added} new, ${updated} updated, ${skipped} skipped.`;
+  } catch (err) {
+    console.error(err);
+    bulkStatusEl.textContent = "File read/parse error. Console check karo.";
+  }
+}
+
+// --- 8) EVENT LISTENERS --------------------------------------
 saveWordBtn.addEventListener("click", saveWordFromForm);
 deleteWordBtn.addEventListener("click", deleteWordFromForm);
 newWordBtn.addEventListener("click", clearForm);
 refreshExportBtn.addEventListener("click", refreshExportText);
 
-// --- 6) INIT -------------------------------------------------
+downloadSampleBtn.addEventListener("click", downloadSampleCsv);
+uploadFileBtn.addEventListener("click", handleUploadFile);
+
+// --- 9) INIT -------------------------------------------------
 renderTable();
 clearForm();

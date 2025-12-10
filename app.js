@@ -429,10 +429,21 @@ function matchesFilters(item, filters) {
 function renderCards(container, data, { mode = "normal" } = {}) {
   container.innerHTML = "";
   if (!data.length) {
-    container.innerHTML =
-      '<p style="grid-column:1 / -1; color:#e5e7eb;">Koi result nahi mila. Filters ya search change karke try karo.</p>';
-    return;
+  const msgColour = "#374151";
+  container.innerHTML =
+    `<p style="grid-column:1 / -1; color:${msgColour};">Koi result nahi mila. Filters ya spelling change karke try karo.</p>`;
+  // if helper from app.html exists, show "Ask SlangAdda" section
+  if (window._updateAskMeaningLink) {
+    const term = (document.getElementById("searchInput")?.value || "").trim();
+    window._updateAskMeaningLink(term);
   }
+  return;
+}
+
+// if we do have results, hide ask-meaning section
+if (window._updateAskMeaningLink) {
+  window._updateAskMeaningLink("");
+}
 
   data.forEach((item) => {
     const card = document.createElement("article");

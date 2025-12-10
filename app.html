@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SlangAdda Ai | App</title>
+  <title>SlangAdda Ai | Dictionary</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="app-body">
-  <header class="header">
+  <header class="header shadow">
     <div class="container header-inner">
       <div>
         <h1 class="logo">SlangAdda Ai</h1>
@@ -20,15 +20,14 @@
         <button id="loginOpenBtn" class="ghost-btn small">Login / Switch user</button>
       </div>
     </div>
+    <nav class="tabs container">
+      <button class="tab-btn active" data-tab="dictionary">Dictionary</button>
+      <button class="tab-btn" data-tab="nsfw">18+ Zone</button>
+      <button class="tab-btn" data-tab="quiz">Quiz</button>
+      <button class="tab-btn" data-tab="activity">Activity</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </nav>
   </header>
-
-  <nav class="tabs container">
-    <button class="tab-btn active" data-tab="dictionary">Dictionary</button>
-    <button class="tab-btn" data-tab="nsfw">18+ Zone</button>
-    <button class="tab-btn" data-tab="quiz">Quiz</button>
-    <button class="tab-btn" data-tab="activity">Activity</button>
-    <button class="tab-btn" data-tab="settings">Settings</button>
-  </nav>
 
   <main class="container app-main">
     <!-- Dictionary TAB -->
@@ -90,7 +89,22 @@
       </section>
 
       <section id="results" class="results">
-        <!-- Cards will be inserted by app.js -->
+        <!-- Cards injected by app.js -->
+      </section>
+
+      <!-- Ask for meaning section (shown when no results) -->
+      <section id="askMeaningSection" class="info-card hidden">
+        <h2>Word nahi mila?</h2>
+        <p>
+          Agar tumhara slang yahan nahi dikh raha, to <strong>SlangAdda request</strong> bhej sakte ho.
+          Hum verify karke dictionary mein add karenge.
+        </p>
+        <p class="small-note">
+          Abhi ke liye request simple email se jayega. Future version mein direct in-app submit hoga.
+        </p>
+        <a id="askMeaningLink" class="primary-btn small" href="#">
+          Ask SlangAdda for this word
+        </a>
       </section>
     </section>
 
@@ -107,7 +121,7 @@
         </p>
       </section>
       <section id="nsfwResults" class="results">
-        <!-- NSFW cards from app.js -->
+        <!-- NSFW cards injected by app.js -->
       </section>
     </section>
 
@@ -117,6 +131,9 @@
         <h2>Slang Quiz 🎮</h2>
         <p>
           Guess karo meaning, dekhte hain kitne updated ho. Perfect for millennials, parents aur travellers.
+        </p>
+        <p class="small-note">
+          Future update: colour unlock, difficulty levels (easy / medium / pro) aur streak rewards.
         </p>
       </section>
       <section class="quiz-box">
@@ -186,7 +203,7 @@
             <option value="male">Male prefer karo</option>
           </select>
           <p class="small-note">
-            Note: Actual voice browser aur device pe depend karega. Hum best-match try karenge.
+            Note: Actual voice browser aur device pe depend karega. Hum best-match Indian accent try karenge.
           </p>
         </div>
 
@@ -208,8 +225,14 @@
   </main>
 
   <footer class="footer">
-    <div class="container">
+    <div class="container footer-inner">
       <p>SlangAdda Ai • Modern slang, clearly explained • Built for millennial India 🇮🇳</p>
+      <nav class="footer-nav">
+        <a href="pricing.html">Pricing</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
     </div>
   </footer>
 
@@ -260,5 +283,27 @@
   </div>
 
   <script src="app.js"></script>
+  <script>
+    // connect "Ask SlangAdda" link to user's current search term via mailto
+    const askSection = document.getElementById('askMeaningSection');
+    const askLink = document.getElementById('askMeaningLink');
+
+    function updateAskMeaningLink(currentTerm) {
+      if (!currentTerm) {
+        askSection.classList.add('hidden');
+        return;
+      }
+      const encoded = encodeURIComponent(currentTerm);
+      const subject = encodeURIComponent(`Slang meaning request: "${currentTerm}"`);
+      const body = encodeURIComponent(
+        `Hi SlangAdda team,\n\nMain app use kar raha/rahi hoon aur mujhe is word ka meaning chahiye:\n\nWord: ${currentTerm}\nWhere I heard it: \nLanguage (Hinglish/English/etc): \n\nThanks!`
+      );
+      askLink.href = `mailto:contact@adpersona.in?subject=${subject}&body=${body}`;
+      askSection.classList.remove('hidden');
+    }
+
+    // expose helper so app.js can call when no results
+    window._updateAskMeaningLink = updateAskMeaningLink;
+  </script>
 </body>
 </html>

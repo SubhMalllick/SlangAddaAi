@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SlangAdda Admin Dashboard</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Excel reader (SheetJS) for upload -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <style>
     .admin-main {
       padding-top: 1rem;
@@ -121,6 +125,16 @@
       background: #ffffff;
       z-index: 1;
     }
+    .bulk-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 0.6rem 0;
+    }
+    .bulk-row input[type="file"] {
+      font-size: 0.8rem;
+    }
   </style>
 </head>
 <body class="app-body">
@@ -129,7 +143,7 @@
       <div>
         <h1 class="logo">SlangAdda Admin</h1>
         <p class="tagline">
-          Local admin panel – yahan se words manage karo, phir export karke app.js mein paste karo.
+          Local admin panel – yahan se words manage karo, export karo, ya Excel se bulk upload karo.
         </p>
       </div>
       <div class="user-box">
@@ -141,7 +155,7 @@
 
   <main class="container admin-main">
     <section class="admin-layout">
-      <!-- Left: form + export -->
+      <!-- Left: form + bulk tools + export -->
       <article class="admin-card">
         <div class="admin-header-row">
           <h2>Word editor</h2>
@@ -152,19 +166,25 @@
           <div class="form-row">
             <div>
               <label>
+                Num ID (auto)
+                <input type="number" id="fieldNumId" placeholder="auto" />
+              </label>
+            </div>
+            <div>
+              <label>
                 ID (unique, a-z, _)
                 <input type="text" id="fieldId" placeholder="e.g. adulting" />
               </label>
             </div>
+          </div>
+
+          <div class="form-row">
             <div>
               <label>
                 Word
                 <input type="text" id="fieldWord" placeholder="e.g. Adulting" />
               </label>
             </div>
-          </div>
-
-          <div class="form-row">
             <div>
               <label>
                 Slang language
@@ -177,6 +197,9 @@
                 </select>
               </label>
             </div>
+          </div>
+
+          <div class="form-row">
             <div>
               <label>
                 Category
@@ -188,9 +211,6 @@
                 </select>
               </label>
             </div>
-          </div>
-
-          <div class="form-row">
             <div>
               <label>
                 Office-safe
@@ -201,6 +221,9 @@
                 </select>
               </label>
             </div>
+          </div>
+
+          <div class="form-row">
             <div>
               <label>
                 Explicit / 18+
@@ -237,6 +260,22 @@
             <button type="button" id="deleteWordBtn" class="ghost-btn small">Delete word</button>
           </div>
         </form>
+
+        <hr style="border-color:rgba(209,213,219,0.9); margin:0.8rem 0;" />
+
+        <h3 style="font-size:0.95rem;">Bulk upload (Excel / CSV)</h3>
+        <p class="small-note">
+          1) Pehle sample file download karo. 2) Excel mein fill karo (1 row = 1 word).
+          3) File upload karo – existing words update ho jayenge, naye add ho jayenge.
+        </p>
+
+        <div class="bulk-row">
+          <button id="downloadSampleBtn" class="ghost-btn small">⬇ Sample Excel (CSV)</button>
+          <input type="file" id="uploadFile" accept=".xlsx,.xls,.csv" />
+          <button id="uploadFileBtn" class="primary-btn small">⬆ Upload & merge</button>
+        </div>
+
+        <p id="bulkStatus" class="small-note"></p>
 
         <hr style="border-color:rgba(209,213,219,0.9); margin:0.8rem 0;" />
 
@@ -277,6 +316,7 @@
         <table class="admin-table" id="wordTable">
           <thead>
             <tr>
+              <th>#</th>
               <th>Word</th>
               <th>Lang</th>
               <th>Cat</th>

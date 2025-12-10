@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SlangAdda Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="app-body">
+  <header class="header">
+    <div class="container header-inner">
+      <div>
+        <h1 class="logo">SlangAdda Admin</h1>
+        <p class="tagline">
+          Manage slang words, requests, users & quiz stats.
+        </p>
+      </div>
+      <div class="user-box">
+        <span id="adminInfo" class="user-greeting">Not signed in</span>
+        <button id="adminLoginBtn" class="ghost-btn small">Sign in with Google</button>
+        <button id="adminLogoutBtn" class="ghost-btn small" style="display:none;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container app-main">
+    <section class="info-card">
+      <h2>Overview</h2>
+      <div class="settings-grid">
+        <div class="settings-block">
+          <h3>Dictionary Stats</h3>
+          <p>Total words: <strong id="statWords">0</strong></p>
+          <p>Office-safe: <strong id="statOfficeSafe">0</strong></p>
+          <p>18+ words: <strong id="statExplicit">0</strong></p>
+        </div>
+        <div class="settings-block">
+          <h3>User Stats</h3>
+          <p>Total users: <strong id="statUsers">0</strong></p>
+          <p>Active (7 days): <strong id="statActiveUsers">0</strong></p>
+        </div>
+        <div class="settings-block">
+          <h3>Quiz Stats</h3>
+          <p>Total questions answered: <strong id="statQuizTotal">0</strong></p>
+          <p>Top player: <strong id="statTopPlayer">-</strong></p>
+        </div>
+        <div class="settings-block">
+          <h3>Requests</h3>
+          <p>New requests: <strong id="statRequestsNew">0</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="settings-block" style="margin-top:1rem;">
+      <h3>Manage slangs</h3>
+      <p>Click a word from the list to edit. Use form to add new.</p>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <div style="flex:1; min-width:260px;">
+          <table class="admin-table" id="slangTable">
+            <thead>
+              <tr>
+                <th>Word</th>
+                <th>Lang</th>
+                <th>Cat</th>
+                <th>Office</th>
+                <th>18+</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="flex:1; min-width:260px;">
+          <form id="slangForm" class="admin-form">
+            <label>
+              ID (no spaces)
+              <input type="text" id="fId" placeholder="e.g. adulting" />
+            </label>
+            <label>
+              Word
+              <input type="text" id="fWord" placeholder="Adulting" />
+            </label>
+            <label>
+              Slang language
+              <select id="fLang">
+                <option value="en">English / Global</option>
+                <option value="hi">Hinglish / Hindi</option>
+                <option value="ta">Tamil</option>
+                <option value="mr">Marathi</option>
+                <option value="bhojpuri">Bhojpuri</option>
+              </select>
+            </label>
+            <label>
+              Category
+              <select id="fCategory">
+                <option value="life">Life & Feelings</option>
+                <option value="work">Work & Office</option>
+                <option value="internet">Internet / Meme</option>
+                <option value="desi">Desi / Local</option>
+              </select>
+            </label>
+            <label>
+              Office-safe
+              <select id="fOfficeSafe">
+                <option value="yes">Yes</option>
+                <option value="caution">Caution</option>
+                <option value="no">No</option>
+              </select>
+            </label>
+            <label>
+              Explicit / 18+
+              <select id="fExplicit">
+                <option value="false">No</option>
+                <option value="true">Yes (18+)</option>
+              </select>
+            </label>
+            <label>
+              Meaning (Hinglish)
+              <textarea id="fMeaningHinglish"></textarea>
+            </label>
+            <label>
+              Meaning (English)
+              <textarea id="fMeaningEn"></textarea>
+            </label>
+            <label>
+              Example (Hinglish)
+              <textarea id="fExampleHinglish"></textarea>
+            </label>
+            <label>
+              Origin / Notes
+              <textarea id="fOrigin"></textarea>
+            </label>
+            <div style="margin-top:0.6rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button type="button" id="saveSlangBtn" class="primary-btn small">Save / Update</button>
+              <button type="button" id="deleteSlangBtn" class="ghost-btn small">Delete</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="settings-block" style="margin-top:1rem;">
+      <h3>Slang requests (from users)</h3>
+      <table class="admin-table" id="requestsTable">
+        <thead>
+          <tr>
+            <th>Word</th>
+            <th>Lang</th>
+            <th>Source</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- TODO: Firebase scripts go here -->
+  <!-- Paste the Firebase SDK and firebaseConfig from your Firebase console -->
+
+  <!-- Example structure (you must replace with your real config & script URLs) -->
+  <script>
+    // AFTER you create Web App in Firebase, you'll get this config:
+    // const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", ... };
+    // firebase.initializeApp(firebaseConfig);
+    // const auth = firebase.auth();
+    // const db = firebase.firestore();
+  </script>
+
+  <script src="admin.js"></script>
+</body>
+</html>

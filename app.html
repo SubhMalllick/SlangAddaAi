@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SlangAdda Ai | App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="app-body">
+  <header class="header">
+    <div class="container header-inner">
+      <div>
+        <h1 class="logo">SlangAdda Ai</h1>
+        <p class="tagline">
+          Hinglish slang dictionary – modern words, office-safe tags, audio aur quiz ke saath.
+        </p>
+      </div>
+      <div class="user-box">
+        <span id="userGreeting" class="user-greeting"></span>
+        <button id="loginOpenBtn" class="ghost-btn small">Login / Switch user</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs container">
+    <button class="tab-btn active" data-tab="dictionary">Dictionary</button>
+    <button class="tab-btn" data-tab="nsfw">18+ Zone</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
+    <button class="tab-btn" data-tab="activity">Activity</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
+  </nav>
+
+  <main class="container app-main">
+    <!-- Dictionary TAB -->
+    <section id="tab-dictionary" class="tab active">
+      <section class="controls">
+        <div class="control-row">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search karo… jaise “rizz”, “doomscrolling”, “scene kya hai”"
+          />
+        </div>
+        <div class="control-row control-row--filters">
+          <label>
+            Explain in:
+            <select id="translateSelect">
+              <option value="hinglish">Hinglish (default)</option>
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
+              <option value="ta">Tamil</option>
+              <option value="mr">Marathi</option>
+              <option value="bhojpuri">Bhojpuri</option>
+            </select>
+          </label>
+
+          <label>
+            Slang language:
+            <select id="slangLangSelect">
+              <option value="all">All</option>
+              <option value="hi">Hinglish / Hindi</option>
+              <option value="en">English / Global</option>
+              <option value="ta">Tamil</option>
+              <option value="mr">Marathi</option>
+              <option value="bhojpuri">Bhojpuri</option>
+            </select>
+          </label>
+
+          <label>
+            Category:
+            <select id="categorySelect">
+              <option value="all">All</option>
+              <option value="work">Work & Office</option>
+              <option value="internet">Internet / Meme</option>
+              <option value="life">Life & Feelings</option>
+              <option value="desi">Desi / Local</option>
+            </select>
+          </label>
+
+          <label class="safe-toggle">
+            <input type="checkbox" id="officeSafeOnly" checked />
+            Sirf office-safe dikhao
+          </label>
+        </div>
+      </section>
+
+      <section id="recentSearchSection" class="recent-searches hidden">
+        <h3>Recent searches</h3>
+        <div id="recentSearchList" class="chip-row"></div>
+      </section>
+
+      <section id="results" class="results">
+        <!-- Cards will be inserted by app.js -->
+      </section>
+    </section>
+
+    <!-- 18+ TAB -->
+    <section id="tab-nsfw" class="tab">
+      <section class="info-card">
+        <h2>⚠ 18+ Slang Zone</h2>
+        <p>
+          Yahan woh slang words honge jo strong, rude ya explicit ho sakte hain.
+          Goal sirf explain karna hai, promote karna nahi.
+        </p>
+        <p class="small-note">
+          Office-safe: ❌ Mostly not. Yeh sirf understanding ke liye hai – use karne se pehle context zaroor socho.
+        </p>
+      </section>
+      <section id="nsfwResults" class="results">
+        <!-- NSFW cards from app.js -->
+      </section>
+    </section>
+
+    <!-- QUIZ TAB -->
+    <section id="tab-quiz" class="tab">
+      <section class="info-card">
+        <h2>Slang Quiz 🎮</h2>
+        <p>
+          Guess karo meaning, dekhte hain kitne updated ho. Perfect for millennials, parents aur travellers.
+        </p>
+      </section>
+      <section class="quiz-box">
+        <div id="quizQuestion" class="quiz-question">
+          Start pe click karo aur quiz shuru karein.
+        </div>
+        <div id="quizOptions" class="quiz-options"></div>
+        <div class="quiz-footer">
+          <button id="startQuizBtn">Start quiz</button>
+          <span id="quizScore">Score: 0 / 0</span>
+        </div>
+      </section>
+    </section>
+
+    <!-- ACTIVITY TAB -->
+    <section id="tab-activity" class="tab">
+      <section class="info-card">
+        <h2>Tumhari activity</h2>
+        <p>Yahan recent searches, recently dekhe gaye words aur favourites dikhenge.</p>
+      </section>
+
+      <section class="activity-section">
+        <h3>Recent searches</h3>
+        <div id="activityRecent" class="chip-row"></div>
+      </section>
+
+      <section class="activity-section">
+        <h3>Favourites</h3>
+        <div id="activityFavourites" class="results"></div>
+      </section>
+    </section>
+
+    <!-- SETTINGS TAB -->
+    <section id="tab-settings" class="tab">
+      <section class="info-card">
+        <h2>Settings</h2>
+        <p>App language, audio voice aur data control yahan se manage karo.</p>
+      </section>
+
+      <section class="settings-grid">
+        <div class="settings-block">
+          <h3>App language (UI)</h3>
+          <p>Abhi SlangAdda Hinglish mein hai. English version baad mein aayega.</p>
+          <div class="chip-row">
+            <button class="chip active">Hinglish</button>
+            <button class="chip" disabled>English (coming soon)</button>
+          </div>
+        </div>
+
+        <div class="settings-block">
+          <h3>Default explain language</h3>
+          <select id="defaultExplainSelect">
+            <option value="hinglish">Hinglish</option>
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="ta">Tamil</option>
+            <option value="mr">Marathi</option>
+            <option value="bhojpuri">Bhojpuri</option>
+          </select>
+        </div>
+
+        <div class="settings-block">
+          <h3>Audio voice preference</h3>
+          <select id="voiceGenderSelect">
+            <option value="neutral">Auto / jo available ho</option>
+            <option value="female">Female prefer karo</option>
+            <option value="male">Male prefer karo</option>
+          </select>
+          <p class="small-note">
+            Note: Actual voice browser aur device pe depend karega. Hum best-match try karenge.
+          </p>
+        </div>
+
+        <div class="settings-block">
+          <h3>18+ section</h3>
+          <label class="safe-toggle">
+            <input type="checkbox" id="showNsfwLink" checked />
+            Tabs mein 18+ Zone dikhana
+          </label>
+        </div>
+
+        <div class="settings-block">
+          <h3>Data & account</h3>
+          <button id="clearDataBtn" class="ghost-btn small">Clear searches & favourites</button>
+          <button id="logoutBtn" class="ghost-btn small">Logout</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>SlangAdda Ai • Modern slang, clearly explained • Built for millennial India 🇮🇳</p>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal-backdrop">
+    <div class="modal">
+      <h2>SlangAdda pe welcome 👋</h2>
+      <p>
+        Login karke apne favourite words, recent searches aur quiz score isi device pe save rakho.
+      </p>
+      <label class="modal-label">
+        Naam
+        <input type="text" id="loginName" placeholder="Tumhara naam" />
+      </label>
+      <label class="modal-label">
+        Email
+        <input type="email" id="loginEmail" placeholder="tum@example.com" />
+      </label>
+      <div class="modal-actions">
+        <button id="loginSubmitBtn" class="primary-btn small">Login / Continue</button>
+        <button id="loginSkipBtn" class="ghost-btn small">Guest ke taur pe continue</button>
+      </div>
+      <p class="small-note">
+        Note: Abhi login basic hai (sirf is device pe save). Baad mein proper account system add hoga.
+      </p>
+    </div>
+  </div>
+
+  <!-- Premium Modal -->
+  <div id="premiumModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <h2>Premium aa raha hai 🔓</h2>
+      <p>
+        Lagta hai tumko SlangAdda pasand aa raha hai. Premium mein hoga – unlimited 18+ explain,
+        advanced quiz, aur personalised office-safe list.
+      </p>
+      <p>Abhi email daalo, jab launch hoga to sabse pehle invite milega.</p>
+      <label class="modal-label">
+        Email
+        <input type="email" id="premiumEmail" placeholder="tum@example.com" />
+      </label>
+      <div class="modal-actions">
+        <button id="premiumNotifyBtn" class="primary-btn small">Notify me</button>
+        <button id="premiumCloseBtn" class="ghost-btn small">Nahi yaar, baad mein</button>
+      </div>
+      <p id="premiumMsg" class="small-note"></p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

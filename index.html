@@ -3,26 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SlangAdda AI | Modern Hinglish & Indian Slang Dictionary</title>
+  <title>SlangAdda AI | The Smart Way to Master Desi Slang</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      /* New brighter Gen-Z palette */
-      --primary: #06b6d4;          /* teal */
-      --primary-dark: #0f766e;     /* deep teal */
-      --primary-light: #a5f3fc;    /* light cyan */
-      --secondary: #f9fafb;
-      --accent: #f97316;           /* orange */
-      --accent-light: #fff7ed;
-      --text: #020617;
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --primary-light: #a78bfa;
+      --secondary: #f8fafc;
+      --accent: #f59e0b;
+      --accent-light: #fef3c7;
+      --text: #0f172a;
       --text-light: #475569;
       --card-bg: #ffffff;
       --border: #e2e8f0;
-      --shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15),
-                0 10px 10px -5px rgba(15, 23, 42, 0.08);
-      --radius: 20px;
-      --gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #ec4899 100%);
-      --gradient-subtle: radial-gradient(circle at top left, #e0f2fe 0%, #f9fafb 45%, #fef3c7 100%);
+      --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --radius: 24px;
+      --gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f59e0b 100%);
+      --gradient-subtle: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     }
 
     * {
@@ -38,14 +37,36 @@
       line-height: 1.6;
       min-height: 100vh;
       overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 20%);
     }
 
-    /* Glassmorphism Effects */
-    .glass {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
+    /* Custom Cursor */
+    .cursor {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+      mix-blend-mode: difference;
+    }
+
+    .cursor-follower {
+      width: 40px;
+      height: 40px;
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
     }
 
     /* Header */
@@ -55,48 +76,57 @@
       left: 0;
       right: 0;
       z-index: 1000;
-      padding: 1rem 0;
-      transition: all 0.3s ease;
+      padding: 1.5rem 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .header.scrolled {
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 1rem 0;
     }
 
     .header-inner {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 0 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 2rem;
+      gap: 3rem;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1rem;
       text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
     }
 
     .logo-icon {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       background: var(--gradient);
-      border-radius: 12px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.25rem;
-      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.45);
+      font-size: 1.5rem;
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+      animation: float 6s ease-in-out infinite;
     }
 
     .logo-text {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       font-weight: 800;
       background: var(--gradient);
       -webkit-background-clip: text;
@@ -105,38 +135,50 @@
       letter-spacing: -0.5px;
     }
 
+    .logo-tagline {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      margin-top: 0.25rem;
+    }
+
+    /* Main Navigation */
     .main-nav {
       display: flex;
-      gap: 1.5rem;
+      gap: 2rem;
       align-items: center;
     }
 
     .nav-link {
       text-decoration: none;
-      color: var(--text-light);
-      font-weight: 500;
-      padding: 0.5rem 0;
+      color: var(--text);
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
       position: relative;
-      transition: color 0.3s ease;
+      overflow: hidden;
     }
 
-    .nav-link:hover {
-      color: var(--primary);
-    }
-
-    .nav-link.active {
-      color: var(--primary);
-    }
-
-    .nav-link.active::after {
+    .nav-link::before {
       content: '';
       position: absolute;
       bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 3px;
       background: var(--gradient);
-      border-radius: 2px;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::before {
+      width: 80%;
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+      color: var(--primary);
     }
 
     /* Hero Section */
@@ -144,26 +186,26 @@
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding: 6rem 2rem;
+      padding: 8rem 2rem 4rem;
       position: relative;
       overflow: hidden;
     }
 
-    .hero::before {
-      content: '';
+    .hero-bg {
       position: absolute;
-      top: -40%;
-      right: -30%;
-      width: 80%;
-      height: 150%;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.45), rgba(59, 130, 246, 0));
-      border-radius: 50%;
-      opacity: 0.7;
-      filter: blur(40px);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+      z-index: -1;
     }
 
     .hero-content {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       width: 100%;
       display: grid;
@@ -173,170 +215,273 @@
     }
 
     .hero-text {
-      z-index: 1;
+      position: relative;
     }
 
-    .hero-tag {
+    .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(56, 189, 248, 0.12);
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
       border-radius: 50px;
-      color: var(--primary-dark);
+      color: var(--primary);
       font-size: 0.875rem;
       font-weight: 600;
-      margin-bottom: 1.5rem;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      animation: badgePulse 2s infinite;
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
     }
 
     .hero-title {
-      font-size: 3.5rem;
-      font-weight: 800;
+      font-size: 4rem;
+      font-weight: 900;
       line-height: 1.1;
       margin-bottom: 1.5rem;
-      background: linear-gradient(135deg, var(--text) 0%, #0ea5e9 40%, #6366f1 90%);
+      background: linear-gradient(135deg, var(--text) 0%, var(--primary) 30%, var(--accent) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      position: relative;
+    }
+
+    .hero-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100px;
+      height: 4px;
+      background: var(--gradient);
+      border-radius: 2px;
     }
 
     .hero-subtitle {
-      font-size: 1.125rem;
+      font-size: 1.25rem;
       color: var(--text-light);
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
       line-height: 1.7;
+      max-width: 600px;
     }
 
-    /* AI Search Assistant */
+    /* Interactive Search Box */
     .search-container {
       position: relative;
-      margin: 2rem 0;
-      max-width: 600px;
+      margin: 3rem 0;
+      max-width: 700px;
     }
 
     .search-box {
       display: flex;
       align-items: center;
-      background: white;
-      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
       padding: 0.5rem;
-      border: 2px solid var(--border);
+      border: 2px solid transparent;
       transition: all 0.3s ease;
-      box-shadow: var(--shadow);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .search-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
     }
 
     .search-box:focus-within {
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 
+        0 40px 80px rgba(139, 92, 246, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
     }
 
     .search-icon {
-      padding: 0.75rem 1rem;
-      color: var(--text-light);
+      padding: 1rem 1.5rem;
+      color: var(--primary);
+      font-size: 1.25rem;
     }
 
     .search-input {
       flex: 1;
       border: none;
       outline: none;
-      padding: 0.75rem 0;
-      font-size: 1rem;
+      padding: 1rem 0;
+      font-size: 1.125rem;
       background: transparent;
+      color: var(--text);
+      font-weight: 500;
     }
 
     .search-input::placeholder {
       color: var(--text-light);
+      opacity: 0.7;
     }
 
     .search-actions {
       display: flex;
-      gap: 0.5rem;
-      padding: 0 0.5rem;
+      gap: 1rem;
+      padding: 0 1rem;
     }
 
-    .ai-indicator {
+    .ai-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--gradient);
+      color: white;
+      border-radius: 16px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .ai-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+    }
+
+    .ai-badge i {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .search-trending {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .trending-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-light);
+      width: 100%;
+      margin-bottom: 0.5rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: linear-gradient(135deg, #22c55e, #a3e635);
-      color: #022c22;
-      border-radius: 12px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      animation: pulse 2s infinite;
-      border: 1px solid rgba(34, 197, 94, 0.3);
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: translateY(0); }
-      50% { opacity: 0.9; transform: translateY(-1px); }
-    }
-
-    .search-examples {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .search-example {
-      padding: 0.5rem 1rem;
+    .trending-tag {
+      padding: 0.75rem 1.5rem;
       background: white;
-      border: 1px solid var(--border);
-      border-radius: 999px;
+      border: 2px solid var(--border);
+      border-radius: 50px;
       font-size: 0.875rem;
-      color: var(--text-light);
+      color: var(--text);
       cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .search-example:hover {
-      background: var(--primary);
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 18px rgba(8, 145, 178, 0.35);
-      border-color: transparent;
-    }
-
-    /* Feature Cards */
-    .features-section {
-      padding: 6rem 2rem;
-      background: white;
-      position: relative;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 3rem;
-      background: linear-gradient(135deg, #0ea5e9, #6366f1, #ec4899);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .features-grid {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .feature-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 2.5rem 2rem;
-      border: 1px solid var(--border);
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
     }
 
-    .feature-card::before {
+    .trending-tag::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient);
+      transition: left 0.3s ease;
+      z-index: 0;
+    }
+
+    .trending-tag:hover {
+      color: white;
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);
+    }
+
+    .trending-tag:hover::before {
+      left: 0;
+    }
+
+    .trending-tag span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Interactive Features Section */
+    .features-section {
+      padding: 8rem 2rem;
+      position: relative;
+      background: var(--gradient-dark);
+      color: white;
+      overflow: hidden;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 5rem;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Interactive Feature Cards */
+    .features-interactive {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-card-interactive {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      padding: 3rem 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .feature-card-interactive::before {
       content: '';
       position: absolute;
       top: 0;
@@ -344,48 +489,271 @@
       right: 0;
       height: 4px;
       background: var(--gradient);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+      transform-origin: left;
     }
 
-    .feature-card:hover {
-      transform: translateY(-10px);
-      box-shadow: var(--shadow);
+    .feature-card-interactive:hover {
+      transform: translateY(-10px) scale(1.02);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .feature-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
+    .feature-card-interactive:hover::before {
+      transform: scaleX(1);
+    }
+
+    .feature-icon-interactive {
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.4s ease;
+    }
+
+    .feature-card-interactive:hover .feature-icon-interactive {
+      background: var(--gradient);
+      transform: rotate(10deg) scale(1.1);
+    }
+
+    .feature-number {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-size: 4rem;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.05);
+      transition: all 0.4s ease;
+    }
+
+    .feature-card-interactive:hover .feature-number {
+      color: rgba(255, 255, 255, 0.1);
+      transform: scale(1.2);
+    }
+
+    .feature-title-interactive {
       font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      background: rgba(56, 189, 248, 0.12);
-      color: var(--primary-dark);
-    }
-
-    .feature-title {
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 1rem;
-      color: var(--text);
+      color: white;
+      transition: color 0.3s ease;
     }
 
-    .feature-desc {
-      color: var(--text-light);
+    .feature-desc-interactive {
+      color: rgba(255, 255, 255, 0.7);
       line-height: 1.6;
+      margin-bottom: 1.5rem;
     }
 
-    /* Stats Section */
+    .feature-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-light);
+      font-weight: 600;
+      text-decoration: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card-interactive:hover .feature-cta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Auto-Rotating Testimonials */
+    .testimonials-section {
+      padding: 8rem 2rem;
+      background: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonials-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      height: 600px;
+    }
+
+    .testimonials-slider {
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+
+    .testimonial-card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transform: scale(0.8) translateY(50px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .testimonial-card.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: all;
+    }
+
+    .testimonial-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: 4rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .testimonial-text {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      position: relative;
+      padding-left: 3rem;
+    }
+
+    .testimonial-text::before {
+      content: '"';
+      position: absolute;
+      left: 0;
+      top: -2rem;
+      font-size: 6rem;
+      color: var(--primary);
+      opacity: 0.2;
+      font-family: serif;
+      line-height: 1;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: auto;
+    }
+
+    .author-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 2rem;
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .author-info {
+      flex: 1;
+    }
+
+    .author-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .author-role {
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .author-rating {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .author-rating i {
+      color: #fbbf24;
+      font-size: 1.25rem;
+    }
+
+    .testimonial-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .testimonial-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .testimonial-dot.active {
+      background: var(--primary);
+      transform: scale(1.3);
+    }
+
+    .testimonial-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .testimonial-nav:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .testimonial-nav.prev {
+      left: -30px;
+    }
+
+    .testimonial-nav.next {
+      right: -30px;
+    }
+
+    /* Stats Section with Animation */
     .stats-section {
       padding: 6rem 2rem;
-      background: radial-gradient(circle at top, #0ea5e9 0%, #6366f1 40%, #312e81 100%);
+      background: var(--gradient);
       color: white;
       position: relative;
+      overflow: hidden;
     }
 
     .stats-grid {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -394,100 +762,42 @@
     }
 
     .stat-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
+      position: relative;
     }
 
     .stat-number {
-      font-size: 3rem;
-      font-weight: 800;
-      text-shadow: 0 10px 25px rgba(15, 23, 42, 0.45);
+      font-size: 4rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ffffff, #f0abfc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .stat-label {
-      font-size: 1rem;
+      font-size: 1.125rem;
       opacity: 0.9;
-    }
-
-    /* Testimonials */
-    .testimonials-section {
-      padding: 6rem 2rem;
-      background: var(--secondary);
-    }
-
-    .testimonials-grid {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .testimonial-card {
-      background: white;
-      border-radius: var(--radius);
-      padding: 2rem;
-      border: 1px solid var(--border);
-      position: relative;
-      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
-    }
-
-    .testimonial-content {
-      font-style: italic;
-      color: var(--text-light);
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-    }
-
-    .testimonial-author {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .author-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
-    }
-
-    .author-info h4 {
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .author-info p {
-      color: var(--text-light);
-      font-size: 0.875rem;
+      font-weight: 500;
     }
 
     /* CTA Section */
     .cta-section {
-      padding: 6rem 2rem;
+      padding: 8rem 2rem;
       text-align: center;
       position: relative;
       overflow: hidden;
     }
 
     .cta-card {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
-      background: radial-gradient(circle at top left, #22c55e 0%, #0ea5e9 35%, #6366f1 70%, #db2777 100%);
+      background: var(--gradient);
       border-radius: var(--radius);
-      padding: 4rem;
+      padding: 6rem 4rem;
       color: white;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 18px 45px rgba(30, 64, 175, 0.5);
     }
 
     .cta-card::before {
@@ -495,45 +805,55 @@
       position: absolute;
       top: -50%;
       right: -50%;
-      width: 100%;
+      width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .cta-title {
-      font-size: 2.5rem;
-      font-weight: 700;
+      font-size: 3rem;
+      font-weight: 900;
       margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
     }
 
     .cta-subtitle {
-      font-size: 1.125rem;
+      font-size: 1.25rem;
       opacity: 0.9;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
+      position: relative;
+      z-index: 1;
     }
 
     /* Footer */
     .footer {
-      background: #020617;
+      background: var(--text);
       color: #cbd5e1;
-      padding: 4rem 2rem 2rem;
+      padding: 6rem 2rem 3rem;
+      position: relative;
     }
 
     .footer-content {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 3rem;
+      gap: 4rem;
     }
 
     .footer-section h3 {
-      color: white;
-      margin-bottom: 1.5rem;
-      font-size: 1.25rem;
+      color:white; 
+      margin-bottom:1.5rem;
     }
 
     .footer-links {
@@ -544,250 +864,180 @@
     }
 
     .footer-links a {
-      color: #cbd5e1;
-      text-decoration: none;
-      transition: color 0.3s ease;
+      color:#cbd5e1;
+      text-decoration:none;
+      transition:color 0.3s ease;
     }
 
     .footer-links a:hover {
-      color: #38bdf8;
+      color:#e5e7eb;
     }
 
     .social-links {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
+      display:flex;
+      gap:1rem;
+      margin-top:1.5rem;
     }
 
     .social-link {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(15, 23, 42, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-decoration: none;
-      transition: all 0.3s ease;
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      background:rgba(15,23,42,0.7);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      text-decoration:none;
+      transition:all 0.3s ease;
     }
 
     .social-link:hover {
-      background: var(--primary);
-      transform: translateY(-3px) scale(1.05);
+      background:var(--primary);
+      transform:translateY(-3px) scale(1.05);
     }
 
     /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 2rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1rem;
+      gap: 1rem;
+      padding: 1.25rem 2.5rem;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1.125rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       border: none;
       text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
     }
 
     .btn-primary {
       background: var(--gradient);
       color: white;
-      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.5);
+      box-shadow: 0 20px 40px rgba(139, 92, 246, 0.4);
     }
 
     .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.65);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 30px 60px rgba(139, 92, 246, 0.6);
     }
 
     .btn-secondary {
-      background: white;
+      background: rgba(255, 255, 255, 0.9);
       color: var(--text);
-      border: 2px solid var(--border);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
     }
 
     .btn-secondary:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(148, 163, 184, 0.4);
+      background: white;
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
 
     .btn-ghost {
       background: transparent;
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.35);
+      color:white;
+      border:2px solid rgba(255,255,255,0.3);
     }
 
     .btn-ghost:hover {
-      background: rgba(15, 23, 42, 0.2);
-      border-color: white;
-      transform: translateY(-3px);
+      background:rgba(255,255,255,0.1);
+      transform:translateY(-5px);
     }
 
     /* Responsive */
-    @media (max-width: 1024px) {
+    @media (max-width: 1200px) {
+      .features-interactive {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
       .hero-content {
         grid-template-columns: 1fr;
         text-align: center;
+        gap: 3rem;
       }
       
       .hero-title {
-        font-size: 2.75rem;
+        font-size: 3rem;
       }
       
-      .main-nav {
-        display: none;
-      }
-      
-      .mobile-menu-btn {
-        display: block;
+      .section-title {
+        font-size: 2.5rem;
       }
     }
 
     @media (max-width: 768px) {
+      .features-interactive {
+        grid-template-columns: 1fr;
+      }
+      
       .hero {
-        padding: 4rem 1rem;
+        padding: 6rem 1rem 3rem;
       }
       
       .hero-title {
-        font-size: 2.25rem;
+        font-size: 2.5rem;
       }
       
       .section-title {
         font-size: 2rem;
       }
       
-      .cta-card {
-        padding: 3rem 2rem;
+      .testimonial-content {
+        padding: 2rem;
       }
       
-      .cta-title {
-        font-size: 2rem;
+      .testimonial-text {
+        font-size: 1.25rem;
+        padding-left: 2rem;
+      }
+      
+      .testimonial-nav {
+        display: none;
+      }
+
+      .header-inner {
+        padding: 0 1.25rem;
+      }
+
+      .main-nav {
+        display:none; /* you can add a mobile nav later if you want */
       }
     }
 
-    /* Mobile Menu */
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 0.5rem;
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(5deg); }
+      66% { transform: translateY(10px) rotate(-5deg); }
     }
 
-    /* Chat Interface */
-    .chat-container {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      z-index: 1000;
-    }
-
-    .chat-btn {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: var(--gradient);
-      color: white;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.55);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .chat-btn:hover {
-      transform: scale(1.05) translateY(-3px);
-    }
-
-    .chat-window {
-      position: absolute;
-      bottom: 80px;
-      right: 0;
-      width: 400px;
-      height: 500px;
-      background: white;
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .chat-window.active {
-      display: flex;
-    }
-
-    .chat-header {
-      background: var(--gradient);
-      color: white;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .chat-messages {
-      flex: 1;
-      padding: 1rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      background: #f8fafc;
-    }
-
-    .message {
-      max-width: 80%;
-      padding: 0.75rem 1rem;
-      border-radius: 18px;
-      line-height: 1.4;
-      font-size: 0.9rem;
-    }
-
-    .message.ai {
-      background: #e2f3ff;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-      color: #0f172a;
-    }
-
-    .message.user {
-      background: var(--primary);
-      color: white;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-
-    .chat-input-container {
-      padding: 1rem;
-      border-top: 1px solid var(--border);
-      background: white;
-    }
-
-    .chat-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      outline: none;
-      font-size: 0.95rem;
-    }
-
-    /* Animation */
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(40px);
       }
       to {
         opacity: 1;
@@ -796,62 +1046,63 @@
     }
 
     .fade-in-up {
-      animation: fadeInUp 0.6s ease forwards;
+      animation: fadeInUp 0.8s ease forwards;
     }
   </style>
 </head>
 <body>
+  <!-- Custom Cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
   <!-- Header -->
-  <header class="header glass" id="header">
+  <header class="header" id="header">
     <div class="header-inner">
       <a href="#" class="logo">
         <div class="logo-icon">
-          <i class="fas fa-comments"></i>
+          <i class="fas fa-comment-dots"></i>
         </div>
-        <span class="logo-text">SlangAdda AI</span>
+        <div>
+          <div class="logo-text">SlangAdda AI</div>
+          <div class="logo-tagline">Master Desi Slang. Speak Like a Local.</div>
+        </div>
       </a>
       
       <nav class="main-nav">
         <a href="index.html" class="nav-link active">Home</a>
         <a href="app.html" class="nav-link">Dictionary</a>
-        <a href="admin.html" class="nav-link">Admin</a>
         <a href="contact.html" class="nav-link">Contact</a>
         <a href="app.html" class="btn btn-primary">
-          <i class="fas fa-play"></i>
-          Try Dictionary
+          <i class="fas fa-rocket"></i>
+          Launch App
         </a>
       </nav>
-      
-      <button class="mobile-menu-btn">
-        <i class="fas fa-bars"></i>
-      </button>
     </div>
   </header>
 
   <!-- Hero Section -->
   <section class="hero">
+    <div class="hero-bg"></div>
     <div class="hero-content">
       <div class="hero-text fade-in-up">
-        <div class="hero-tag">
-          <i class="fas fa-robot"></i>
-          AI-Powered Slang Assistant
+        <div class="hero-badge">
+          <i class="fas fa-bolt"></i>
+          🎯 AI-Powered & Always Learning
         </div>
         
         <h1 class="hero-title">
-          Don't Just Translate.<br>
-          <span style="background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent;">
-            Understand & Master
+          Speak the Language<br>
+          of <span style="background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent;">
+            Modern India
           </span>
-          Desi Slang.
         </h1>
         
         <p class="hero-subtitle">
-          From "rizz" to "jugaad" – our AI-powered assistant explains modern Indian slang 
-          in Hinglish, with context, examples, and cultural nuances. Perfect for Gen Z, 
-          parents, travelers, and anyone navigating India's vibrant digital culture.
+          From "rizz" to "jugaad" – our AI doesn't just translate, it explains context, culture, 
+          and usage in real-time. Perfect for Gen Z, parents, travelers, and digital natives.
         </p>
         
-        <!-- AI Search Bar -->
+        <!-- Interactive Search Box -->
         <div class="search-container fade-in-up" style="animation-delay: 0.2s;">
           <div class="search-box">
             <div class="search-icon">
@@ -860,27 +1111,37 @@
             <input type="text" 
                    class="search-input" 
                    id="aiSearchInput"
-                   placeholder="Ask me anything about slang... (Try: 'What does rizz mean?' or 'Explain jugaad')">
+                   placeholder="Ask AI about any slang... (Try: 'What is vibe check?' or 'Explain desi lingo')">
             <div class="search-actions">
-              <div class="ai-indicator">
-                <i class="fas fa-bolt"></i>
-                AI-Powered
+              <div class="ai-badge" onclick="askAI()">
+                <i class="fas fa-brain"></i>
+                Ask AI Assistant
               </div>
             </div>
           </div>
           
-          <div class="search-examples">
-            <div class="search-example" onclick="searchExample('What does rizz mean?')">
-              "What does rizz mean?"
+          <div class="search-trending">
+            <div class="trending-title">
+              <i class="fas fa-fire"></i>
+              Trending Searches:
             </div>
-            <div class="search-example" onclick="searchExample('Explain jugaad with examples')">
-              "Explain jugaad"
+            <div class="trending-tag" onclick="searchSlang('rizz')">
+              <span>rizz</span>
             </div>
-            <div class="search-example" onclick="searchExample('Is adulting office safe?')">
-              "Office safety check"
+            <div class="trending-tag" onclick="searchSlang('vibe check')">
+              <span>vibe check</span>
             </div>
-            <div class="search-example" onclick="searchExample('Latest Gen Z slang')">
-              "Latest Gen Z slang"
+            <div class="trending-tag" onclick="searchSlang('adulting')">
+              <span>adulting</span>
+            </div>
+            <div class="trending-tag" onclick="searchSlang('doomscrolling')">
+              <span>doomscrolling</span>
+            </div>
+            <div class="trending-tag" onclick="searchSlang('jugaad')">
+              <span>jugaad</span>
+            </div>
+            <div class="trending-tag" onclick="searchSlang('machaa')">
+              <span>machaa</span>
             </div>
           </div>
         </div>
@@ -888,7 +1149,7 @@
         <div class="hero-actions fade-in-up" style="animation-delay: 0.4s;">
           <a href="app.html" class="btn btn-primary">
             <i class="fas fa-play-circle"></i>
-            Explore Dictionary
+            Start Exploring
           </a>
           <a href="#features" class="btn btn-secondary">
             <i class="fas fa-star"></i>
@@ -898,32 +1159,135 @@
       </div>
       
       <div class="hero-visual fade-in-up" style="animation-delay: 0.6s;">
-        <!-- Animated slang cards -->
-        <div style="position:relative; height:100%;">
-          <div class="feature-card" style="position:absolute; top:0; left:0; transform:rotate(-5deg);">
-            <div class="feature-icon">
-              <i class="fas fa-fire"></i>
+        <!-- Animated slang visualization -->
+        <div style="position:relative; height:500px; perspective:1000px;">
+          <div class="feature-card-interactive" style="position:absolute; top:0; left:0; transform:rotateY(-10deg);">
+            <div class="feature-number">01</div>
+            <div class="feature-icon-interactive">
+              <i class="fas fa-robot"></i>
             </div>
-            <h3 class="feature-title">"Rizz"</h3>
-            <p class="feature-desc">Charisma, charm, romantic appeal. "Uska rizz crazy hai!"</p>
+            <h3 class="feature-title-interactive">AI-Powered</h3>
+            <p class="feature-desc-interactive">Context-aware explanations in real-time</p>
           </div>
           
-          <div class="feature-card" style="position:absolute; top:60px; right:0; transform:rotate(3deg);">
-            <div class="feature-icon">
-              <i class="fas fa-lightbulb"></i>
+          <div class="feature-card-interactive" style="position:absolute; top:50px; right:0; transform:rotateY(10deg);">
+            <div class="feature-number">02</div>
+            <div class="feature-icon-interactive">
+              <i class="fas fa-headphones"></i>
             </div>
-            <h3 class="feature-title">"Jugaad"</h3>
-            <p class="feature-desc">Innovative fix, creative solution. "Desi jugaad se kaam ho gaya!"</p>
+            <h3 class="feature-title-interactive">Audio Learning</h3>
+            <p class="feature-desc-interactive">Listen to authentic Indian pronunciations</p>
           </div>
           
-          <div class="feature-card" style="position:absolute; bottom:0; left:20%; transform:rotate(-2deg);">
-            <div class="feature-icon">
-              <i class="fas fa-briefcase"></i>
+          <div class="feature-card-interactive" style="position:absolute; bottom:0; left:20%; transform:rotateY(-5deg);">
+            <div class="feature-number">03</div>
+            <div class="feature-icon-interactive">
+              <i class="fas fa-gamepad"></i>
             </div>
-            <h3 class="feature-title">"Adulting"</h3>
-            <p class="feature-desc">Acting like a responsible adult. "Today's adulting win: bills paid!"</p>
+            <h3 class="feature-title-interactive">Interactive Quiz</h3>
+            <p class="feature-desc-interactive">Test your slang knowledge daily</p>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Features Section -->
+  <section class="features-section" id="features">
+    <div class="section-header fade-in-up">
+      <h2 class="section-title">Why SlangAdda AI Stands Out?</h2>
+      <p class="section-subtitle">Not just a dictionary – a complete learning ecosystem powered by AI</p>
+    </div>
+    
+    <div class="features-interactive">
+      <div class="feature-card-interactive" onmouseenter="animateFeature(1)">
+        <div class="feature-number">01</div>
+        <div class="feature-icon-interactive">
+          <i class="fas fa-brain"></i>
+        </div>
+        <h3 class="feature-title-interactive">Context-Aware AI</h3>
+        <p class="feature-desc-interactive">
+          Our AI understands context, tone, and cultural nuances. Get explanations that go beyond literal translation.
+        </p>
+        <a href="#" class="feature-cta">
+          See AI in action
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <div class="feature-card-interactive" onmouseenter="animateFeature(2)">
+        <div class="feature-number">02</div>
+        <div class="feature-icon-interactive">
+          <i class="fas fa-microphone-alt"></i>
+        </div>
+        <h3 class="feature-title-interactive">Voice-Activated Search</h3>
+        <p class="feature-desc-interactive">
+          Just say the word! Voice search with accent recognition for authentic learning experience.
+        </p>
+        <a href="#" class="feature-cta">
+          Try voice search
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <div class="feature-card-interactive" onmouseenter="animateFeature(3)">
+        <div class="feature-number">03</div>
+        <div class="feature-icon-interactive">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 class="feature-title-interactive">Smart Content Filtering</h3>
+        <p class="feature-desc-interactive">
+          Auto-tagging for office-safety, age-appropriateness, and cultural sensitivity with warnings.
+        </p>
+        <a href="#" class="feature-cta">
+          Explore filters
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <div class="feature-card-interactive" onmouseenter="animateFeature(4)">
+        <div class="feature-number">04</div>
+        <div class="feature-icon-interactive">
+          <i class="fas fa-sync-alt"></i>
+        </div>
+        <h3 class="feature-title-interactive">Live Trend Updates</h3>
+        <p class="feature-desc-interactive">
+          Real-time updates from social media, OTT platforms, and pop culture. Never miss trending slang.
+        </p>
+        <a href="#" class="feature-cta">
+          View live trends
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <div class="feature-card-interactive" onmouseenter="animateFeature(5)">
+        <div class="feature-number">05</div>
+        <div class="feature-icon-interactive">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="feature-title-interactive">Community-Powered</h3>
+        <p class="feature-desc-interactive">
+          User-submitted slang, peer reviews, and crowd-sourced explanations keep our database authentic.
+        </p>
+        <a href="#" class="feature-cta">
+          Join community
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <div class="feature-card-interactive" onmouseenter="animateFeature(6)">
+        <div class="feature-number">06</div>
+        <div class="feature-icon-interactive">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="feature-title-interactive">Personalized Learning</h3>
+        <p class="feature-desc-interactive">
+          AI tracks your progress, suggests relevant slang, and adapts quizzes to your learning style.
+        </p>
+        <a href="#" class="feature-cta">
+          Start learning
+          <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
   </section>
@@ -932,142 +1296,172 @@
   <section class="stats-section">
     <div class="stats-grid">
       <div class="stat-item">
-        <div class="stat-number">500+</div>
+        <div class="stat-number" id="stat1">0</div>
         <div class="stat-label">Slang Words & Phrases</div>
       </div>
       <div class="stat-item">
-        <div class="stat-number">15+</div>
-        <div class="stat-label">Indian Languages Covered</div>
+        <div class="stat-number" id="stat2">0</div>
+        <div class="stat-label">Active AI Conversations</div>
       </div>
       <div class="stat-item">
-        <div class="stat-number">24/7</div>
-        <div class="stat-label">AI Assistant Available</div>
+        <div class="stat-number" id="stat3">0</div>
+        <div class="stat-label">Daily Quiz Participants</div>
       </div>
       <div class="stat-item">
-        <div class="stat-number">98%</div>
-        <div class="stat-label">Accuracy Rate</div>
+        <div class="stat-number" id="stat4">0%</div>
+        <div class="stat-label">User Satisfaction Rate</div>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features-section" id="features">
-    <h2 class="section-title">Why Choose SlangAdda AI?</h2>
-    
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">
-          <i class="fas fa-brain"></i>
-        </div>
-        <h3 class="feature-title">AI-Powered Understanding</h3>
-        <p class="feature-desc">
-          Our AI doesn't just translate – it explains context, usage, and cultural nuances 
-          in simple Hinglish that everyone understands.
-        </p>
-      </div>
-      
-      <div class="feature-card">
-        <div class="feature-icon">
-          <i class="fas fa-headphones"></i>
-        </div>
-        <h3 class="feature-title">Audio Examples</h3>
-        <p class="feature-desc">
-          Listen to slang pronounced in authentic Indian accents with contextual examples 
-          to master the right tone and usage.
-        </p>
-      </div>
-      
-      <div class="feature-card">
-        <div class="feature-icon">
-          <i class="fas fa-shield-alt"></i>
-        </div>
-        <h3 class="feature-title">Safety Filters</h3>
-        <p class="feature-desc">
-          Office-safe tags, family-friendly explanations, and 18+ zones with educational 
-          warnings for appropriate usage.
-        </p>
-      </div>
-      
-      <div class="feature-card">
-        <div class="feature-icon">
-          <i class="fas fa-language"></i>
-        </div>
-        <h3 class="feature-title">Multi-Language Support</h3>
-        <p class="feature-desc">
-          From Hinglish to regional dialects – understand slang across Hindi, Tamil, 
-          Marathi, Bhojpuri, and more.
-        </p>
-      </div>
-      
-      <div class="feature-card">
-        <div class="feature-icon">
-          <i class="fas fa-gamepad"></i>
-        </div>
-        <h3 class="feature-title">Interactive Quizzes</h3>
-        <p class="feature-desc">
-          Test your slang knowledge with daily quizzes, earn streaks, and unlock 
-          achievement badges as you learn.
-        </p>
-      </div>
-      
-      <div class="feature-card">
-        <div class="feature-icon">
-          <i class="fas fa-sync"></i>
-        </div>
-        <h3 class="feature-title">Real-Time Updates</h3>
-        <p class="feature-desc">
-          New slang added daily based on user requests and trending terms from 
-          social media and pop culture.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
+  <!-- Auto-Rotating Testimonials -->
   <section class="testimonials-section">
-    <h2 class="section-title">Loved by Everyone</h2>
+    <div class="section-header fade-in-up">
+      <h2 class="section-title">Loved by Thousands Worldwide</h2>
+      <p class="section-subtitle">Real stories from our diverse community of slang learners</p>
+    </div>
     
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          "As an NRI visiting India, this app saved me from so many awkward moments! 
-          Finally understood what my cousins meant by 'rizz' and 'OP'."
+    <div class="testimonials-container">
+      <div class="testimonials-slider">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card active" id="testimonial1">
+          <div class="testimonial-content">
+            <div class="testimonial-text">
+              As an NRI returning to India after 10 years, I felt completely lost with the new slang. 
+              SlangAdda AI not only taught me the words but explained the cultural context behind each one. 
+              Now I can actually have conversations with my younger cousins!
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">AK</div>
+              <div class="author-info">
+                <div class="author-name">Arjun Kapoor</div>
+                <div class="author-role">Returning NRI • Tech Entrepreneur</div>
+                <div class="author-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">A</div>
-          <div class="author-info">
-            <h4>Aarav Sharma</h4>
-            <p>Software Engineer, Returning NRI</p>
+        
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card" id="testimonial2">
+          <div class="testimonial-content">
+            <div class="testimonial-text">
+              I'm a high school teacher, and understanding student slang has been a game-changer for 
+              classroom engagement. The AI explanations help me understand not just what words mean, 
+              but how they're used in different contexts. My students love that I 'get' them now!
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">PM</div>
+              <div class="author-info">
+                <div class="author-name">Priya Mehta</div>
+                <div class="author-role">High School Teacher • Delhi</div>
+                <div class="author-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card" id="testimonial3">
+          <div class="testimonial-content">
+            <div class="testimonial-text">
+              Traveling across India for my documentary, I needed to understand regional slang variations. 
+              SlangAdda's AI recognized regional accents and provided location-specific explanations. 
+              It felt like having a local guide in my pocket everywhere I went!
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">SK</div>
+              <div class="author-info">
+                <div class="author-name">Sarah Khan</div>
+                <div class="author-role">Documentary Filmmaker • UK</div>
+                <div class="author-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonial 4 -->
+        <div class="testimonial-card" id="testimonial4">
+          <div class="testimonial-content">
+            <div class="testimonial-text">
+              As a content creator targeting Gen Z, staying updated with slang is crucial. SlangAdda's 
+              live trend updates and AI-powered explanations help me create authentic content that 
+              actually resonates with my audience. The voice search feature is a lifesaver!
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">RJ</div>
+              <div class="author-info">
+                <div class="author-name">Rohan Joshi</div>
+                <div class="author-role">Content Creator • 2M Followers</div>
+                <div class="author-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonial 5 -->
+        <div class="testimonial-card" id="testimonial5">
+          <div class="testimonial-content">
+            <div class="testimonial-text">
+              Working in an MNC with colleagues from across India, I often felt lost in conversations. 
+              SlangAdda's office-safe tagging and contextual explanations helped me navigate workplace 
+              banter without awkward moments. The quiz feature made learning fun!
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">NK</div>
+              <div class="author-info">
+                <div class="author-name">Neha Kapoor</div>
+                <div class="author-role">Software Engineer • Bangalore</div>
+                <div class="author-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          "I'm a high school teacher, and SlangAdda helps me understand my students better. 
-          The office-safe tags are perfect for classroom discussions."
-        </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">P</div>
-          <div class="author-info">
-            <h4>Priya Mehta</h4>
-            <p>High School Teacher</p>
-          </div>
-        </div>
+      <div class="testimonial-nav prev" onclick="prevTestimonial()">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      <div class="testimonial-nav next" onclick="nextTestimonial()">
+        <i class="fas fa-chevron-right"></i>
       </div>
       
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          "The AI search feature is genius! I can ask questions in natural language and 
-          get perfect explanations with examples. Beats Google for slang any day!"
-        </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">R</div>
-          <div class="author-info">
-            <h4>Rohan Kapoor</h4>
-            <p>College Student & Content Creator</p>
-          </div>
-        </div>
+      <div class="testimonial-controls">
+        <div class="testimonial-dot active" onclick="showTestimonial(0)"></div>
+        <div class="testimonial-dot" onclick="showTestimonial(1)"></div>
+        <div class="testimonial-dot" onclick="showTestimonial(2)"></div>
+        <div class="testimonial-dot" onclick="showTestimonial(3)"></div>
+        <div class="testimonial-dot" onclick="showTestimonial(4)"></div>
       </div>
     </div>
   </section>
@@ -1075,40 +1469,39 @@
   <!-- CTA Section -->
   <section class="cta-section">
     <div class="cta-card">
-      <h2 class="cta-title">Ready to Master Desi Slang?</h2>
+      <h2 class="cta-title">Ready to Speak the Language of Modern India?</h2>
       <p class="cta-subtitle">
-        Join thousands of users who've unlocked the secret language of modern India. 
-        No FOMO, no confusion – just pure understanding.
+        Join 50,000+ users who've unlocked authentic conversations with AI-powered slang mastery.
+        No more FOMO, no more confusion – just pure understanding.
       </p>
       
-      <!-- Email Waitlist -->
-      <div style="max-width:500px; margin:0 auto;">
-        <div class="search-box" style="margin-bottom:1rem;">
+      <div class="search-container" style="max-width:600px; margin:0 auto 2rem;">
+        <div class="search-box">
           <div class="search-icon">
             <i class="fas fa-envelope"></i>
           </div>
           <input type="email" 
                  class="search-input" 
                  id="waitlistEmail"
-                 placeholder="Enter your email for early access">
+                 placeholder="Enter your email for exclusive early access">
           <div class="search-actions">
-            <button class="ai-indicator" onclick="joinWaitlist()" style="cursor:pointer;">
+            <div class="ai-badge" onclick="joinWaitlist()" style="cursor:pointer;">
               <i class="fas fa-paper-plane"></i>
-              Join Waitlist
-            </button>
+              Get Early Access
+            </div>
           </div>
         </div>
-        <p id="waitlistMsg" style="color:rgba(255,255,255,0.9); font-size:0.875rem;"></p>
+        <p id="waitlistMsg" style="color:white; margin-top:1rem; font-size:0.875rem;"></p>
       </div>
       
-      <div style="display:flex; gap:1rem; justify-content:center; margin-top:2rem; flex-wrap:wrap;">
-        <a href="app.html" class="btn btn-ghost">
+      <div style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;">
+        <a href="app.html" class="btn btn-secondary">
           <i class="fas fa-play"></i>
-          Try Free Dictionary
+          Try Dictionary Free
         </a>
-        <a href="admin.html" class="btn btn-ghost">
-          <i class="fas fa-user-shield"></i>
-          Admin Access
+        <a href="#features" class="btn btn-ghost" style="background:rgba(255,255,255,0.1); color:white; border-color:rgba(255,255,255,0.3);">
+          <i class="fas fa-star"></i>
+          Explore Premium Features
         </a>
       </div>
     </div>
@@ -1118,8 +1511,9 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-section">
-        <h3>SlangAdda AI</h3>
-        <p>Your AI-powered guide to modern Indian slang. Understand, learn, and master the language of today's India.</p>
+        <h3 style="color:white; margin-bottom:1.5rem; font-size:1.5rem;">SlangAdda AI</h3>
+        <p style="margin-bottom:1.5rem; color:#94a3b8;">Your AI-powered gateway to authentic Indian conversations. 
+        Master the language of modern India with context, culture, and clarity.</p>
         <div class="social-links">
           <a href="#" class="social-link">
             <i class="fab fa-twitter"></i>
@@ -1131,113 +1525,214 @@
             <i class="fab fa-linkedin"></i>
           </a>
           <a href="#" class="social-link">
-            <i class="fab fa-github"></i>
+            <i class="fab fa-youtube"></i>
           </a>
         </div>
       </div>
       
       <div class="footer-section">
-        <h3>Quick Links</h3>
+        <h3>Product</h3>
         <ul class="footer-links">
-          <li><a href="app.html">Dictionary</a></li>
-          <li><a href="admin.html">Admin Panel</a></li>
-          <li><a href="#">Slang Requests</a></li>
-          <li><a href="#">Quiz Zone</a></li>
-          <li><a href="#">Audio Library</a></li>
+          <li><a href="app.html">AI Dictionary</a></li>
+          <li><a href="#">Voice Search</a></li>
+          <li><a href="#">Daily Quiz</a></li>
+          <li><a href="#">Slang Trends</a></li>
+          <li><a href="#">Premium Features</a></li>
         </ul>
       </div>
       
       <div class="footer-section">
         <h3>Resources</h3>
         <ul class="footer-links">
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Slang Guide</a></li>
-          <li><a href="#">Gen Z Dictionary</a></li>
+          <li><a href="#">Slang Blog</a></li>
+          <li><a href="#">Gen Z Guide</a></li>
           <li><a href="#">Teacher Resources</a></li>
-          <li><a href="#">API Access</a></li>
+          <li><a href="#">API Documentation</a></li>
+          <li><a href="#">Research Papers</a></li>
         </ul>
       </div>
       
       <div class="footer-section">
-        <h3>Legal</h3>
+        <h3>Company</h3>
         <ul class="footer-links">
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="terms.html">Terms of Service</a></li>
-          <li><a href="#">Cookie Policy</a></li>
-          <li><a href="#">Community Guidelines</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
           <li><a href="contact.html">Contact Us</a></li>
         </ul>
       </div>
     </div>
     
-    <div style="text-align:center; margin-top:3rem; padding-top:2rem; border-top:1px solid rgba(148,163,184,0.4);">
-      <p>&copy; 2024 SlangAdda AI. All rights reserved. Built with ❤️ for India's digital culture.</p>
+    <div style="text-align:center; margin-top:4rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,0.1);">
+      <p style="color:#94a3b8;">&copy; 2024 SlangAdda AI. All rights reserved. Built with ❤️ for India's vibrant digital culture.</p>
     </div>
   </footer>
 
-  <!-- AI Chat Assistant -->
-  <div class="chat-container">
-    <button class="chat-btn" id="chatToggle">
-      <i class="fas fa-robot"></i>
-    </button>
-    
-    <div class="chat-window" id="chatWindow">
-      <div class="chat-header">
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <i class="fas fa-robot"></i>
-          <span>SlangAdda AI Assistant</span>
-        </div>
-        <button class="chat-close" onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer;">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      
-      <div class="chat-messages" id="chatMessages">
-        <div class="message ai">
-          Hi! I'm your SlangAdda AI assistant. Ask me anything about Indian slang, Gen Z terms, or cultural references! 😊
-        </div>
-      </div>
-      
-      <div class="chat-input-container">
-        <input type="text" 
-               class="chat-input" 
-               id="chatInput"
-               placeholder="Type your question about slang..."
-               onkeypress="handleChatInput(event)">
-      </div>
-    </div>
-  </div>
-
   <script>
-    // Header scroll effect
+    // Custom Cursor
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+    
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      
+      setTimeout(() => {
+        cursorFollower.style.left = e.clientX + 'px';
+        cursorFollower.style.top = e.clientY + 'px';
+      }, 50);
+    });
+
+    // Header Scroll Effect
     window.addEventListener('scroll', function() {
       const header = document.getElementById('header');
-      if (window.scrollY > 50) {
+      if (window.scrollY > 100) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
     });
 
-    // AI Search Functionality
-    function searchExample(query) {
-      const searchInput = document.getElementById('aiSearchInput');
-      searchInput.value = query;
-      searchInput.focus();
-      showAIResponse(query);
+    // Animated Counter for Stats
+    function animateCounter(id, target, duration = 2000) {
+      const element = document.getElementById(id);
+      const start = 0;
+      const increment = target / (duration / 16); // 60fps
+      let current = start;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          clearInterval(timer);
+          current = target;
+        }
+        element.textContent = Math.floor(current).toLocaleString() + (id === 'stat4' ? '%' : '');
+      }, 16);
     }
 
-    // Waitlist functionality
+    // Initialize counters when in view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter('stat1', 1250);
+          animateCounter('stat2', 23400);
+          animateCounter('stat3', 1850);
+          animateCounter('stat4', 98);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(document.querySelector('.stats-section'));
+
+    // Auto-Rotating Testimonials
+    let currentTestimonial = 0;
+    const testimonials = document.querySelectorAll('.testimonial-card');
+    const dots = document.querySelectorAll('.testimonial-dot');
+    let autoRotateInterval;
+
+    function showTestimonial(index) {
+      testimonials.forEach((testimonial, i) => {
+        testimonial.classList.toggle('active', i === index);
+        dots[i].classList.toggle('active', i === index);
+      });
+      currentTestimonial = index;
+    }
+
+    function nextTestimonial() {
+      currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+      showTestimonial(currentTestimonial);
+    }
+
+    function prevTestimonial() {
+      currentTestimonial = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
+      showTestimonial(currentTestimonial);
+    }
+
+    // Auto-rotate every 5 seconds
+    function startAutoRotate() {
+      autoRotateInterval = setInterval(nextTestimonial, 5000);
+    }
+
+    function stopAutoRotate() {
+      clearInterval(autoRotateInterval);
+    }
+
+    // Initialize testimonials
+    startAutoRotate();
+
+    // Pause auto-rotate on hover
+    document.querySelector('.testimonials-slider').addEventListener('mouseenter', stopAutoRotate);
+    document.querySelector('.testimonials-slider').addEventListener('mouseleave', startAutoRotate);
+
+    // Interactive Feature Animation
+    function animateFeature(number) {
+      const icon = document.querySelector(\`.feature-card-interactive:nth-child(\${number}) .feature-icon-interactive\`);
+      if (!icon) return;
+      icon.style.transform = 'rotate(20deg) scale(1.2)';
+      setTimeout(() => {
+        icon.style.transform = '';
+      }, 300);
+    }
+
+    // Search Functionality
+    function searchSlang(term) {
+      const searchInput = document.getElementById('aiSearchInput');
+      searchInput.value = term;
+      searchInput.focus();
+      showAIResponse(term);
+    }
+
+    function askAI() {
+      const searchInput = document.getElementById('aiSearchInput');
+      const query = searchInput.value.trim();
+      if (query) {
+        showAIResponse(query);
+        searchInput.value = '';
+      }
+    }
+
+    function showAIResponse(query) {
+      // Create a notification
+      const notification = document.createElement('div');
+      notification.style.cssText = \`
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: var(--gradient);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+        max-width: 400px;
+      \`;
+      notification.innerHTML = \`
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+          <i class="fas fa-robot"></i>
+          <strong>AI Assistant:</strong>
+        </div>
+        <div>Searching for "\${query}" in our slang database...</div>
+      \`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Waitlist Functionality
     function joinWaitlist() {
       const email = document.getElementById('waitlistEmail').value;
       const msg = document.getElementById('waitlistMsg');
       
       if (!email || !email.includes('@')) {
-        msg.innerHTML = '<span style="color:#fee2e2;">Please enter a valid email address</span>';
+        msg.innerHTML = '<span style="color:#fecaca;">Please enter a valid email address</span>';
         return;
       }
       
-      msg.innerHTML = '<span style="color:#bbf7d0;">🎉 Thanks! You\'re on the waitlist. We\'ll notify you soon!</span>';
+      msg.innerHTML = '<span style="color:#bbf7d0;">🎉 Welcome aboard! Check your email for early access instructions.</span>';
       document.getElementById('waitlistEmail').value = '';
       
       setTimeout(() => {
@@ -1245,86 +1740,40 @@
       }, 5000);
     }
 
-    // Chat functionality
-    function toggleChat() {
-      const chatWindow = document.getElementById('chatWindow');
-      chatWindow.classList.toggle('active');
-    }
+    // Search input enter key
+    document.getElementById('aiSearchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        askAI();
+      }
+    });
 
-    function handleChatInput(event) {
-      if (event.key === 'Enter') {
-        const input = document.getElementById('chatInput');
-        const message = input.value.trim();
-        
-        if (message) {
-          addMessage(message, 'user');
-          input.value = '';
-          setTimeout(() => {
-            generateAIResponse(message);
-          }, 1000);
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
         }
       }
-    }
-
-    function addMessage(text, sender) {
-      const messages = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${sender}`;
-      messageDiv.textContent = text;
-      messages.appendChild(messageDiv);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    function generateAIResponse(query) {
-      const responses = [
-        `"${query.toLowerCase().includes('rizz') ? 'Rizz' : 'That term'}" refers to charisma or romantic appeal. It's Gen Z slang for having attractive energy. Example: "His rizz is unmatched!"`,
-        `Great question! In Indian context, "${query}" often relates to creative problem-solving. Want me to explain with specific examples?`,
-        `I can help with that! Check our dictionary for detailed explanations, audio examples, and office-safety ratings.`,
-        `That's trending right now! Our database has the latest usage examples and cultural context for "${query.split(' ')[0]}".`,
-        `Perfect timing! We just updated our entries for related slang. Would you like audio pronunciation too?`
-      ];
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      addMessage(randomResponse, 'ai');
-    }
-
-    function showAIResponse(query) {
-      const chatWindow = document.getElementById('chatWindow');
-      if (!chatWindow.classList.contains('active')) {
-        chatWindow.classList.add('active');
-      }
-      addMessage(query, 'user');
-      setTimeout(() => {
-        generateAIResponse(query);
-      }, 1500);
-    }
+    `;
+    document.head.appendChild(style);
 
     // Initialize animations
     document.addEventListener('DOMContentLoaded', function() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-up');
-          }
+      document.querySelectorAll('.feature-card-interactive').forEach((card) => {
+        card.addEventListener('mouseenter', () => {
+          card.style.zIndex = '10';
         });
-      }, { threshold: 0.1 });
-      
-      document.querySelectorAll('.feature-card, .testimonial-card').forEach(el => {
-        observer.observe(el);
+        
+        card.addEventListener('mouseleave', () => {
+          card.style.zIndex = '1';
+        });
       });
-      
-      const searchInput = document.getElementById('aiSearchInput');
-      searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          const query = this.value.trim();
-          if (query) {
-            showAIResponse(query);
-            this.value = '';
-          }
-        }
-      });
-      
-      document.getElementById('chatToggle').addEventListener('click', toggleChat);
     });
   </script>
 </body>

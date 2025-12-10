@@ -5,172 +5,311 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SlangAdda Admin Dashboard</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .admin-main {
+      padding-top: 1rem;
+    }
+    .admin-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: 1rem;
+    }
+    .admin-card {
+      background: #ffffff;
+      border-radius: 1rem;
+      padding: 1rem 1.1rem;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      font-size: 0.9rem;
+      max-height: 80vh;
+      overflow: auto;
+    }
+    .admin-card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #111827;
+    }
+    .admin-form label {
+      display: block;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      color: #374151;
+    }
+    .admin-form input,
+    .admin-form textarea,
+    .admin-form select {
+      margin-top: 0.2rem;
+      width: 100%;
+      padding: 0.45rem 0.7rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: #f9fafb;
+      color: #111827;
+      font-size: 0.85rem;
+    }
+    .admin-form textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    .admin-form .form-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .admin-form .form-row > div {
+      flex: 1;
+    }
+    .export-area {
+      width: 100%;
+      min-height: 160px;
+      margin-top: 0.5rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: #f9fafb;
+      color: #111827;
+      font-size: 0.8rem;
+      padding: 0.5rem 0.7rem;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    }
+    .admin-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 0.7rem;
+    }
+    .stat-card {
+      background: #f9fafb;
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.7rem;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      font-size: 0.8rem;
+    }
+    .stat-card .label {
+      color: #6b7280;
+      font-size: 0.7rem;
+    }
+    .stat-card .value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .admin-table th,
+    .admin-table td {
+      padding: 0.35rem 0.4rem;
+      border-bottom: 1px solid rgba(209, 213, 219, 0.9);
+      text-align: left;
+      color: #374151;
+    }
+    .admin-table tr:hover {
+      background: rgba(219, 234, 254, 0.6);
+      cursor: pointer;
+    }
+    .admin-table th {
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body class="app-body">
-  <header class="header">
+  <header class="header shadow">
     <div class="container header-inner">
       <div>
         <h1 class="logo">SlangAdda Admin</h1>
         <p class="tagline">
-          Manage slang words, requests, users & quiz stats.
+          Local admin panel – yahan se words manage karo, phir export karke app.js mein paste karo.
         </p>
       </div>
       <div class="user-box">
-        <span id="adminInfo" class="user-greeting">Not signed in</span>
-        <button id="adminLoginBtn" class="ghost-btn small">Sign in with Google</button>
-        <button id="adminLogoutBtn" class="ghost-btn small" style="display:none;">Logout</button>
+        <span class="user-greeting">Admin (no auth yet)</span>
+        <a href="app.html" class="ghost-btn small">⬅ Back to app</a>
       </div>
     </div>
   </header>
 
-  <main class="container app-main">
-    <section class="info-card">
-      <h2>Overview</h2>
-      <div class="settings-grid">
-        <div class="settings-block">
-          <h3>Dictionary Stats</h3>
-          <p>Total words: <strong id="statWords">0</strong></p>
-          <p>Office-safe: <strong id="statOfficeSafe">0</strong></p>
-          <p>18+ words: <strong id="statExplicit">0</strong></p>
-        </div>
-        <div class="settings-block">
-          <h3>User Stats</h3>
-          <p>Total users: <strong id="statUsers">0</strong></p>
-          <p>Active (7 days): <strong id="statActiveUsers">0</strong></p>
-        </div>
-        <div class="settings-block">
-          <h3>Quiz Stats</h3>
-          <p>Total questions answered: <strong id="statQuizTotal">0</strong></p>
-          <p>Top player: <strong id="statTopPlayer">-</strong></p>
-        </div>
-        <div class="settings-block">
-          <h3>Requests</h3>
-          <p>New requests: <strong id="statRequestsNew">0</strong></p>
-        </div>
-      </div>
-    </section>
-
-    <section class="settings-block" style="margin-top:1rem;">
-      <h3>Manage slangs</h3>
-      <p>Click a word from the list to edit. Use form to add new.</p>
-
-      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-        <div style="flex:1; min-width:260px;">
-          <table class="admin-table" id="slangTable">
-            <thead>
-              <tr>
-                <th>Word</th>
-                <th>Lang</th>
-                <th>Cat</th>
-                <th>Office</th>
-                <th>18+</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- filled by JS -->
-            </tbody>
-          </table>
+  <main class="container admin-main">
+    <section class="admin-layout">
+      <!-- Left: form + export -->
+      <article class="admin-card">
+        <div class="admin-header-row">
+          <h2>Word editor</h2>
+          <button id="newWordBtn" class="ghost-btn small">+ New word</button>
         </div>
 
-        <div style="flex:1; min-width:260px;">
-          <form id="slangForm" class="admin-form">
-            <label>
-              ID (no spaces)
-              <input type="text" id="fId" placeholder="e.g. adulting" />
-            </label>
-            <label>
-              Word
-              <input type="text" id="fWord" placeholder="Adulting" />
-            </label>
-            <label>
-              Slang language
-              <select id="fLang">
-                <option value="en">English / Global</option>
-                <option value="hi">Hinglish / Hindi</option>
-                <option value="ta">Tamil</option>
-                <option value="mr">Marathi</option>
-                <option value="bhojpuri">Bhojpuri</option>
-              </select>
-            </label>
-            <label>
-              Category
-              <select id="fCategory">
-                <option value="life">Life & Feelings</option>
-                <option value="work">Work & Office</option>
-                <option value="internet">Internet / Meme</option>
-                <option value="desi">Desi / Local</option>
-              </select>
-            </label>
-            <label>
-              Office-safe
-              <select id="fOfficeSafe">
-                <option value="yes">Yes</option>
-                <option value="caution">Caution</option>
-                <option value="no">No</option>
-              </select>
-            </label>
-            <label>
-              Explicit / 18+
-              <select id="fExplicit">
-                <option value="false">No</option>
-                <option value="true">Yes (18+)</option>
-              </select>
-            </label>
-            <label>
-              Meaning (Hinglish)
-              <textarea id="fMeaningHinglish"></textarea>
-            </label>
-            <label>
-              Meaning (English)
-              <textarea id="fMeaningEn"></textarea>
-            </label>
-            <label>
-              Example (Hinglish)
-              <textarea id="fExampleHinglish"></textarea>
-            </label>
-            <label>
-              Origin / Notes
-              <textarea id="fOrigin"></textarea>
-            </label>
-            <div style="margin-top:0.6rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-              <button type="button" id="saveSlangBtn" class="primary-btn small">Save / Update</button>
-              <button type="button" id="deleteSlangBtn" class="ghost-btn small">Delete</button>
+        <form id="wordForm" class="admin-form">
+          <div class="form-row">
+            <div>
+              <label>
+                ID (unique, a-z, _)
+                <input type="text" id="fieldId" placeholder="e.g. adulting" />
+              </label>
             </div>
-          </form>
-        </div>
-      </div>
-    </section>
+            <div>
+              <label>
+                Word
+                <input type="text" id="fieldWord" placeholder="e.g. Adulting" />
+              </label>
+            </div>
+          </div>
 
-    <section class="settings-block" style="margin-top:1rem;">
-      <h3>Slang requests (from users)</h3>
-      <table class="admin-table" id="requestsTable">
-        <thead>
-          <tr>
-            <th>Word</th>
-            <th>Lang</th>
-            <th>Source</th>
-            <th>Status</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- filled by JS -->
-        </tbody>
-      </table>
+          <div class="form-row">
+            <div>
+              <label>
+                Slang language
+                <select id="fieldLang">
+                  <option value="en">English / Global</option>
+                  <option value="hi">Hinglish / Hindi</option>
+                  <option value="ta">Tamil</option>
+                  <option value="mr">Marathi</option>
+                  <option value="bhojpuri">Bhojpuri</option>
+                </select>
+              </label>
+            </div>
+            <div>
+              <label>
+                Category
+                <select id="fieldCategory">
+                  <option value="life">Life & Feelings</option>
+                  <option value="work">Work & Office</option>
+                  <option value="internet">Internet / Meme</option>
+                  <option value="desi">Desi / Local</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>
+                Office-safe
+                <select id="fieldOfficeSafe">
+                  <option value="yes">Yes</option>
+                  <option value="caution">Caution</option>
+                  <option value="no">No</option>
+                </select>
+              </label>
+            </div>
+            <div>
+              <label>
+                Explicit / 18+
+                <select id="fieldExplicit">
+                  <option value="false">No</option>
+                  <option value="true">Yes (18+)</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <label>
+            Meaning (Hinglish)
+            <textarea id="fieldMeaningHinglish" placeholder="Explain in Hinglish..."></textarea>
+          </label>
+
+          <label>
+            Meaning (English)
+            <textarea id="fieldMeaningEn" placeholder="Explain in English..."></textarea>
+          </label>
+
+          <label>
+            Example sentence (Hinglish / English)
+            <textarea id="fieldExampleHinglish" placeholder="Example sentence..."></textarea>
+          </label>
+
+          <label>
+            Origin / Notes
+            <textarea id="fieldOrigin" placeholder="Optional: origin, where it's used, etc."></textarea>
+          </label>
+
+          <div style="margin-top:0.7rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" id="saveWordBtn" class="primary-btn small">Save / Update word</button>
+            <button type="button" id="deleteWordBtn" class="ghost-btn small">Delete word</button>
+          </div>
+        </form>
+
+        <hr style="border-color:rgba(209,213,219,0.9); margin:0.8rem 0;" />
+
+        <h3 style="font-size:0.95rem; margin-bottom:0.3rem;">Export SLANGS array for app.js</h3>
+        <p class="small-note">
+          Neeche wala text copy karo aur <strong>app.js</strong> mein
+          <code>const SLANGS = [...]</code> ke jagah paste karo, phir GitHub pe save karo. Vercel auto deploy karega.
+        </p>
+        <textarea id="exportArea" class="export-area" readonly></textarea>
+        <button id="refreshExportBtn" class="ghost-btn small" style="margin-top:0.4rem;">
+          🔁 Refresh export text
+        </button>
+      </article>
+
+      <!-- Right: list + stats + requests notes -->
+      <article class="admin-card">
+        <h2>Words list & snapshot</h2>
+
+        <section class="stat-grid" id="statGrid">
+          <div class="stat-card">
+            <div class="label">Total words</div>
+            <div class="value" id="statTotalWords">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Office-safe words</div>
+            <div class="value" id="statOfficeSafe">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">18+ words</div>
+            <div class="value" id="statExplicit">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Desi / Local</div>
+            <div class="value" id="statDesi">0</div>
+          </div>
+        </section>
+
+        <table class="admin-table" id="wordTable">
+          <thead>
+            <tr>
+              <th>Word</th>
+              <th>Lang</th>
+              <th>Cat</th>
+              <th>Office</th>
+              <th>18+</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- rows via JS -->
+          </tbody>
+        </table>
+
+        <hr style="border-color:rgba(209,213,219,0.9); margin:0.8rem 0;" />
+
+        <h3 style="font-size:0.95rem; margin-bottom:0.3rem;">Slang requests (manual note)</h3>
+        <p class="small-note">
+          Abhi requests email / Google Form se aa sakte hain. Unka text yahan copy-paste karke reference ke liye rakh sakte ho
+          jab naya word add kar rahe ho.
+        </p>
+        <textarea
+          id="requestsArea"
+          class="export-area"
+          placeholder="Yahaan par pending slang requests paste kar sakte ho (sirf reference)."
+        ></textarea>
+      </article>
     </section>
   </main>
 
-  <!-- TODO: Firebase scripts go here -->
-  <!-- Paste the Firebase SDK and firebaseConfig from your Firebase console -->
-
-  <!-- Example structure (you must replace with your real config & script URLs) -->
-  <script>
-    // AFTER you create Web App in Firebase, you'll get this config:
-    // const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", ... };
-    // firebase.initializeApp(firebaseConfig);
-    // const auth = firebase.auth();
-    // const db = firebase.firestore();
-  </script>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>SlangAdda Admin • Local word manager (no auth, no DB yet)</p>
+    </div>
+  </footer>
 
   <script src="admin.js"></script>
 </body>

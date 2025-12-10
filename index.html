@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SlangAdda Ai | Hinglish Slang Dictionary for Millennials</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="landing-body">
+  <header class="header">
+    <div class="container header-inner">
+      <div>
+        <h1 class="logo">SlangAdda Ai</h1>
+        <p class="tagline">
+          Modern slang, bina cringe ke. Millennials, parents aur travellers ke liye Hinglish slang dictionary.
+        </p>
+      </div>
+      <span class="beta-pill">Beta</span>
+    </div>
+  </header>
+
+  <main class="container landing-main">
+    <section class="hero">
+      <h2>Samajh lo slang, feel na karo FOMO.</h2>
+      <p>
+        Rizz, doomscrolling, scene kya hai, jugaad, OP – sab kuch ek jagah.
+        Hinglish UI, audio examples, office-safe tags aur 18+ zone with warning.
+      </p>
+      <div class="hero-actions">
+        <a href="app.html" class="primary-btn">👉 Open Dictionary</a>
+        <button id="waitlistBtn" class="ghost-btn">Premium jaldi aa raha hai</button>
+      </div>
+    </section>
+
+    <section class="feature-grid">
+      <article class="feature-card">
+        <h3>Millennials & working pros</h3>
+        <p>Team Gen Z hai, clients serious hain? Dono ki language samajhni hai? SlangAdda help karega.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Parents & teachers</h3>
+        <p>Bacche kya bol rahe hain? Clean, simple Hinglish explaination – bina graphic examples ke.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Travellers in India</h3>
+        <p>“Jugaad”, “scene kya hai”, “timepass” – asli context samjho, audio suno, galat jagah mat use karo.</p>
+      </article>
+    </section>
+
+    <section class="feature-list">
+      <h2>Features jo roz wapas le aayenge 👇</h2>
+      <ul>
+        <li>✅ Multilingual meaning – Hinglish, English, Hindi & regional mix</li>
+        <li>✅ Audio button – word + example sentence suno</li>
+        <li>✅ Office-safe / not-safe tag har slang ke saath</li>
+        <li>✅ 18+ slang alag section mein, warning ke saath</li>
+        <li>✅ Quiz mode – slang guess karo, score track karo</li>
+        <li>✅ Login karke favourites & recent searches save karo</li>
+      </ul>
+    </section>
+
+    <section class="waitlist-section">
+      <h2>Premium aa raha hai – early access chahiye?</h2>
+      <p>
+        Unlimited 18+ explain, advanced quizzes, personalised office-safe word pack aur bhi bohot kuch.
+        Abhi email daalo, pehle invite milega.
+      </p>
+      <form id="waitlistForm" class="waitlist-form">
+        <input type="email" id="waitlistEmail" placeholder="Apna email daalo" required />
+        <button type="submit" class="primary-btn small">Notify me</button>
+      </form>
+      <p id="waitlistMsg" class="small-note"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>SlangAdda Ai • Hinglish Slang Dictionary • Built for millennial brains 🧠</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple fake waitlist handler (no backend, just UI)
+    const waitlistForm = document.getElementById('waitlistForm');
+    const waitlistEmail = document.getElementById('waitlistEmail');
+    const waitlistMsg = document.getElementById('waitlistMsg');
+
+    waitlistForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!waitlistEmail.value.trim()) return;
+      waitlistMsg.textContent = "Shukriya! Premium launch hote hi email aa jayega. 🙌";
+      waitlistEmail.value = "";
+    });
+  </script>
+</body>
+</html>

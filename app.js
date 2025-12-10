@@ -401,6 +401,17 @@ function getExampleInLang(item, langKey) {
   return vals[0] || "";
 }
 
+// NEW: short preview so meaning doesn't repeat twice
+function getShortPreview(item) {
+  const full = getMeaningInLang(item, settings.explainLang || "hinglish");
+  if (!full) return "";
+  const limit = 160; // characters
+  if (full.length <= limit) return full;
+  // cut at last space before limit to avoid chopping words
+  const cutIndex = full.lastIndexOf(" ", limit);
+  return full.slice(0, cutIndex > 0 ? cutIndex : limit) + "…";
+}
+
 function matchesFilters(item, filters) {
   const { text, slangLang, category, officeSafeOnly } = filters;
   if (officeSafeOnly && item.officeSafe === "no") return false;
@@ -432,13 +443,14 @@ function renderCards(container, data, { mode = "normal" } = {}) {
     const isFav = favourites.includes(item.id);
     const favClass = isFav ? "fav-btn faved" : "fav-btn";
 
-    const meaning = getMeaningInLang(item, settings.explainLang);
+    const fullMeaning = getMeaningInLang(item, settings.explainLang);
+    const shortPreview = getShortPreview(item);
     const example = getExampleInLang(item, settings.explainLang);
 
-    let extraContent = `
-      <p><span class="card-label">Meaning:</span> ${meaning}</p>
-      <p><span class="card-label">Example:</span> ${example}</p>
-    `;
+    let extraContent = "";
+    // show full meaning only inside the expanded area (avoid duplicate)
+    extraContent += `<p><span class="card-label">Meaning:</span> ${fullMeaning}</p>`;
+    extraContent += `<p><span class="card-label">Example:</span> ${example}</p>`;
     if (item.origin) {
       extraContent += `<p><span class="card-label">Origin:</span> ${item.origin}</p>`;
     }
@@ -453,7 +465,7 @@ function renderCards(container, data, { mode = "normal" } = {}) {
         <h3 class="card-title">${item.word}</h3>
         <span class="card-tag">${tagLabel}</span>
       </div>
-      <p class="card-short">${item.meaning.hinglish || item.meaning.en}</p>
+      <p class="card-short">${shortPreview}</p>
       <div class="card-extra">
         ${extraContent}
         <div class="card-footer-row">
@@ -608,6 +620,10 @@ function speakSlang(item) {
   const voice = pickVoiceFor(langCode);
   if (voice) utter.voice = voice;
 
+  utter.rate = 0.95;
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utter);
 }
@@ -693,7 +709,7 @@ function nextQuizQuestion() {
 }
 
 // ----------------------
-// Premium Popup Logic
+// Premium Popup Logic (placeholder)
 // ----------------------
 function showPremiumModal() {
   premiumModal.classList.remove("hidden");
@@ -706,12 +722,7 @@ function hidePremiumModal() {
 }
 
 function maybeShowPremium(reason) {
-  if (reason === "favs" && favourites.length > 5) {
-    showPremiumModal();
-  }
-  if (reason === "nsfw" && nsfwViewsCount > 3) {
-    showPremiumModal();
-  }
+  // placeholder for future premium logic
 }
 
 // ----------------------

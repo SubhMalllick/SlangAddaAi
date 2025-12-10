@@ -1,282 +1,215 @@
 // admin.js
 
-// Allowed admin emails (only these can see dashboard)
-const ADMIN_EMAILS = [
-  "youremail@domain.com",   // <- put YOUR email here (same one used for Google login)
-  "anotheradmin@domain.com"
-];
-
-let auth, db;
-if (firebase && firebase.auth && firebase.firestore) {
-  auth = firebase.auth();
-  db = firebase.firestore();
-} else {
-  alert("Firebase not loaded. Check your script tags in admin.html.");
-}
-
-// DOM elements
-const adminInfo = document.getElementById("adminInfo");
-const adminLoginBtn = document.getElementById("adminLoginBtn");
-const adminLogoutBtn = document.getElementById("adminLogoutBtn");
-
-const statWords = document.getElementById("statWords");
-const statOfficeSafe = document.getElementById("statOfficeSafe");
-const statExplicit = document.getElementById("statExplicit");
-
-const statUsers = document.getElementById("statUsers");
-const statActiveUsers = document.getElementById("statActiveUsers");
-const statQuizTotal = document.getElementById("statQuizTotal");
-const statTopPlayer = document.getElementById("statTopPlayer");
-
-const statRequestsNew = document.getElementById("statRequestsNew");
-
-const slangTableBody = document.querySelector("#slangTable tbody");
-const requestsTableBody = document.querySelector("#requestsTable tbody");
-
-// Form fields
-const fId = document.getElementById("fId");
-const fWord = document.getElementById("fWord");
-const fLang = document.getElementById("fLang");
-const fCategory = document.getElementById("fCategory");
-const fOfficeSafe = document.getElementById("fOfficeSafe");
-const fExplicit = document.getElementById("fExplicit");
-const fMeaningHinglish = document.getElementById("fMeaningHinglish");
-const fMeaningEn = document.getElementById("fMeaningEn");
-const fExampleHinglish = document.getElementById("fExampleHinglish");
-const fOrigin = document.getElementById("fOrigin");
-
-const saveSlangBtn = document.getElementById("saveSlangBtn");
-const deleteSlangBtn = document.getElementById("deleteSlangBtn");
-
-let currentSlangDocId = null; // Firestore doc ID
-
-// ---- Auth handling ----
-adminLoginBtn.addEventListener("click", async () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    await auth.signInWithPopup(provider);
-  } catch (err) {
-    console.error("Login error:", err);
-    alert("Login failed. Check console.");
-  }
-});
-
-adminLogoutBtn.addEventListener("click", async () => {
-  await auth.signOut();
-});
-
-// Listen to auth state
-auth.onAuthStateChanged((user) => {
-  if (!user) {
-    adminInfo.textContent = "Not signed in";
-    adminLogoutBtn.style.display = "none";
-    adminLoginBtn.style.display = "inline-flex";
-    hideAdminData();
-    return;
-  }
-
-  const isAdmin = ADMIN_EMAILS.includes(user.email);
-  if (!isAdmin) {
-    adminInfo.textContent = `No admin access for ${user.email}`;
-    adminLogoutBtn.style.display = "inline-flex";
-    adminLoginBtn.style.display = "none";
-    hideAdminData();
-    alert("This Google account is not an admin. Use authorised email.");
-    return;
-  }
-
-  adminInfo.textContent = `Admin: ${user.displayName || user.email}`;
-  adminLogoutBtn.style.display = "inline-flex";
-  adminLoginBtn.style.display = "none";
-  loadDashboardData();
-});
-
-function hideAdminData() {
-  // Clear tables & stats
-  slangTableBody.innerHTML = "";
-  requestsTableBody.innerHTML = "";
-  statWords.textContent = "0";
-  statOfficeSafe.textContent = "0";
-  statExplicit.textContent = "0";
-  statUsers.textContent = "0";
-  statActiveUsers.textContent = "0";
-  statQuizTotal.textContent = "0";
-  statTopPlayer.textContent = "-";
-  statRequestsNew.textContent = "0";
-}
-
-// ---- Load data for dashboard ----
-function loadDashboardData() {
-  loadSlangs();
-  loadRequests();
-  loadStats();
-}
-
-// Slangs list
-function loadSlangs() {
-  db.collection("slangs").orderBy("word").onSnapshot((snapshot) => {
-    slangTableBody.innerHTML = "";
-    let total = 0;
-    let officeSafeCount = 0;
-    let explicitCount = 0;
-
-    snapshot.forEach((doc) => {
-      total++;
-      const data = doc.data();
-      if (data.officeSafe === "yes") officeSafeCount++;
-      if (data.explicit) explicitCount++;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${data.word || ""}</td>
-        <td>${data.lang || ""}</td>
-        <td>${data.category || ""}</td>
-        <td>${data.officeSafe || ""}</td>
-        <td>${data.explicit ? "Yes" : "No"}</td>
-      `;
-      tr.addEventListener("click", () => {
-        loadSlangIntoForm(doc.id, data);
-      });
-      slangTableBody.appendChild(tr);
-    });
-
-    statWords.textContent = total;
-    statOfficeSafe.textContent = officeSafeCount;
-    statExplicit.textContent = explicitCount;
-  });
-}
-
-function loadSlangIntoForm(docId, data) {
-  currentSlangDocId = docId;
-  fId.value = docId;
-  fWord.value = data.word || "";
-  fLang.value = data.lang || "en";
-  fCategory.value = data.category || "life";
-  fOfficeSafe.value = data.officeSafe || "yes";
-  fExplicit.value = data.explicit ? "true" : "false";
-  fMeaningHinglish.value = data.meaning?.hinglish || "";
-  fMeaningEn.value = data.meaning?.en || "";
-  fExampleHinglish.value = data.example?.hinglish || "";
-  fOrigin.value = data.origin || "";
-}
-
-// Save / update slang
-saveSlangBtn.addEventListener("click", async () => {
-  const id = fId.value.trim();
-  if (!id) {
-    alert("ID zaroori hai.");
-    return;
-  }
-  const payload = {
-    word: fWord.value.trim() || id,
-    lang: fLang.value,
-    category: fCategory.value,
-    officeSafe: fOfficeSafe.value,
-    explicit: fExplicit.value === "true",
+// --- 1) SLANGS DATA SOURCE ------------------------------------
+// TODO: Har baar jab real update karna ho, app.js se latest
+// `const SLANGS = [...]` yahan copy-paste kar dena.
+// Abhi main sample data daal raha hoon (same structure):
+let SLANGS = [
+  {
+    id: "adulting",
+    word: "Adulting",
+    lang: "en",
+    category: "life",
+    officeSafe: "yes",
+    explicit: false,
     meaning: {
-      hinglish: fMeaningHinglish.value.trim(),
-      en: fMeaningEn.value.trim()
+      hinglish:
+        "Adulting ka matlab hai woh saare boring but important kaam jo bade log karte hain – bills pay karna, kaam pe time se jaana, ghar manage karna, doctor check-up, etc.",
+      en: "Doing responsible grown-up tasks like paying bills, working, managing a home – especially when it feels strange that you are the adult now."
     },
     example: {
-      hinglish: fExampleHinglish.value.trim()
+      hinglish:
+        "“Kal raat party nahi gayi, pura din adulting hi chal raha tha – rent, laundry, sab.”"
     },
-    origin: fOrigin.value.trim(),
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    origin:
+      "Millennial internet slang, popular on Instagram & Twitter for describing everyday responsibilities."
+  },
+  {
+    id: "fomo",
+    word: "FOMO",
+    lang: "en",
+    category: "life",
+    officeSafe: "yes",
+    explicit: false,
+    meaning: {
+      hinglish:
+        "FOMO – Fear Of Missing Out. Jab lagta hai ki koi fun ya important cheez ho rahi hai jisme tum nahi ho, aur uska tension feel hota hai.",
+      en: "Fear of missing out on something fun or important that others are doing."
+    },
+    example: {
+      hinglish:
+        "“Main actually trip pe jaana nahi chahta, bas FOMO ho raha hai sab ja rahe hain.”"
+    },
+    origin: "Popular internet acronym; widely used in social life, investing and career decisions."
+  }
+  // ... yahan baaki words add honge jab tum app.js se copy karoge
+];
+
+// --- 2) DOM REFERENCES ----------------------------------------
+const wordTableBody = document.querySelector("#wordTable tbody");
+
+const statTotalWords = document.getElementById("statTotalWords");
+const statOfficeSafe = document.getElementById("statOfficeSafe");
+const statExplicit = document.getElementById("statExplicit");
+const statDesi = document.getElementById("statDesi");
+
+const fieldId = document.getElementById("fieldId");
+const fieldWord = document.getElementById("fieldWord");
+const fieldLang = document.getElementById("fieldLang");
+const fieldCategory = document.getElementById("fieldCategory");
+const fieldOfficeSafe = document.getElementById("fieldOfficeSafe");
+const fieldExplicit = document.getElementById("fieldExplicit");
+const fieldMeaningHinglish = document.getElementById("fieldMeaningHinglish");
+const fieldMeaningEn = document.getElementById("fieldMeaningEn");
+const fieldExampleHinglish = document.getElementById("fieldExampleHinglish");
+const fieldOrigin = document.getElementById("fieldOrigin");
+
+const saveWordBtn = document.getElementById("saveWordBtn");
+const deleteWordBtn = document.getElementById("deleteWordBtn");
+const newWordBtn = document.getElementById("newWordBtn");
+
+const exportArea = document.getElementById("exportArea");
+const refreshExportBtn = document.getElementById("refreshExportBtn");
+
+let currentIndex = null;
+
+// --- 3) TABLE & FORM RENDERING -------------------------------
+function renderStats() {
+  const total = SLANGS.length;
+  const officeSafeCount = SLANGS.filter((w) => w.officeSafe === "yes").length;
+  const explicitCount = SLANGS.filter((w) => w.explicit).length;
+  const desiCount = SLANGS.filter((w) => w.category === "desi").length;
+
+  statTotalWords.textContent = total;
+  statOfficeSafe.textContent = officeSafeCount;
+  statExplicit.textContent = explicitCount;
+  statDesi.textContent = desiCount;
+}
+
+function renderTable() {
+  wordTableBody.innerHTML = "";
+  const sorted = [...SLANGS].sort((a, b) =>
+    (a.word || "").localeCompare(b.word || "", "en", { sensitivity: "base" })
+  );
+
+  sorted.forEach((item) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${item.word || ""}</td>
+      <td>${item.lang || ""}</td>
+      <td>${item.category || ""}</td>
+      <td>${item.officeSafe || ""}</td>
+      <td>${item.explicit ? "Yes" : "No"}</td>
+    `;
+    tr.addEventListener("click", () => {
+      const idx = SLANGS.findIndex((w) => w.id === item.id);
+      if (idx !== -1) {
+        currentIndex = idx;
+        loadWordIntoForm(SLANGS[idx]);
+      }
+    });
+    wordTableBody.appendChild(tr);
+  });
+
+  renderStats();
+  refreshExportText();
+}
+
+function clearForm() {
+  currentIndex = null;
+  fieldId.value = "";
+  fieldWord.value = "";
+  fieldLang.value = "en";
+  fieldCategory.value = "life";
+  fieldOfficeSafe.value = "yes";
+  fieldExplicit.value = "false";
+  fieldMeaningHinglish.value = "";
+  fieldMeaningEn.value = "";
+  fieldExampleHinglish.value = "";
+  fieldOrigin.value = "";
+}
+
+function loadWordIntoForm(item) {
+  fieldId.value = item.id || "";
+  fieldWord.value = item.word || "";
+  fieldLang.value = item.lang || "en";
+  fieldCategory.value = item.category || "life";
+  fieldOfficeSafe.value = item.officeSafe || "yes";
+  fieldExplicit.value = item.explicit ? "true" : "false";
+  fieldMeaningHinglish.value = item.meaning?.hinglish || "";
+  fieldMeaningEn.value = item.meaning?.en || "";
+  fieldExampleHinglish.value = item.example?.hinglish || item.example?.en || "";
+  fieldOrigin.value = item.origin || "";
+}
+
+// --- 4) SAVE / DELETE / EXPORT -------------------------------
+function saveWordFromForm() {
+  const id = fieldId.value.trim();
+  const word = fieldWord.value.trim() || id;
+
+  if (!id) {
+    alert("ID zaroori hai (a-z, numbers, underscores).");
+    return;
+  }
+
+  const existingIndex = SLANGS.findIndex((w) => w.id === id);
+  const payload = {
+    id,
+    word,
+    lang: fieldLang.value,
+    category: fieldCategory.value,
+    officeSafe: fieldOfficeSafe.value,
+    explicit: fieldExplicit.value === "true",
+    meaning: {
+      hinglish: fieldMeaningHinglish.value.trim(),
+      en: fieldMeaningEn.value.trim()
+    },
+    example: {
+      hinglish: fieldExampleHinglish.value.trim()
+    },
+    origin: fieldOrigin.value.trim()
   };
 
-  try {
-    await db.collection("slangs").doc(id).set(
-      {
-        ...payload,
-        createdAt: currentSlangDocId ? undefined : firebase.firestore.FieldValue.serverTimestamp()
-      },
-      { merge: true }
-    );
-    alert("Word saved/updated.");
-    currentSlangDocId = id;
-  } catch (err) {
-    console.error("Error saving slang:", err);
-    alert("Error while saving. See console.");
+  if (existingIndex !== -1) {
+    SLANGS[existingIndex] = payload;
+    currentIndex = existingIndex;
+  } else {
+    SLANGS.push(payload);
+    currentIndex = SLANGS.length - 1;
   }
-});
 
-// Delete slang
-deleteSlangBtn.addEventListener("click", async () => {
-  const id = fId.value.trim();
+  renderTable();
+  alert("Word saved/updated (remember to copy export text into app.js).");
+}
+
+function deleteWordFromForm() {
+  const id = fieldId.value.trim();
   if (!id) {
     alert("Select a word first.");
     return;
   }
   if (!confirm(`Delete word "${id}"?`)) return;
-  try {
-    await db.collection("slangs").doc(id).delete();
-    alert("Word deleted.");
-    currentSlangDocId = null;
-    document.getElementById("slangForm").reset();
-  } catch (err) {
-    console.error("Error deleting slang:", err);
-    alert("Error while deleting. See console.");
-  }
-});
 
-// Requests list
-function loadRequests() {
-  db.collection("requests")
-    .orderBy("createdAt", "desc")
-    .limit(100)
-    .onSnapshot((snapshot) => {
-      requestsTableBody.innerHTML = "";
-      let newCount = 0;
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.status === "new") newCount++;
-        const created = data.createdAt?.toDate
-          ? data.createdAt.toDate().toLocaleString()
-          : "-";
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${data.word || ""}</td>
-          <td>${data.language || ""}</td>
-          <td>${data.source || ""}</td>
-          <td>${data.status || "new"}</td>
-          <td>${created}</td>
-        `;
-        requestsTableBody.appendChild(tr);
-      });
-      statRequestsNew.textContent = newCount;
-    });
+  SLANGS = SLANGS.filter((w) => w.id !== id);
+  clearForm();
+  renderTable();
 }
 
-// Stats (users & quiz)
-async function loadStats() {
-  // TOTAL USERS
-  const usersSnap = await db.collection("users").get();
-  const totalUsers = usersSnap.size;
-  statUsers.textContent = totalUsers;
-
-  // ACTIVE USERS (last 7 days)
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  const activeSnap = await db
-    .collection("users")
-    .where("lastSeen", ">=", sevenDaysAgo)
-    .get();
-  statActiveUsers.textContent = activeSnap.size;
-
-  // Quiz stats + top player (this assumes you store quiz stats per user)
-  let totalQuiz = 0;
-  let topPlayer = null;
-  usersSnap.forEach((doc) => {
-    const data = doc.data();
-    const qTotal = data.totalQuizQuestions || 0;
-    totalQuiz += qTotal;
-    if (!topPlayer || (data.totalCorrect || 0) > (topPlayer.totalCorrect || 0)) {
-      topPlayer = data;
-    }
-  });
-  statQuizTotal.textContent = totalQuiz;
-  statTopPlayer.textContent = topPlayer
-    ? `${topPlayer.name || topPlayer.email || "User"} (${topPlayer.totalCorrect || 0} correct)`
-    : "-";
+function exportSlangsAsJs() {
+  const js = "const SLANGS = " + JSON.stringify(SLANGS, null, 2) + ";\n";
+  return js;
 }
+
+function refreshExportText() {
+  exportArea.value = exportSlangsAsJs();
+}
+
+// --- 5) EVENT LISTENERS --------------------------------------
+saveWordBtn.addEventListener("click", saveWordFromForm);
+deleteWordBtn.addEventListener("click", deleteWordFromForm);
+newWordBtn.addEventListener("click", clearForm);
+refreshExportBtn.addEventListener("click", refreshExportText);
+
+// --- 6) INIT -------------------------------------------------
+renderTable();
+clearForm();

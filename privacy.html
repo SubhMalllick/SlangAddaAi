@@ -1,49 +1,169 @@
-<!-- privacy.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SlangAdda Ai | Privacy Policy</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>SlangAdda AI | Privacy Policy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #06b6d4;
+      --primary-dark: #0f766e;
+      --primary-light: #a5f3fc;
+      --secondary: #f9fafb;
+      --text: #020617;
+      --text-light: #475569;
+      --border: #e2e8f0;
+      --gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #ec4899 100%);
+      --gradient-subtle: radial-gradient(circle at top left, #e0f2fe 0%, #f9fafb 45%, #fef3c7 100%);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--gradient-subtle);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .header {
+      position: fixed;
+      top: 0; left: 0; right:0;
+      padding: 1rem 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226,232,240,0.8);
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:1.5rem;
+    }
+    .logo {
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+      text-decoration:none;
+    }
+    .logo-icon {
+      width:32px; height:32px;
+      border-radius:10px;
+      background:var(--gradient);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:1rem;
+    }
+    .logo-text {
+      font-weight:700;
+      background:var(--gradient);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-size:1.1rem;
+    }
+    .policy-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem 3rem;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1, #ec4899);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .meta {
+      font-size:0.85rem;
+      color:var(--text-light);
+      margin-bottom:1.5rem;
+    }
+    .card {
+      background:#fff;
+      border-radius:16px;
+      padding:1.5rem 1.5rem;
+      border:1px solid var(--border);
+      box-shadow:0 10px 25px rgba(15,23,42,0.08);
+      margin-bottom:1rem;
+    }
+    h2 {
+      font-size:1.1rem;
+      margin-bottom:0.4rem;
+    }
+    p, li {
+      font-size:0.9rem;
+      color:var(--text-light);
+    }
+    ul { padding-left:1.3rem; margin:0.5rem 0; }
+    a { color:#0284c7; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+  </style>
 </head>
-<body class="app-body">
-  <header class="header shadow">
-    <div class="container header-inner">
-      <div>
-        <h1 class="logo">Privacy Policy</h1>
-        <p class="tagline">Short, simple aur honest policy – beta version ke liye.</p>
-      </div>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-comments"></i></div>
+        <span class="logo-text">SlangAdda AI</span>
+      </a>
     </div>
   </header>
 
-  <main class="container app-main">
-    <section class="info-card">
-      <h2>Data we currently use</h2>
-      <ul class="small-note">
-        <li>• Basic analytics (page visits) via hosting platform</li>
-        <li>• Optional email if you join waitlist ya contact form</li>
-        <li>• Local history (recent searches, favourites) stored only in your browser</li>
+  <main class="policy-wrapper">
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated: January 2025</p>
+
+    <section class="card">
+      <h2>1. Overview</h2>
+      <p>
+        SlangAdda AI is designed to help you understand modern slang with context and safety in mind. 
+        We collect only the information we need to keep the product working, improve it over time, 
+        and prevent abuse.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>2. What we collect</h2>
+      <ul>
+        <li>Basic usage data (pages visited, buttons clicked, generic usage patterns).</li>
+        <li>Search queries and slang terms you look up (used to improve quality and add new entries).</li>
+        <li>Optional contact info when you join the waitlist or message us (e.g., email address).</li>
       </ul>
     </section>
 
-    <section class="info-card">
-      <h2>No selling of personal data</h2>
-      <p class="small-note">
-        SlangAdda Ai abhi experiment phase mein hai. Hum users ka personal data sell nahi karte.
-        Agar future mein koi third-party tools add karenge, to yahan clearly mention hoga.
+    <section class="card">
+      <h2>3. How we use your data</h2>
+      <ul>
+        <li>To run and improve the slang dictionary and AI explanations.</li>
+        <li>To understand which slang and features are most useful.</li>
+        <li>To communicate with you if you opt-in (e.g., early access updates, product news).</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>4. Your choices</h2>
+      <p>
+        You can choose not to share personal information like your email by simply using the dictionary 
+        without joining the waitlist or filling contact forms. If you’d like us to remove data related 
+        to your email, just write to us at <a href="mailto:support@slangadda.ai">support@slangadda.ai</a>.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>5. Contact</h2>
+      <p>
+        For questions about this policy, reach out at 
+        <a href="mailto:privacy@slangadda.ai">privacy@slangadda.ai</a>.
       </p>
     </section>
   </main>
-
-  <footer class="footer">
-    <div class="container footer-inner">
-      <p>SlangAdda Ai • Simple privacy for beta version</p>
-      <nav class="footer-nav">
-        <a href="index.html">Home</a>
-        <a href="terms.html">Terms</a>
-      </nav>
-    </div>
-  </footer>
 </body>
 </html>

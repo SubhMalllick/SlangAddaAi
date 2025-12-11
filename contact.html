@@ -3,58 +3,907 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SlangAdda Ai | Contact</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>SlangAdda AI | Contact</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #06b6d4;
+      --primary-dark: #0f766e;
+      --primary-light: #a5f3fc;
+      --secondary: #f9fafb;
+      --accent: #f97316;
+      --accent-light: #fff7ed;
+      --text: #020617;
+      --text-light: #475569;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15),
+                0 10px 10px -5px rgba(15, 23, 42, 0.08);
+      --radius: 20px;
+      --gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #ec4899 100%);
+      --gradient-subtle: radial-gradient(circle at top left, #e0f2fe 0%, #f9fafb 45%, #fef3c7 100%);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gradient-subtle);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Cursor */
+    .cursor {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease-out;
+      mix-blend-mode: difference;
+    }
+    .cursor-follower {
+      width: 36px;
+      height: 36px;
+      background: rgba(6, 182, 212, 0.14);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.25s ease-out;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1rem 0;
+      transition: all 0.3s ease;
+    }
+
+    .header.scrolled {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.45);
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-light);
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      position: relative;
+      border-radius: 999px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: var(--gradient);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--primary);
+    }
+
+    .nav-link:hover::after {
+      width: 70%;
+    }
+
+    .nav-link.active {
+      color: var(--primary-dark);
+      background: rgba(6, 182, 212, 0.08);
+    }
+
+    .nav-link.active::after {
+      width: 70%;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.8rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      background: var(--gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.5);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.65);
+    }
+
+    /* Contact layout */
+    .contact-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 7rem 2rem 3rem;
+    }
+
+    .contact-header {
+      text-align: left;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-header h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .contact-header p {
+      margin-top: 0.6rem;
+      color: var(--text-light);
+      max-width: 550px;
+      font-size: 0.97rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.8rem 1.7rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text);
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s ease;
+      background: #fff;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.25rem;
+    }
+
+    .contact-info-list {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+    }
+
+    .info-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(6, 182, 212, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-dark);
+      flex-shrink: 0;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.1rem;
+    }
+
+    .info-value {
+      font-size: 0.87rem;
+      color: var(--text-light);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    /* FAQ */
+    .faq-section {
+      margin-top: 1rem;
+    }
+
+    .faq-item {
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      background: #f9fafb;
+      margin-bottom: 0.7rem;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 0.7rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .faq-answer {
+      padding: 0 0.9rem 0.8rem;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      display: none;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+
+    /* Footer */
+    .footer {
+      background: #020617;
+      color: #cbd5e1;
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+    }
+
+    .footer-section h3 {
+      color: white;
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .footer-links a:hover {
+      color: #38bdf8;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+      background: var(--primary);
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    /* Chat */
+    .chat-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+    }
+
+    .chat-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.55);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .chat-btn:hover {
+      transform: scale(1.05) translateY(-3px);
+    }
+
+    .chat-window {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 400px;
+      height: 500px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-window.active {
+      display: flex;
+    }
+
+    .chat-header {
+      background: var(--gradient);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: #f8fafc;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 0.75rem 1rem;
+      border-radius: 18px;
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
+    .message.ai {
+      background: #e2f3ff;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      color: #0f172a;
+    }
+
+    .message.user {
+      background: var(--primary);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-input-container {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      background: white;
+    }
+
+    .chat-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 1024px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .main-nav { display: none; }
+      .chat-window { width: 340px; height: 460px; }
+    }
+
+    @media (max-width: 768px) {
+      .contact-wrapper { padding: 6rem 1rem 3rem; }
+      .chat-window { width: 320px; }
+    }
+  </style>
 </head>
-<body class="app-body">
-  <header class="header shadow">
-    <div class="container header-inner">
-      <div>
-        <h1 class="logo">Contact SlangAdda</h1>
-        <p class="tagline">Slang suggestion, feedback ya collab – sab yahan se.</p>
-      </div>
+<body>
+  <!-- Cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <!-- Header -->
+  <header class="header glass" id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-comments"></i></div>
+        <span class="logo-text">SlangAdda AI</span>
+      </a>
+
       <nav class="main-nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="app.html" class="nav-link">Dictionary</a>
-        <a href="pricing.html" class="nav-link">Pricing</a>
         <a href="contact.html" class="nav-link active">Contact</a>
+        <a href="app.html" class="btn-primary">
+          <i class="fas fa-play"></i> Try Dictionary
+        </a>
       </nav>
     </div>
   </header>
 
-  <main class="container app-main">
-    <section class="info-card">
-      <h2>Get in touch</h2>
-      <p>Email: <strong>contact@adpersona.in</strong></p>
-      <p class="small-note">
-        SlangAdda Ai is part of your AdPersona experiments – early users ka feedback bohot valuable hai.
+  <main class="contact-wrapper">
+    <section class="contact-header">
+      <h1>Contact the SlangAdda Team</h1>
+      <p>
+        Have a feature idea, partnership request, or found a slang we should add? 
+        Drop us a message and we’ll get back ASAP.
       </p>
     </section>
 
-    <section class="settings-grid">
-      <article class="settings-block">
-        <h3>Slang suggestions</h3>
-        <p>New slang, regional words ya dialogues jo app mein nahi hai – email ke subject mein <code>[Slang Suggestion]</code> likho.</p>
-      </article>
-      <article class="settings-block">
-        <h3>Bug reports</h3>
-        <p>App crash, wrong meaning, audio issues – screenshots ke saath detail bhejo.</p>
-      </article>
-      <article class="settings-block">
-        <h3>Collabs</h3>
-        <p>Creators, educators, brands – agar slang / youth language se linked content banana hai toh reach out.</p>
-      </article>
+    <section class="contact-grid">
+      <!-- Left: form -->
+      <div class="card">
+        <div class="card-title">Send us a message</div>
+        <p class="card-subtitle">
+          Tell us a bit about why you’re reaching out – whether it’s feedback, collaboration, or a support query.
+        </p>
+
+        <form onsubmit="handleContactSubmit(event)">
+          <div class="form-row">
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">Full name</label>
+              <input type="text" id="nameInput" class="form-input" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">Email</label>
+              <input type="email" id="emailInput" class="form-input" placeholder="you@example.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">Topic</label>
+              <select id="topicSelect" class="form-select">
+                <option value="general">General question</option>
+                <option value="feature">Feature request</option>
+                <option value="bug">Bug / Issue</option>
+                <option value="partner">Partnership / collaboration</option>
+                <option value="education">Teacher / classroom use</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">How are you using SlangAdda?</label>
+              <select id="usageSelect" class="form-select">
+                <option value="personal">Personal / fun</option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="creator">Content creator</option>
+                <option value="corporate">Corporate / team</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Your message</label>
+            <textarea id="messageInput" class="form-textarea" placeholder="Share details, links, or examples so we can help faster." required></textarea>
+            <div class="helper-text">
+              Bonus: share slang examples or screenshots if your question is about a specific phrase.
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" style="margin-top:0.5rem;">
+            <i class="fas fa-paper-plane"></i> Send message
+          </button>
+          <p id="formStatus" class="helper-text" style="margin-top:0.6rem;"></p>
+        </form>
+      </div>
+
+      <!-- Right: info + FAQ -->
+      <div class="card">
+        <div class="card-title">How to reach us</div>
+        <p class="card-subtitle">
+          We’re a small, focused team – email is usually the fastest way to get a thoughtful response.
+        </p>
+
+        <div class="contact-info-list">
+          <div class="info-item">
+            <div class="info-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <div class="info-label">Support & General Queries</div>
+              <div class="info-value">support@slangadda.ai</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon"><i class="fas fa-briefcase"></i></div>
+            <div>
+              <div class="info-label">Partnerships & Collaboration</div>
+              <div class="info-value">collab@slangadda.ai</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div>
+              <div class="info-label">Schools & Educators</div>
+              <div class="info-value">education@slangadda.ai</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="badge-row">
+          <span class="badge">Response in 24–48 hours</span>
+          <span class="badge">India time (IST)</span>
+          <span class="badge">Beta product</span>
+        </div>
+
+        <div class="faq-section">
+          <div style="font-size:0.9rem; font-weight:600; margin-bottom:0.4rem;">Common questions</div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>Can I use SlangAdda in my classroom?</span>
+              <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i>
+            </div>
+            <div class="faq-answer">
+              Yes! Many teachers use SlangAdda to understand student slang and build better classroom communication. 
+              You can also request an “education-safe” mode for stricter filtering.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>Do you offer an API?</span>
+              <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i>
+            </div>
+            <div class="faq-answer">
+              We’re working on an API for creators, edtech, and language apps. 
+              Share your use case and we’ll get in touch when early access is ready.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>How do you decide which slang to add?</span>
+              <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i>
+            </div>
+            <div class="faq-answer">
+              A mix of AI signals, social trend data, and community suggestions. 
+              If a word appears often and across multiple sources, it moves up the priority list.
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
+  <!-- Footer -->
   <footer class="footer">
-    <div class="container footer-inner">
-      <p>SlangAdda Ai • Built with love & memes</p>
-      <nav class="footer-nav">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-      </nav>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>SlangAdda AI</h3>
+        <p>Your AI-powered guide to modern Indian slang. Understand, learn, and master the language of today's India.</p>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="app.html">Dictionary</a></li>
+          <li><a href="#">Slang Requests</a></li>
+          <li><a href="#">Quiz Zone</a></li>
+          <li><a href="#">Audio Library</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <ul class="footer-links">
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Slang Guide</a></li>
+          <li><a href="#">Gen Z Dictionary</a></li>
+          <li><a href="#">Teacher Resources</a></li>
+          <li><a href="#">API Access</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul class="footer-links">
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Community Guidelines</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div style="text-align:center; margin-top:3rem; padding-top:2rem; border-top:1px solid rgba(148,163,184,0.4);">
+      <p>&copy; 2024 SlangAdda AI. All rights reserved. Built with ❤️ for India's digital culture.</p>
     </div>
   </footer>
+
+  <!-- Chat -->
+  <div class="chat-container">
+    <button class="chat-btn" id="chatToggle">
+      <i class="fas fa-robot"></i>
+    </button>
+    
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-header">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <i class="fas fa-robot"></i>
+          <span>SlangAdda AI Assistant</span>
+        </div>
+        <button class="chat-close" onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages">
+        <div class="message ai">
+          Hi! You can ask me about using SlangAdda in classrooms, teams, or content – or just say hi 👋
+        </div>
+      </div>
+      
+      <div class="chat-input-container">
+        <input type="text" 
+               class="chat-input" 
+               id="chatInput"
+               placeholder="Type your question..."
+               onkeypress="handleChatInput(event)">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cursor
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      setTimeout(() => {
+        cursorFollower.style.left = e.clientX + 'px';
+        cursorFollower.style.top = e.clientY + 'px';
+      }, 60);
+    });
+
+    // Header scroll
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (window.scrollY > 50) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    });
+
+    // FAQ
+    function toggleFaq(el) {
+      const item = el.parentElement;
+      item.classList.toggle('active');
+    }
+
+    // Contact form (frontend only)
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('nameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
+      const topic = document.getElementById('topicSelect').value;
+      const message = document.getElementById('messageInput').value.trim();
+      const status = document.getElementById('formStatus');
+
+      if (!name || !email || !message) {
+        status.textContent = 'Please fill all required fields.';
+        status.style.color = '#b91c1c';
+        return;
+      }
+
+      status.textContent = 'Thanks, ' + name + '! Your message has been recorded. We’ll get back via email.';
+      status.style.color = '#16a34a';
+
+      // Clear (frontend only)
+      document.getElementById('messageInput').value = '';
+    }
+
+    // Chat
+    function toggleChat() {
+      const chatWindow = document.getElementById('chatWindow');
+      chatWindow.classList.toggle('active');
+    }
+
+    function handleChatInput(event) {
+      if (event.key === 'Enter') {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        if (!message) return;
+        addMessage(message, 'user');
+        input.value = '';
+        setTimeout(() => generateAIResponse(message), 800);
+      }
+    }
+
+    function addMessage(text, sender) {
+      const messages = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message ' + sender;
+      messageDiv.textContent = text;
+      messages.appendChild(messageDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function generateAIResponse(query) {
+      const responses = [
+        'Thanks for reaching out! For official support, please also email support@slangadda.ai.',
+        'If your question is about using SlangAdda with a team or class, mention that in the contact form for a faster, tailored reply.',
+        'We love feedback about new slang or wrong meanings – feel free to share examples in the message box!',
+        'If you have a partnership or collab idea, pick “Partnership / collaboration” as the topic in the form.',
+      ];
+      const reply = responses[Math.floor(Math.random() * responses.length)];
+      addMessage(reply, 'ai');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('chatToggle').addEventListener('click', toggleChat);
+    });
+  </script>
 </body>
 </html>

@@ -1,49 +1,163 @@
-<!-- terms.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SlangAdda Ai | Terms of Use</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>SlangAdda AI | Terms of Service</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #06b6d4;
+      --primary-dark: #0f766e;
+      --primary-light: #a5f3fc;
+      --secondary: #f9fafb;
+      --text: #020617;
+      --text-light: #475569;
+      --border: #e2e8f0;
+      --gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #ec4899 100%);
+      --gradient-subtle: radial-gradient(circle at top left, #e0f2fe 0%, #f9fafb 45%, #fef3c7 100%);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--gradient-subtle);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .header {
+      position: fixed;
+      top: 0; left: 0; right:0;
+      padding: 1rem 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226,232,240,0.8);
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:1.5rem;
+    }
+    .logo {
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+      text-decoration:none;
+    }
+    .logo-icon {
+      width:32px; height:32px;
+      border-radius:10px;
+      background:var(--gradient);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:1rem;
+    }
+    .logo-text {
+      font-weight:700;
+      background:var(--gradient);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-size:1.1rem;
+    }
+    .policy-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem 3rem;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1, #ec4899);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .meta {
+      font-size:0.85rem;
+      color:var(--text-light);
+      margin-bottom:1.5rem;
+    }
+    .card {
+      background:#fff;
+      border-radius:16px;
+      padding:1.5rem 1.5rem;
+      border:1px solid var(--border);
+      box-shadow:0 10px 25px rgba(15,23,42,0.08);
+      margin-bottom:1rem;
+    }
+    h2 {
+      font-size:1.1rem;
+      margin-bottom:0.4rem;
+    }
+    p, li {
+      font-size:0.9rem;
+      color:var(--text-light);
+    }
+    ul { padding-left:1.3rem; margin:0.5rem 0; }
+  </style>
 </head>
-<body class="app-body">
-  <header class="header shadow">
-    <div class="container header-inner">
-      <div>
-        <h1 class="logo">Terms of Use</h1>
-        <p class="tagline">SlangAdda responsible use guidelines.</p>
-      </div>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-comments"></i></div>
+        <span class="logo-text">SlangAdda AI</span>
+      </a>
     </div>
   </header>
 
-  <main class="container app-main">
-    <section class="info-card">
-      <h2>Educational intent only</h2>
-      <p class="small-note">
-        SlangAdda ka main goal youth language ko samjhana hai – na ki rude ya hateful slang ko promote karna.
-        Especially 18+ words sirf context samajhne ke liye hain.
+  <main class="policy-wrapper">
+    <h1>Terms of Service</h1>
+    <p class="meta">Last updated: January 2025</p>
+
+    <section class="card">
+      <h2>1. Using SlangAdda AI</h2>
+      <p>
+        SlangAdda AI is offered on an “as-is” and “as-available” basis. 
+        You agree to use the app responsibly and not for any illegal, harmful, or abusive purposes.
       </p>
     </section>
 
-    <section class="info-card">
-      <h2>Your responsibility</h2>
-      <ul class="small-note">
-        <li>• Please respect other people while using any slang.</li>
-        <li>• App ke basis pe kisi ko bully / harass / insult mat karo.</li>
-        <li>• Professional / office settings mein words thoughtfully use karo.</li>
+    <section class="card">
+      <h2>2. Content & Accuracy</h2>
+      <p>
+        Slang definitions, examples, and context are generated and refined using a mix of AI and community input. 
+        While we aim for high accuracy, some entries may be incomplete, outdated, or context-dependent. 
+        Always use discretion when using slang in professional or sensitive environments.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>3. Fair Use & Restrictions</h2>
+      <ul>
+        <li>Don’t spam, scrape, or reverse-engineer the service.</li>
+        <li>Don’t use the app to harass, bully, or target individuals or groups.</li>
+        <li>Don’t falsely present SlangAdda’s output as professional legal, medical, or financial advice.</li>
       </ul>
     </section>
-  </main>
 
-  <footer class="footer">
-    <div class="container footer-inner">
-      <p>SlangAdda Ai • Be kind, even when you know all the slang.</p>
-      <nav class="footer-nav">
-        <a href="index.html">Home</a>
-        <a href="privacy.html">Privacy</a>
-      </nav>
-    </div>
-  </footer>
+    <section class="card">
+      <h2>4. Changes</h2>
+      <p>
+        We may update these terms as the product evolves. Continued use after changes means you accept the updated terms.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>5. Contact</h2>
+      <p>
+        For questions about these terms, you can email us at legal@slangadda.ai.
+      </p>
+    </section>
+  </main>
 </body>
 </html>

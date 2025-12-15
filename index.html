@@ -7,11 +7,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <meta name="description" content="SlangAdda AI — AI-powered Hinglish & Indian slang dictionary with context-aware explanations, regional audio, quizzes and more." />
   
-  <!-- Firebase SDK (IMPORTANT: Use CDN version for browser compatibility) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
   
   <style>
     :root{
@@ -29,7 +28,7 @@
     }
     *{box-sizing:border-box}
     body{font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system; margin:0; color:var(--text); background:var(--bg-grad); -webkit-font-smoothing:antialiased}
-    a{color:inherit}
+    a{color:inherit; text-decoration:none;}
     /* header */
     header{position:fixed;top:0;left:0;right:0;z-index:999;background:transparent;padding:1rem 1.5rem;transition:all .25s ease}
     header.scrolled{backdrop-filter: blur(8px); background:rgba(255,255,255,0.85); box-shadow:0 8px 30px rgba(2,6,23,.08)}
@@ -39,10 +38,12 @@
     .logo-text{font-weight:800;font-size:1.25rem; background:var(--gradient); -webkit-background-clip:text;background-clip:text;color:transparent}
     .nav{display:flex;gap:1rem;align-items:center}
     .nav a{font-weight:600;text-decoration:none;color:var(--muted);padding:.4rem .6rem;border-radius:10px;transition:all .18s}
-    .nav a:hover{color:var(--primary)}
-    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1rem;border-radius:12px;border:none;cursor:pointer;font-weight:700}
+    .nav a:hover{color:var(--primary); background:rgba(6,182,212,.06);}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1.2rem;border-radius:12px;border:none;cursor:pointer;font-weight:700;transition:all .2s;}
     .btn-primary{background:var(--gradient);color:#fff;box-shadow:0 10px 30px rgba(6,182,212,.18)}
+    .btn-primary:hover{transform:translateY(-2px); box-shadow:0 15px 40px rgba(6,182,212,.25);}
     .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--muted)}
+    .btn-ghost:hover{background:rgba(0,0,0,0.02);}
     /* hero */
     .hero{min-height:92vh;display:grid;align-items:center;padding:6.5rem 1.5rem 4rem}
     .hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center}
@@ -54,13 +55,15 @@
     .search{display:flex;align-items:center;background:var(--glass);border-radius:14px;padding:.35rem;border:1px solid rgba(15,23,42,0.04);box-shadow:var(--shadow)}
     .search input{flex:1;border:0;padding:.85rem 1rem;font-size:1rem;background:transparent;outline:none}
     .search .icon{padding:.5rem 1rem;color:var(--primary-dark)}
-    .ai-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .8rem;border-radius:12px;background:var(--gradient);color:#fff;font-weight:700}
+    .ai-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .8rem;border-radius:12px;background:var(--gradient);color:#fff;font-weight:700;cursor:pointer;border:none;}
+    .ai-badge:hover{transform:scale(1.05);}
     .examples{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
-    .example{padding:.45rem .8rem;border-radius:999px;background:#fff;border:1px solid rgba(2,6,23,.04);cursor:pointer;color:var(--muted)}
-    .example:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(2,6,23,.06)}
+    .example{padding:.45rem .8rem;border-radius:999px;background:#fff;border:1px solid rgba(2,6,23,.04);cursor:pointer;color:var(--muted);transition:all .2s;}
+    .example:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(2,6,23,.06); background:rgba(6,182,212,.05);}
     /* hero visual cards */
     .visual-cards{position:relative;height:420px}
-    .card{width:260px;padding:1.1rem;border-radius:14px;background:var(--card-bg);box-shadow:0 14px 38px rgba(2,6,23,.06);position:absolute}
+    .card{width:260px;padding:1.1rem;border-radius:14px;background:var(--card-bg);box-shadow:0 14px 38px rgba(2,6,23,.06);position:absolute;transition:all .3s;}
+    .card:hover{transform:translateY(-10px) rotate(0deg)!important; box-shadow:0 20px 50px rgba(2,6,23,.15);}
     .card .icon{width:48px;height:48px;border-radius:10px;background:rgba(6,182,212,.08);display:flex;align-items:center;justify-content:center;color:var(--primary-dark);margin-bottom:.6rem}
     /* stats */
     .stats-section{padding:4rem 1rem;margin-top:2rem}
@@ -71,7 +74,8 @@
     /* features */
     .features{padding:4rem 1rem}
     .features-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
-    .feature{background:var(--card-bg);padding:1.6rem;border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(2,6,23,.03)}
+    .feature{background:var(--card-bg);padding:1.6rem;border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(2,6,23,.03);transition:all .3s;}
+    .feature:hover{transform:translateY(-5px); box-shadow:0 25px 50px rgba(2,6,23,.1);}
     .feature h4{margin:0 0 .6rem}
     .muted{color:var(--muted)}
     /* context + quiz area */
@@ -79,11 +83,13 @@
     .context{background:var(--card-bg);padding:1.25rem;border-radius:12px;box-shadow:var(--shadow)}
     .context h3{margin-bottom:.6rem}
     .context p{color:var(--muted)}
-    .play-audio{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:10px;background:linear-gradient(90deg,#06b6d4,#6366f1);color:#fff;border:none;cursor:pointer}
+    .play-audio{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:10px;background:linear-gradient(90deg,#06b6d4,#6366f1);color:#fff;border:none;cursor:pointer;transition:all .2s;}
+    .play-audio:hover{transform:scale(1.05);}
     /* quiz box */
     .quiz-box{background:linear-gradient(180deg,#f8fafc,#fff);padding:1rem;border-radius:12px;box-shadow:var(--shadow)}
     .quiz-ctr{display:flex;gap:.6rem;align-items:center;justify-content:space-between;margin-bottom:.6rem}
-    .quiz-btn{padding:.6rem .85rem;border-radius:10px;border:1px solid rgba(2,6,23,.05);background:#fff;cursor:pointer}
+    .quiz-btn{padding:.6rem .85rem;border-radius:10px;border:1px solid rgba(2,6,23,.05);background:#fff;cursor:pointer;transition:all .2s;}
+    .quiz-btn:hover{background:rgba(6,182,212,.05);}
     .quiz-count{font-weight:800;color:var(--primary-dark)}
     /* CTA */
     .cta{padding:3.5rem 1rem}
@@ -91,29 +97,45 @@
     /* testimonials */
     .testimonials{padding:4rem 1rem}
     .test-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-    .testimonial{background:var(--card-bg);padding:1.25rem;border-radius:12px;box-shadow:var(--shadow)}
+    .testimonial{background:var(--card-bg);padding:1.25rem;border-radius:12px;box-shadow:var(--shadow);transition:all .3s;}
+    .testimonial:hover{transform:translateY(-5px);}
     .author{display:flex;align-items:center;gap:.75rem;margin-top:1rem}
     .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#06b6d4,#6366f1);color:#fff;font-weight:700}
     /* footer */
     footer{background:#020617;color:#cbd5e1;padding:2.4rem 1rem;margin-top:2rem}
     .footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
     .footer h4{color:#fff;margin-bottom:.6rem}
-    .footer a{display:block;color:#cbd5e1;text-decoration:none;margin-bottom:.45rem}
+    .footer a{display:block;color:#cbd5e1;text-decoration:none;margin-bottom:.45rem;transition:color .2s;}
     .footer a:hover{color:#06b6d4}
     /* login modal */
     .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.45);z-index:1200}
     .modal.active{display:flex}
     .modal-card{background:#fff;padding:1.25rem;border-radius:12px;width:360px;box-shadow:0 20px 50px rgba(2,6,23,.25)}
     .form-row{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.6rem}
-    input[type=email],input[type=password],input[type=text]{padding:.6rem .75rem;border-radius:8px;border:1px solid rgba(2,6,23,.06);outline:none}
+    input[type=email],input[type=password],input[type=text]{padding:.6rem .75rem;border-radius:8px;border:1px solid rgba(2,6,23,.06);outline:none;transition:all .2s;}
+    input:focus{border-color:#06b6d4; box-shadow:0 0 0 3px rgba(6,182,212,.1);}
     .muted-small{font-size:.875rem;color:var(--muted)}
     
     /* Auth Tabs */
     .auth-tabs{display:flex;gap:0;border-bottom:1px solid #e5e7eb;margin-bottom:1.5rem}
-    .auth-tab{flex:1;padding:0.8rem;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-weight:600}
+    .auth-tab{flex:1;padding:0.8rem;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-weight:600;transition:all .2s;}
     .auth-tab.active{border-bottom-color:#06b6d4;color:#06b6d4}
+    .auth-tab:hover{color:#06b6d4;}
     .auth-form{display:none}
     .auth-form:first-of-type{display:block}
+    
+    /* Notification */
+    .notification{position:fixed;right:20px;bottom:20px;background:linear-gradient(90deg,#06b6d4,#6366f1);color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,.25);z-index:2000;animation: slideIn 0.3s ease; max-width:320px;}
+    
+    /* Animations */
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
     
     /* responsive */
     @media (max-width:1000px){.hero-inner{grid-template-columns:1fr}.features-grid{grid-template-columns:1fr 1fr}.test-grid{grid-template-columns:1fr}}
@@ -130,7 +152,7 @@
       <nav class="nav" id="topNav">
         <a href="index.html">Home</a>
         <a href="app.html">Dictionary</a>
-        <a href="app.html#quiz">Quiz Zone</a>
+        <a href="quiz.html">Quiz Zone</a>
         <a href="audio.html">Audio Library</a>
         <a href="contact.html">Contact</a>
         <button class="btn btn-primary" id="loginBtn"><i class="fas fa-user"></i> Login / Register</button>
@@ -336,92 +358,60 @@
         <h4>SlangAdda AI</h4>
         <p style="color:#94a3b8">AI-powered guide to modern Indian slang — Hinglish, regional pronunciation, quizzes & more.</p>
         <div style="margin-top:.6rem">
-          <a href="https://twitter.com" target="_blank" rel="noopener">Twitter</a>
-          <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://twitter.com" target="_blank" rel="noopener"><i class="fab fa-twitter"></i> Twitter</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> Instagram</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i> LinkedIn</a>
         </div>
       </div>
 
       <div>
         <h4>Quick Links</h4>
-        <a href="app.html">Dictionary</a>
-        <a href="requests.html">Slang Requests</a>
-        <a href="app.html#quiz">Quiz Zone</a>
-        <a href="audio.html">Audio Library</a>
+        <a href="app.html"><i class="fas fa-book"></i> Dictionary</a>
+        <a href="requests.html"><i class="fas fa-plus-circle"></i> Slang Requests</a>
+        <a href="quiz.html"><i class="fas fa-brain"></i> Quiz Zone</a>
+        <a href="audio.html"><i class="fas fa-volume-up"></i> Audio Library</a>
       </div>
 
       <div>
         <h4>Resources</h4>
-        <a href="blog.html">Blog</a>
-        <a href="slang-guide.html">Slang Guide</a>
-        <a href="genz.html">Gen Z Dictionary</a>
-        <a href="teacher.html">Teacher Resources</a>
-        <a href="api.html">API Access</a>
+        <a href="blog.html"><i class="fas fa-blog"></i> Blog</a>
+        <a href="slang-guide.html"><i class="fas fa-graduation-cap"></i> Slang Guide</a>
+        <a href="genz.html"><i class="fas fa-users"></i> Gen Z Dictionary</a>
+        <a href="teacher.html"><i class="fas fa-chalkboard-teacher"></i> Teacher Resources</a>
+        <a href="api.html"><i class="fas fa-code"></i> API Access</a>
       </div>
 
       <div>
         <h4>Legal</h4>
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="cookie.html">Cookie Policy</a>
-        <a href="guidelines.html">Community Guidelines</a>
-        <a href="contact.html">Contact Us</a>
+        <a href="privacy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="terms.html"><i class="fas fa-file-contract"></i> Terms of Service</a>
+        <a href="cookie.html"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
+        <a href="guidelines.html"><i class="fas fa-hands-helping"></i> Community Guidelines</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> Contact Us</a>
       </div>
     </div>
 
     <div style="text-align:center;margin-top:1.25rem;color:#94a3b8">&copy; <span id="year"></span> SlangAdda AI. Built with ❤️ for India's digital culture.</div>
   </footer>
 
-  <!-- UPDATED LOGIN MODAL WITH FIREBASE -->
-  <div class="modal" id="modal">
-    <div class="modal-card" style="width: 380px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 style="margin: 0;">Login / Register</h3>
-        <button id="closeModal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted);">&times;</button>
+  <!-- SIMPLE LOGIN MODAL -->
+  <div class="modal" id="loginModal">
+    <div class="modal-card">
+      <h3 style="margin-top:0">Login / Register</h3>
+      <div class="form-row">
+        <label class="muted-small">Email</label>
+        <input id="emailField" type="email" placeholder="you@domain.com">
       </div>
-      
-      <!-- Tab Navigation -->
-      <div class="auth-tabs">
-        <button class="auth-tab active" data-tab="email">Email</button>
-        <button class="auth-tab" data-tab="phone">Phone</button>
+      <div class="form-row">
+        <label class="muted-small">Password</label>
+        <input id="passField" type="password" placeholder="password">
       </div>
-      
-      <!-- Email Login Form -->
-      <div id="emailForm" class="auth-form">
-        <div class="form-row">
-          <label class="muted-small">Email</label>
-          <input id="loginEmail" type="email" placeholder="you@example.com">
-        </div>
-        <div class="form-row">
-          <label class="muted-small">Password</label>
-          <input id="loginPassword" type="password" placeholder="••••••••">
-        </div>
-        <button id="doLogin" class="btn btn-primary" style="width: 100%; margin-bottom: 0.8rem;">Login</button>
-        <div style="text-align: center; margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">or</div>
-        <button id="doRegister" class="btn btn-ghost" style="width: 100%;">Create New Account</button>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
+        <button class="btn btn-ghost" id="closeModal">Cancel</button>
+        <button class="btn btn-primary" id="doLogin">Login</button>
+        <button class="btn btn-ghost" id="doRegister">Register</button>
       </div>
-      
-      <!-- Phone Login Form -->
-      <div id="phoneForm" class="auth-form" style="display: none;">
-        <div class="form-row">
-          <label class="muted-small">Phone Number</label>
-          <input id="phoneNumber" type="tel" placeholder="+91 9876543210">
-        </div>
-        <div id="recaptcha-container"></div>
-        <button id="sendOTP" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Send OTP</button>
-        
-        <div id="otpSection" style="display: none;">
-          <div class="form-row">
-            <label class="muted-small">Enter OTP</label>
-            <input id="otpCode" type="text" placeholder="123456">
-          </div>
-          <button id="verifyOTP" class="btn btn-primary" style="width: 100%;">Verify OTP</button>
-        </div>
-      </div>
-      
-      <div style="margin-top: 1rem; font-size: 0.8rem; color: #6b7280; text-align: center;">
-        By continuing, you agree to our Terms & Privacy Policy
-      </div>
+      <p class="muted-small" style="margin-top:.8rem">Test login: test@example.com / password123</p>
     </div>
   </div>
 
@@ -430,632 +420,487 @@
     // ======================
     // FIREBASE CONFIGURATION
     // ======================
-    // YOUR ACTUAL FIREBASE CONFIG (from your provided code)
     const firebaseConfig = {
       apiKey: "AIzaSyAUit5I8Qml9wWIsKATJkwOhOdlCw06irg",
       authDomain: "slangaddaai.firebaseapp.com",
       projectId: "slangaddaai",
       storageBucket: "slangaddaai.firebasestorage.app",
       messagingSenderId: "633159892736",
-      appId: "1:633159892736:web:b33c2d89f3cba1f609fde5",
-      measurementId: "G-LG4J2DX0H9"
+      appId: "1:633159892736:web:b33c2d89f3cba1f609fde5"
     };
     
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    const analytics = firebase.analytics();
     
-    console.log("🔥 Firebase initialized successfully!");
-    console.log("📊 Analytics enabled");
+    console.log("🔥 Firebase initialized!");
     
     // ======================
-    // AUTHENTICATION MANAGER
+    // AUTHENTICATION MANAGER (SIMPLE VERSION)
     // ======================
-    class AuthManager {
-      constructor() {
-        this.currentUser = null;
-        this.init();
-      }
-
-      init() {
-        // Listen for auth state changes
-        auth.onAuthStateChanged((user) => {
-          this.currentUser = user;
-          this.updateUI();
-          
-          if (user) {
-            console.log("✅ User logged in:", user.email);
-            // Track login event in analytics
-            if (analytics) {
-              analytics.logEvent('login', { method: user.providerId });
-            }
-            this.loadUserData(user.uid);
-          } else {
-            console.log("👋 User logged out");
-          }
-        });
-      }
-
-      updateUI() {
-        const loginBtn = document.getElementById('loginBtn');
-        
-        if (this.currentUser) {
-          if (loginBtn) {
-            const displayName = this.currentUser.displayName || this.currentUser.email.split('@')[0];
-            loginBtn.innerHTML = `<i class="fas fa-user"></i> ${displayName}`;
-            loginBtn.onclick = () => this.showUserMenu();
-            loginBtn.style.background = 'linear-gradient(135deg, #10b981, #06b6d4)';
-          }
-        } else {
-          if (loginBtn) {
-            loginBtn.innerHTML = `<i class="fas fa-user"></i> Login / Register`;
-            loginBtn.onclick = () => this.showLoginModal();
-            loginBtn.style.background = 'var(--gradient)';
-          }
-        }
-      }
-
-      async login(email, password) {
-        try {
-          const userCredential = await auth.signInWithEmailAndPassword(email, password);
-          showNotification(`Welcome back, ${email.split('@')[0]}! 🎉`);
-          return { success: true, user: userCredential.user };
-        } catch (error) {
-          console.error("Login error:", error);
-          return { success: false, error: this.getFriendlyError(error.code) };
-        }
-      }
-
-      async register(email, password, name) {
-        try {
-          // Validate password
-          if (password.length < 6) {
-            return { success: false, error: "Password must be at least 6 characters" };
-          }
-          
-          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-          
-          // Update user profile
-          await userCredential.user.updateProfile({
-            displayName: name
-          });
-          
-          // Create user document in Firestore
-          await db.collection('users').doc(userCredential.user.uid).set({
-            name: name,
-            email: email,
-            plan: 'free',
-            favorites: [],
-            recentSearches: [],
-            settings: {
-              explainLang: 'hinglish',
-              voiceGender: 'neutral',
-              showNsfwLink: true
-            },
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          
-          showNotification(`Account created! Welcome to SlangAdda, ${name}! 🎊`);
-          
-          // Track registration event
-          if (analytics) {
-            analytics.logEvent('sign_up', { method: 'email' });
-          }
-          
-          return { success: true, user: userCredential.user };
-        } catch (error) {
-          console.error("Registration error:", error);
-          return { success: false, error: this.getFriendlyError(error.code) };
-        }
-      }
-
-      async loginWithPhone(phoneNumber) {
-        try {
-          // Setup reCAPTCHA
-          const recaptchaContainer = document.getElementById('recaptcha-container');
-          if (!recaptchaContainer.innerHTML) {
-            const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-              size: 'normal',
-              callback: function(response) {
-                console.log("reCAPTCHA solved");
-              },
-              'expired-callback': function() {
-                console.log("reCAPTCHA expired");
-              }
-            });
-            
-            const confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, appVerifier);
-            window.phoneConfirmationResult = confirmationResult;
-            
-            showNotification('OTP sent to your phone! 📱');
-            return { success: true, confirmationResult: confirmationResult };
-          }
-        } catch (error) {
-          console.error("Phone login error:", error);
-          return { success: false, error: this.getFriendlyError(error.code) };
-        }
-      }
-
-      async verifyPhoneCode(code) {
-        try {
-          const credential = await window.phoneConfirmationResult.confirm(code);
-          showNotification('Phone verification successful! ✅');
-          return { success: true, user: credential.user };
-        } catch (error) {
-          console.error("OTP verification error:", error);
-          return { success: false, error: "Invalid OTP. Please try again." };
-        }
-      }
-
-      async logout() {
-        try {
-          await auth.signOut();
-          showNotification('Logged out successfully. See you soon! 👋');
-          return { success: true };
-        } catch (error) {
-          console.error("Logout error:", error);
-          return { success: false, error: error.message };
-        }
-      }
-
-      async loadUserData(uid) {
-        try {
-          const userDoc = await db.collection('users').doc(uid).get();
-          if (userDoc.exists) {
-            console.log("User data loaded:", userDoc.data());
-            return userDoc.data();
-          }
-          return null;
-        } catch (error) {
-          console.error("Error loading user data:", error);
-          return null;
-        }
-      }
-
-      getFriendlyError(errorCode) {
-        const errors = {
-          'auth/invalid-email': 'Please enter a valid email address',
-          'auth/user-disabled': 'This account has been disabled',
-          'auth/user-not-found': 'No account found with this email',
-          'auth/wrong-password': 'Incorrect password',
-          'auth/email-already-in-use': 'Email already registered. Try logging in instead.',
-          'auth/weak-password': 'Password should be at least 6 characters',
-          'auth/operation-not-allowed': 'Email/password accounts are not enabled',
-          'auth/too-many-requests': 'Too many attempts. Please try again later.',
-          'auth/invalid-verification-code': 'Invalid OTP code',
-          'auth/invalid-phone-number': 'Invalid phone number format'
+    let currentUser = null;
+    
+    // Check auth state
+    auth.onAuthStateChanged((user) => {
+      currentUser = user;
+      updateLoginUI();
+    });
+    
+    function updateLoginUI() {
+      const loginBtn = document.getElementById('loginBtn');
+      if (currentUser) {
+        const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+        loginBtn.innerHTML = `<i class="fas fa-user"></i> ${displayName}`;
+        loginBtn.onclick = () => {
+          showNotification(`Logged in as ${displayName}`, 2000);
         };
-        return errors[errorCode] || 'An error occurred. Please try again.';
-      }
-
-      showLoginModal() {
-        const modal = document.getElementById('modal');
-        if (modal) {
-          modal.classList.add('active');
-          // Reset forms
-          document.getElementById('loginEmail').value = '';
-          document.getElementById('loginPassword').value = '';
-          document.getElementById('phoneNumber').value = '';
-          document.getElementById('otpCode').value = '';
-          document.getElementById('otpSection').style.display = 'none';
-          document.getElementById('sendOTP').style.display = 'block';
-          
-          // Clear reCAPTCHA
-          const recaptchaContainer = document.getElementById('recaptcha-container');
-          if (recaptchaContainer) {
-            recaptchaContainer.innerHTML = '';
-          }
-        }
-      }
-
-      showUserMenu() {
-        if (!this.currentUser) return;
-        
-        const userMenu = `
-          <div style="position: absolute; top: 70px; right: 20px; background: white; border-radius: 12px; box-shadow: var(--shadow); padding: 1rem; min-width: 200px; z-index: 1000;">
-            <div style="margin-bottom: 1rem;">
-              <strong>${this.currentUser.displayName || this.currentUser.email.split('@')[0]}</strong>
-              <div style="font-size: 0.8rem; color: var(--muted);">${this.currentUser.email}</div>
-            </div>
-            <button onclick="authManager.logout()" class="btn btn-ghost" style="width: 100%; margin-bottom: 0.5rem;">
-              <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-            <button onclick="window.location.href='app.html'" class="btn btn-ghost" style="width: 100%;">
-              <i class="fas fa-book"></i> My Dictionary
-            </button>
-          </div>
-        `;
-        
-        // Remove existing menu if any
-        const existingMenu = document.getElementById('userMenuPopup');
-        if (existingMenu) existingMenu.remove();
-        
-        // Create new menu
-        const menuDiv = document.createElement('div');
-        menuDiv.id = 'userMenuPopup';
-        menuDiv.innerHTML = userMenu;
-        document.body.appendChild(menuDiv);
-        
-        // Close menu when clicking outside
-        setTimeout(() => {
-          const closeMenu = (e) => {
-            if (!menuDiv.contains(e.target) && e.target.id !== 'loginBtn') {
-              menuDiv.remove();
-              document.removeEventListener('click', closeMenu);
-            }
-          };
-          document.addEventListener('click', closeMenu);
-        }, 100);
+      } else {
+        loginBtn.innerHTML = `<i class="fas fa-user"></i> Login / Register`;
+        loginBtn.onclick = () => {
+          document.getElementById('loginModal').classList.add('active');
+        };
       }
     }
-
-    // Create global instance
-    const authManager = new AuthManager();
-
+    
     // ======================
-    // ORIGINAL PAGE FUNCTIONS
+    // NOTIFICATION SYSTEM
+    // ======================
+    function showNotification(message, duration = 3000) {
+      // Remove existing notification
+      const existing = document.querySelector('.notification');
+      if (existing) existing.remove();
+      
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;">
+          <i class="fas fa-info-circle"></i>
+          <div>${message}</div>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Auto remove after duration
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, duration);
+    }
+    
+    // ======================
+    // PAGE INTERACTIVITY
     // ======================
     
-    // initial numbers target
+    // 1. ANIMATE STATS NUMBERS
     const TARGETS = { s1:1250, s2:23400, s3:1850, s4:98 };
     
-    // animate counters when visible
     function animateNum(id, target, duration=1400){
       const el = document.getElementById(id);
-      let start=0; const step = Math.max(1, Math.floor(target/(duration/16)));
+      let start=0; 
+      const step = Math.max(1, Math.floor(target/(duration/16)));
       const t = setInterval(()=>{
         start+=step;
-        if(start>=target){ start = target; clearInterval(t); }
+        if(start>=target){ 
+          start = target; 
+          clearInterval(t); 
+        }
         el.textContent = (id==='s4') ? start + '%' : start.toLocaleString();
       },16);
     }
     
-    const obs = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
+    // Trigger animation when stats section is visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
           animateNum('s1', TARGETS.s1);
           animateNum('s2', TARGETS.s2);
           animateNum('s3', TARGETS.s3);
           animateNum('s4', TARGETS.s4);
-          obs.disconnect();
+          observer.disconnect();
         }
       });
-    },{threshold:.5});
+    }, { threshold: 0.5 });
     
-    const statsEl = document.querySelector('.stats-wrap');
-    if(statsEl) obs.observe(statsEl);
-
-    // header scroll
+    const statsEl = document.querySelector('.stats-section');
+    if(statsEl) observer.observe(statsEl);
+    
+    // 2. HEADER SCROLL EFFECT
     const header = document.getElementById('mainHeader');
-    window.addEventListener('scroll',()=> header.classList.toggle('scrolled', window.scrollY>20));
-
-    // footer year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // ======================
-    // LOGIN MODAL HANDLERS
-    // ======================
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+    });
     
-    // Tab switching
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+    // 3. SET FOOTER YEAR
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // ======================
+    // SEARCH FUNCTIONALITY
+    // ======================
+    const DICT = [
+      {
+        id:'rizz',
+        word:'rizz',
+        lang:'en',
+        mean_h:'Charisma, charm',
+        mean_en:'Charisma or romantic charm',
+        example:'His rizz is insane',
+        tags:['internet','genz'],
+        office:'caution',
+        explicit:false,
+        origin:'Gen Z internet slang',
+        audio:false
+      },
+      {
+        id:'jugaad',
+        word:'jugaad',
+        lang:'hi',
+        mean_h:'Desi fix or hack',
+        mean_en:'A clever or resourceful solution',
+        example:'Desi jugaad se kaam ho gaya',
+        tags:['desi','innovation'],
+        office:'caution',
+        explicit:false,
+        origin:'Hindi/Urdu South Asia',
+        audio:false
+      },
+      {
+        id:'adulting',
+        word:'adulting',
+        lang:'en',
+        mean_h:'Bade aadmi jaise kaam karna',
+        mean_en:'Doing grown-up responsibilities',
+        example:'Paid the rent — adulting!',
+        tags:['life'],
+        office:'yes',
+        explicit:false,
+        origin:'Millennial internet slang',
+        audio:false
+      }
+    ];
+    
+    // Search function
+    function doSearch(){
+      const query = document.getElementById('searchInput').value.trim();
+      if(!query) {
+        showNotification('Please type something to search!');
+        return;
+      }
+      
+      showNotification(`Searching for: "${query}"`);
+      
+      // Find matching slang
+      const match = DICT.find(item => 
+        query.toLowerCase().includes(item.word.toLowerCase()) || 
+        item.mean_h.toLowerCase().includes(query.toLowerCase()) ||
+        item.mean_en.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      showContext(match || {
+        word: query,
+        mean_en: `No exact match found for "${query}". Try searching for "rizz", "jugaad", or "adulting".`,
+        example: 'Coming soon in our database!',
+        origin: 'Unknown',
+        office: 'unknown'
+      }, query);
+    }
+    
+    function showContext(item, query){
+      const contextWord = document.getElementById('contextWord');
+      const contextMeaning = document.getElementById('contextMeaning');
+      const tagsArea = document.getElementById('tagsArea');
+      
+      contextWord.textContent = `"${item.word}"`;
+      contextMeaning.innerHTML = `
+        <strong>Meaning:</strong> ${item.mean_en || item.mean_h}<br>
+        <strong>Example:</strong> "${item.example}"<br>
+        <strong>Origin:</strong> ${item.origin}<br>
+        <strong>Office Safety:</strong> ${item.office === 'yes' ? '✅ Safe' : item.office === 'caution' ? '⚠️ Use with caution' : '❌ Not safe'}
+      `;
+      
+      // Show tags
+      tagsArea.innerHTML = '';
+      if(item.tags && item.tags.length){
+        item.tags.forEach(tag => {
+          const tagEl = document.createElement('span');
+          tagEl.textContent = tag;
+          tagEl.style.cssText = 'padding:4px 8px; background:rgba(6,182,212,0.1); border-radius:8px; font-size:0.8rem; margin-left:5px;';
+          tagsArea.appendChild(tagEl);
+        });
+      }
+      
+      // Setup audio button
+      const playBtn = document.getElementById('playExample');
+      playBtn.onclick = () => {
+        speakText(`${item.word}. ${item.example}`);
+      };
+    }
+    
+    // Speech function
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-IN';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+        showNotification('Playing audio... 🔊');
+      } else {
+        showNotification('Audio not supported in this browser');
+      }
+    }
+    
+    // Quick search examples
+    function applyExample(example) {
+      document.getElementById('searchInput').value = example;
+      doSearch();
+    }
+    
+    // ======================
+    // QUIZ FUNCTIONALITY
+    // ======================
+    const SAMPLE_QUIZ = [
+      {
+        q:"What does 'rizz' mean?",
+        options:["Money", "Charisma", "Problem-solver", "Speed"],
+        a:1
+      },
+      {
+        q:"'Jugaad' best describes:",
+        options:["Formal plan", "Creative hack", "Technology only", "Expensive solution"],
+        a:1
+      },
+      {
+        q:"Is 'adulting' office-safe?",
+        options:["Yes", "No", "Only on Fridays", "Depends on context"],
+        a:0
+      }
+    ];
+    
+    let triesLeft = parseInt(localStorage.getItem('slang_tries')) || 10;
+    let currentQuiz = null;
+    
+    function updateTriesDisplay() {
+      document.getElementById('triesLeft').textContent = triesLeft;
+      localStorage.setItem('slang_tries', triesLeft);
+    }
+    
+    updateTriesDisplay();
+    
+    // Start quiz
+    document.getElementById('startQuizBtn').addEventListener('click', () => {
+      if (triesLeft <= 0) {
+        showNotification('No free tries left! Watch ad or subscribe.');
+        return;
+      }
+      
+      triesLeft--;
+      updateTriesDisplay();
+      startQuiz();
+    });
+    
+    function startQuiz() {
+      currentQuiz = {
+        questions: [...SAMPLE_QUIZ],
+        currentIndex: 0,
+        score: 0
+      };
+      
+      showNextQuestion();
+    }
+    
+    function showNextQuestion() {
+      if (!currentQuiz || currentQuiz.currentIndex >= currentQuiz.questions.length) {
+        endQuiz();
+        return;
+      }
+      
+      const question = currentQuiz.questions[currentQuiz.currentIndex];
+      document.getElementById('quizQ').textContent = question.q;
+      
+      const optionsDiv = document.getElementById('quizOptions');
+      optionsDiv.innerHTML = '';
+      
+      question.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn';
+        btn.style.cssText = 'display:block; width:100%; margin-bottom:8px; padding:10px;';
+        btn.textContent = option;
         
-        document.getElementById('emailForm').style.display = 
-          tab.dataset.tab === 'email' ? 'block' : 'none';
-        document.getElementById('phoneForm').style.display = 
-          tab.dataset.tab === 'phone' ? 'block' : 'none';
+        btn.onclick = () => {
+          // Check answer
+          if (index === question.a) {
+            btn.style.background = '#d1fae5';
+            btn.style.color = '#065f46';
+            currentQuiz.score++;
+            showNotification('Correct! ✅', 1000);
+          } else {
+            btn.style.background = '#fee2e2';
+            btn.style.color = '#991b1b';
+            showNotification('Incorrect! ❌', 1000);
+          }
+          
+          // Disable all buttons
+          document.querySelectorAll('#quizOptions .quiz-btn').forEach(b => {
+            b.disabled = true;
+          });
+          
+          // Next question after delay
+          setTimeout(() => {
+            currentQuiz.currentIndex++;
+            showNextQuestion();
+          }, 1500);
+        };
+        
+        optionsDiv.appendChild(btn);
       });
+    }
+    
+    function endQuiz() {
+      const score = currentQuiz.score;
+      const total = currentQuiz.questions.length;
+      
+      document.getElementById('quizQ').textContent = `Quiz Complete! Score: ${score}/${total}`;
+      document.getElementById('quizOptions').innerHTML = `
+        <div style="padding:15px; background:rgba(6,182,212,0.1); border-radius:10px; text-align:center;">
+          <h4>🎉 Quiz Finished!</h4>
+          <p>You scored ${score} out of ${total}</p>
+          ${score >= 2 ? '<p><strong>Great job! You unlocked a theme snippet! 🎁</strong></p>' : '<p>Try again to improve your score!</p>'}
+        </div>
+      `;
+      
+      showNotification(`Quiz complete! Score: ${score}/${total}`, 3000);
+    }
+    
+    // Ad unlock
+    document.getElementById('watchAdBtn').addEventListener('click', () => {
+      showNotification('Playing ad... (Demo mode)', 2000);
+      setTimeout(() => {
+        triesLeft += 5;
+        updateTriesDisplay();
+        showNotification('+5 free tries unlocked! 🎉', 3000);
+      }, 2000);
     });
-
-    // Email Login
-    document.getElementById('doLogin').addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
+    
+    // Premium button
+    document.getElementById('getPremiumBtn').addEventListener('click', () => {
+      showNotification('Premium features coming soon! 🚀', 3000);
+    });
+    
+    // ======================
+    // LOGIN MODAL
+    // ======================
+    const modal = document.getElementById('loginModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const doLoginBtn = document.getElementById('doLogin');
+    const doRegisterBtn = document.getElementById('doRegister');
+    
+    // Open modal when login button clicked
+    document.getElementById('loginBtn').addEventListener('click', (e) => {
+      if (!currentUser) {
+        modal.classList.add('active');
+      }
+    });
+    
+    // Close modal
+    closeModalBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+    
+    // Login function
+    doLoginBtn.addEventListener('click', async () => {
+      const email = document.getElementById('emailField').value;
+      const password = document.getElementById('passField').value;
       
       if (!email || !password) {
         showNotification('Please enter email and password');
-        return;
-      }
-      
-      const result = await authManager.login(email, password);
-      if (result.success) {
-        document.getElementById('modal').classList.remove('active');
-      } else {
-        showNotification(`Login failed: ${result.error}`);
-      }
-    });
-
-    // Register
-    document.getElementById('doRegister').addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const name = email.split('@')[0]; // Use email prefix as name
-      
-      if (!email || !password) {
-        showNotification('Please enter email and password');
-        return;
-      }
-      
-      const result = await authManager.register(email, password, name);
-      if (result.success) {
-        document.getElementById('modal').classList.remove('active');
-      } else {
-        showNotification(`Registration failed: ${result.error}`);
-      }
-    });
-
-    // Phone OTP
-    document.getElementById('sendOTP').addEventListener('click', async () => {
-      const phoneNumber = document.getElementById('phoneNumber').value;
-      
-      if (!phoneNumber) {
-        showNotification('Please enter phone number');
-        return;
-      }
-      
-      const result = await authManager.loginWithPhone(phoneNumber);
-      if (result.success) {
-        document.getElementById('otpSection').style.display = 'block';
-        document.getElementById('sendOTP').style.display = 'none';
-      } else {
-        showNotification(`Failed to send OTP: ${result.error}`);
-      }
-    });
-
-    document.getElementById('verifyOTP').addEventListener('click', async () => {
-      const otp = document.getElementById('otpCode').value;
-      
-      if (!otp) {
-        showNotification('Please enter OTP');
         return;
       }
       
       try {
-        const result = await authManager.verifyPhoneCode(otp);
-        if (result.success) {
-          document.getElementById('modal').classList.remove('active');
-        } else {
-          showNotification(`OTP verification failed: ${result.error}`);
-        }
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        showNotification(`Welcome back, ${userCredential.user.email}!`);
+        modal.classList.remove('active');
       } catch (error) {
-        showNotification(`OTP verification failed: ${error.message}`);
+        showNotification(`Login failed: ${error.message}`);
       }
     });
-
-    // Close modal
-    document.getElementById('closeModal').addEventListener('click', () => {
-      document.getElementById('modal').classList.remove('active');
-    });
-
-    // Open modal when login button clicked
-    document.getElementById('loginBtn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!authManager.currentUser) {
-        document.getElementById('modal').classList.add('active');
+    
+    // Register function
+    doRegisterBtn.addEventListener('click', async () => {
+      const email = document.getElementById('emailField').value;
+      const password = document.getElementById('passField').value;
+      
+      if (!email || !password) {
+        showNotification('Please enter email and password');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showNotification('Password must be at least 6 characters');
+        return;
+      }
+      
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        
+        // Create user in Firestore
+        await db.collection('users').doc(userCredential.user.uid).set({
+          email: email,
+          name: email.split('@')[0],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          plan: 'free'
+        });
+        
+        showNotification(`Account created! Welcome to SlangAdda!`);
+        modal.classList.remove('active');
+      } catch (error) {
+        showNotification(`Registration failed: ${error.message}`);
       }
     });
-
+    
     // Close modal when clicking outside
-    document.addEventListener('click', (e) => {
-      const modal = document.getElementById('modal');
-      const modalCard = document.querySelector('.modal-card');
-      if (modal && modal.classList.contains('active') && 
-          !modalCard.contains(e.target) && 
-          e.target.id !== 'loginBtn') {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
         modal.classList.remove('active');
       }
     });
-
-    // ======================
-    // SEARCH & CONTEXT FUNCTIONS
-    // ======================
     
-    const DICT = [
-      {id:'rizz',word:'rizz',lang:'en',mean_h:'Charisma, charm',mean_en:'Charisma or romantic charm',example:'His rizz is insane',tags:['internet','genz'],office:'caution',explicit:false,origin:'Gen Z internet slang',audio:false},
-      {id:'jugaad',word:'jugaad',lang:'hi',mean_h:'Desi fix or hack',mean_en:'A clever or resourceful solution',example:'Desi jugaad se kaam ho gaya',tags:['desi','innovation'],office:'caution',explicit:false,origin:'Hindi/Urdu South Asia',audio:false},
-      {id:'adulting',word:'adulting',lang:'en',mean_h:'Bade aadmi jaise kaam karna',mean_en:'Doing grown-up responsibilities',example:'Paid the rent — adulting!',tags:['life'],office:'yes',explicit:false,origin:'Millennial internet slang',audio:false},
-    ];
-
-    function findBestMatch(sentence){
-      const s = sentence.toLowerCase();
-      for(const item of DICT){
-        if(s.includes(item.word)) return item;
-      }
-      const tokens = s.split(/\W+/).filter(Boolean);
-      if(tokens.length){
-        const token = tokens[0];
-        return {word:token,mean_h:'No direct entry yet',mean_en:'We don\\'t have this in our database. Submit a request.',example:'',tags:[],office:'caution',explicit:false,origin:'Unknown',audio:false};
-      }
-      return null;
+    // ======================
+    // PAGE NAVIGATION
+    // ======================
+    function openDictionary() {
+      window.location.href = 'app.html';
     }
-
-    // Search action
-    document.getElementById('askAI').addEventListener('click', doSearch);
-    document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doSearch(); });
-
-    function doSearch(){
-      const q = document.getElementById('searchInput').value.trim();
-      if(!q) { showNotification('Type a word or sentence first'); return; }
-      const match = findBestMatch(q);
-      showContext(match, q);
-      showNotification(`Searching & updating context for: "${q}"`);
+    
+    function openRequests() {
+      showNotification('Slang submission coming soon!');
     }
-
-    function showContext(item, query){
-      const cw = document.getElementById('contextWord');
-      const cm = document.getElementById('contextMeaning');
-      const tagsArea = document.getElementById('tagsArea');
-      if(!item){ cw.textContent = 'No result'; cm.textContent='We could not find a match.'; tagsArea.innerHTML=''; return; }
-      cw.textContent = item.word ? `"${item.word}"` : query;
-      cm.innerHTML = `<strong>Meaning:</strong> ${item.mean_en || item.mean_h || 'Not available.'}<br><strong>Example:</strong> ${item.example || '—'}<br><strong>Origin:</strong> ${item.origin || '—'}<br><strong>Office:</strong> ${item.office || '—'}`;
-      tagsArea.innerHTML = '';
-      if(item.tags && item.tags.length){
-        item.tags.forEach(t=>{
-          const el = document.createElement('span');
-          el.style.cssText = 'display:inline-block;padding:.25rem .5rem;border-radius:8px;background:rgba(2,6,23,.04);margin-left:.4rem;font-size:.8rem';
-          el.textContent = t;
-          tagsArea.appendChild(el);
-        });
-      }
-      const play = document.getElementById('playExample');
-      if(item.audio){
-        play.disabled = false;
-      } else {
-        play.disabled = false;
-        play.onclick = ()=> {
-          const text = (item.example || item.mean_en || item.mean_h || item.word);
-          speakText(text);
-        };
-      }
-    }
-
-    // SpeechSynthesis helper
-    function speakText(txt){
-      try{
-        const msg = new SpeechSynthesisUtterance(txt);
-        const voices = window.speechSynthesis.getVoices();
-        let v = voices.find(x=>x.lang && x.lang.toLowerCase().includes('en-in'));
-        if(!v) v = voices.find(x=>x.lang && x.lang.toLowerCase().startsWith('en'));
-        if(v) msg.voice = v;
-        msg.rate = 0.95; msg.pitch = 1;
-        window.speechSynthesis.cancel(); window.speechSynthesis.speak(msg);
-      } catch(err){ console.warn('TTS not supported', err); showNotification('Audio not supported in this browser'); }
-    }
-
-    // small notification
-    function showNotification(txt){
-      // Remove existing notifications
-      document.querySelectorAll('.slang-notification').forEach(n => n.remove());
+    
+    // ======================
+    // INITIALIZE ON LOAD
+    // ======================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize UI
+      updateLoginUI();
       
-      const n = document.createElement('div');
-      n.className = 'slang-notification';
-      n.style.cssText = 'position:fixed;right:20px;bottom:20px;background:linear-gradient(90deg,#06b6d4,#6366f1);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,.25);z-index:2000;animation: slideIn 0.3s ease';
-      n.textContent = txt;
-      document.body.appendChild(n);
-      setTimeout(()=>n.style.opacity=0,2800);
-      setTimeout(()=>n.remove(),3200);
-    }
-
-    // Add CSS animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-    `;
-    document.head.appendChild(style);
-
-    // example quick apply
-    function applyExample(q){ document.getElementById('searchInput').value = q; doSearch(); }
-
-    // DICTIONARY link placeholder handlers
-    function openDictionary(){ window.location.href = 'app.html'; }
-    function openRequests(){ window.location.href = 'requests.html'; }
-
-    // QUIZ sample logic
-    const SAMPLE_QUIZ = [
-      {q:"What does 'rizz' mean?", options:["Money","Charisma","Problem-solver"], a:1},
-      {q:"'Jugaad' best describes:", options:["Formal plan","Creative hack","Technology only"], a:1},
-      {q:"Is 'adulting' office-safe?", options:["Yes","No","Only on Fridays"], a:0}
-    ];
-    let triesLeft = parseInt(localStorage.getItem('slang_tries')) || 10;
-    const TRIES_ELEM = document.getElementById('triesLeft');
-
-    function updateTriesDisplay(){ TRIES_ELEM.textContent = triesLeft; localStorage.setItem('slang_tries', triesLeft); }
-    updateTriesDisplay();
-
-    document.getElementById('startQuizBtn').addEventListener('click', startQuizSample);
-    document.getElementById('watchAdBtn').addEventListener('click', simulateAdUnlock);
-    document.getElementById('getPremiumBtn').addEventListener('click', ()=> showNotification('Premium coming soon! 🚀'));
-
-    function startQuizSample(){
-      if(triesLeft<=0){ showNotification('No free tries left. Watch ad to unlock temporary access or subscribe.'); return; }
-      triesLeft--; updateTriesDisplay();
-      runQuizSession(SAMPLE_QUIZ);
-    }
-
-    function runQuizSession(questions){
-      let idx=0, score=0;
-      const qArea = document.getElementById('quizArea');
-      const qText = document.getElementById('quizQ');
-      const opts = document.getElementById('quizOptions');
-      opts.innerHTML=''; qText.textContent = questions[idx].q;
-      renderOptions();
-
-      function renderOptions(){
-        opts.innerHTML='';
-        questions[idx].options.forEach((op,i)=>{
-          const b = document.createElement('button');
-          b.className='quiz-btn'; b.style.display='block'; b.style.width='100%'; b.style.marginBottom='8px';
-          b.textContent = op;
-          b.onclick = ()=> {
-            if(i===questions[idx].a) {
-              score++;
-              b.style.background = '#d1fae5';
-              b.style.color = '#065f46';
-            } else {
-              b.style.background = '#fee2e2';
-              b.style.color = '#991b1b';
-            }
-            idx++;
-            setTimeout(() => {
-              if(idx<questions.length){ 
-                qText.textContent = questions[idx].q; 
-                renderOptions(); 
-              } else {
-                opts.innerHTML = `<div style="padding:8px;background:rgba(6,182,212,.06);border-radius:8px">Sample finished — Score: ${score}/${questions.length}</div>`;
-                if(score >= 2) showNotification('Nice! You earned a theme snippet unlock! 🎁');
-                // Track quiz completion
-                if (analytics && authManager.currentUser) {
-                  analytics.logEvent('quiz_completed', { score: score, total: questions.length });
-                }
-              }
-            }, 800);
-          };
-          opts.appendChild(b);
-        });
-      }
-    }
-
-    function simulateAdUnlock(){
-      if(localStorage.getItem('ad_unlocked')){ showNotification('Ad reward already used (demo limit).'); return; }
-      showNotification('Playing short ad... ⏳'); 
-      setTimeout(()=>{
-        showNotification('Unlocked: 1 quiz session + 30 min premium demo 🎉');
-        localStorage.setItem('ad_unlocked', '1');
-        triesLeft = Math.max(triesLeft, 1); 
-        updateTriesDisplay();
-      },2000);
-    }
-
-    // small accessibility: enable keyboard focus on examples
-    Array.from(document.querySelectorAll('.example')).forEach(el=>el.tabIndex=0);
-
-    // when page loaded, show intro context example
-    document.addEventListener('DOMContentLoaded', ()=>{
+      // Set up search
+      document.getElementById('askAI').addEventListener('click', doSearch);
+      document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') doSearch();
+      });
+      
+      // Show initial example
       applyExample('What does rizz mean?');
-      if(window.speechSynthesis && typeof window.speechSynthesis.getVoices === 'function'){ 
-        window.speechSynthesis.getVoices(); 
+      
+      // Load speech voices
+      if ('speechSynthesis' in window) {
+        speechSynthesis.getVoices();
       }
       
-      // Track page view
-      if (analytics) {
-        analytics.logEvent('page_view', { page_title: 'Homepage' });
-      }
+      console.log('SlangAdda AI loaded successfully!');
     });
-
-    // expose small functions for debug/demo
-    window.showContext = showContext;
-    window.applyExample = applyExample;
-    window.startQuizSample = startQuizSample;
-    window.updateTriesDisplay = updateTriesDisplay;
-    window.authManager = authManager; // Expose auth manager for debugging
+    
   </script>
 </body>
 </html>

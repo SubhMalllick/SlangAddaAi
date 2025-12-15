@@ -1,892 +1,394 @@
-// ----------------------
-// Slang Data
-// ----------------------
-const SLANGS = [
-  {
-    id: "adulting",
-    word: "Adulting",
-    lang: "en",
-    category: "life",
-    officeSafe: "yes", // yes / caution / no
-    explicit: false,
-    meaning: {
-      hinglish:
-        "Adulting ka matlab hai woh saare boring but important kaam jo bade log karte hain – bills pay karna, kaam pe time se jaana, ghar manage karna, doctor check-up, etc.",
-      en: "Doing responsible grown-up tasks like paying bills, working, managing a home – especially when it feels strange that you are the adult now.",
-      hi: "बड़ों जैसी ज़िम्मेदारियाँ निभाना – जैसे बिल भरना, ऑफ़िस जाना, घर संभालना आदि।"
-    },
-    example: {
-      hinglish:
-        "“Kal raat party nahi gayi, pura din adulting hi chal raha tha – rent, laundry, sab.”",
-      en: '"Couldn’t go to the party last night, I was busy adulting – rent, laundry, everything."'
-    },
-    origin:
-      "Millennial internet slang, popular on Instagram & Twitter for describing everyday responsibilities."
-  },
-  {
-    id: "doomscrolling",
-    word: "Doomscrolling",
-    lang: "en",
-    category: "life",
-    officeSafe: "yes",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "Doomscrolling matlab raat ko ya free time mein social media ya news apps pe itna scroll karna ki sirf negative ya heavy content dekhte jao aur mood down ho jaye.",
-      en: "Endlessly scrolling through negative news or content, often late at night, and feeling mentally exhausted afterwards."
-    },
-    example: {
-      hinglish:
-        "“11 baje phone rakha tha, phir doomscrolling start ho gayi aur pata hi nahi chala 1:30 ho gaya.”"
-    },
-    origin: "Rose during pandemic times when news feeds felt constantly negative."
-  },
-  {
-    id: "fomo",
-    word: "FOMO",
-    lang: "en",
-    category: "life",
-    officeSafe: "yes",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "FOMO – Fear Of Missing Out. Jab lagta hai ki koi fun ya important cheez ho rahi hai jisme tum nahi ho, aur uska tension feel hota hai.",
-      en: "Fear of missing out on something fun or important that others are doing."
-    },
-    example: {
-      hinglish:
-        "“Main actually trip pe jaana nahi chahta, bas FOMO ho raha hai sab ja rahe hain.”"
-    },
-    origin:
-      "Popular internet acronym; widely used in social life, investing and career decisions."
-  },
-  {
-    id: "ghosting",
-    word: "Ghosting",
-    lang: "en",
-    category: "internet",
-    officeSafe: "caution",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "Ghosting tab hota hai jab koi achanak reply karna completely band kar de – na message, na call, zero explanation.",
-      en: "When someone suddenly stops responding without any explanation – in dating, hiring, sales or friendships."
-    },
-    example: {
-      hinglish:
-        "“Candidate interested lag raha tha, offer ke baad completely ghosting.”"
-    },
-    origin:
-      "Dating app culture; later adopted in work & hiring conversations."
-  },
-  {
-    id: "vibecheck",
-    word: "Vibe check",
-    lang: "en",
-    category: "life",
-    officeSafe: "caution",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "Vibe check matlab quick mood test – banda ya situation positive feel ho raha hai ya off lag raha hai.",
-      en: "A quick test of the mood or energy of a person or situation – does it feel good, off, tense, etc.?"
-    },
-    example: {
-      hinglish:
-        "“Launch se pehle ek quick vibe check kar lete hain team ke saath.”"
-    },
-    origin: "Social media & meme culture; now used in workplaces and friend groups."
-  },
-  {
-    id: "jugaad",
-    word: "Jugaad",
-    lang: "hi",
-    category: "desi",
-    officeSafe: "yes",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "Jugaad ek Indian word hai – limited resources mein smart, creative hack se kaam chala lena.",
-      en: "A clever low-cost workaround or hack using limited resources.",
-      hi: "सीमित साधनों से रचनात्मक तरीके से काम निकाल लेना।"
-    },
-    example: {
-      hinglish: "“Yeh portable stand pura jugaad aur dedication ka result hai.”"
-    },
-    origin:
-      "Common Hindi word, celebrated in Indian startup and management culture."
-  },
-  {
-    id: "scenekyahai",
-    word: "Scene kya hai",
-    lang: "hi",
-    category: "desi",
-    officeSafe: "caution",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "“Scene kya hai” ka matlab hota hai – overall plan ya situation kya chal rahi hai, party ho, drama ho, ya trip.",
-      en: 'Casual way of asking, "What\'s the plan / situation?"'
-    },
-    example: {
-      hinglish: "“Kal office ke baad kuch scene hai ya seedha ghar?”"
-    },
-    origin: "Bollywood, college culture and Indian meme pages."
-  },
-  {
-    id: "op",
-    word: "OP",
-    lang: "hi",
-    category: "internet",
-    officeSafe: "caution",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "OP ka matlab hota hai “overpowered” – jab kuch ya koi itna accha ho ki next-level lage.",
-      en: "Short for “overpowered” – used to praise something as extremely good or strong."
-    },
-    example: {
-      hinglish: "“Tumhara pitch deck OP tha, clients ko bohot pasand aaya.”"
-    },
-    origin: "Gaming language; now common in Indian YouTube & meme slang."
-  },
-  {
-    id: "launda",
-    word: "Launda",
-    lang: "bhojpuri",
-    category: "desi",
-    officeSafe: "caution",
-    explicit: false,
-    meaning: {
-      // ❗ Notice: no hinglish here on purpose, so it will fall back to English
-      en: "North Indian/Bhojpuri slang for a young guy; friendly among friends, but can sound crude with strangers."
-    },
-    example: {
-      en: '"Woh launda mast gaata hai."'
-    },
-    origin: "Bhojpuri & North Indian youth slang, cinema & music."
-  },
-  {
-    id: "item",
-    word: "Item",
-    lang: "hi",
-    category: "internet",
-    officeSafe: "no",
-    explicit: true,
-    meaning: {
-      hinglish:
-        "Kisi (mostly ladki) ke liye objectifying tareeke se use hota hai – casual lag sakta hai, par kaafi disrespectful bhi ho sakta hai.",
-      en: "A word used to describe someone (often a woman) in an objectifying way; can be sexist or disrespectful."
-    },
-    example: {
-      hinglish: "“Woh naya item kaun hai yaar?”"
-    },
-    origin: "Bollywood songs & casual speech; now criticised for being sexist."
-  },
-  {
-    id: "locha",
-    word: "Locha",
-    lang: "mr",
-    category: "desi",
-    officeSafe: "caution",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "Locha matlab problem ya complication – jab lagta hai ki kuch गड़बड़ hai.",
-      en: "Mumbai/Gujarati-influenced slang for a problem or complication."
-    },
-    example: {
-      hinglish: "“Yahan kuch locha lag raha hai, dobara check karte hain.”"
-    },
-    origin: "Mumbai slang, popularised by Bollywood."
-  },
-  {
-    id: "machaa",
-    word: "Machaa",
-    lang: "ta",
-    category: "desi",
-    officeSafe: "caution",
-    explicit: false,
-    meaning: {
-      hinglish:
-        "Tamil slang for close friend – jaise ‘bro’ ya ‘dude’. Doston ke saath friendly, lekin elders ke saath casual lag sakta hai.",
-      en: "Tamil slang used like “bro” or “dude” for a close friend."
-    },
-    example: {
-      hinglish: "“Machaa, aaj shaam ko free hai kya?”"
-    },
-    origin: "Tamil college culture & movies."
-  }
-];
-
-// ----------------------
-// State & Storage Helpers
-// ----------------------
-const STORAGE_KEYS = {
-  USER: "sa_user",
-  SETTINGS_PREFIX: "sa_settings_",
-  FAVS_PREFIX: "sa_favs_",
-  RECENT_PREFIX: "sa_recent_"
-};
-
-let currentUser = null;
+// app.js - SlangAdda Dictionary with Firebase
+let SLANGS = []; // Will be loaded from Firestore
+let favourites = [];
+let recentSearches = [];
 let settings = {
   explainLang: "hinglish",
   voiceGender: "neutral",
   showNsfwLink: true
 };
-let favourites = [];
-let recentSearches = [];
-let nsfwViewsCount = 0;
+let currentUser = null;
 
-// ----------------------
-// DOM References
-// ----------------------
-const tabButtons = document.querySelectorAll(".tab-btn");
-const tabs = document.querySelectorAll(".tab");
+// DOM Elements
+const searchInput = document.getElementById('searchInput');
+const resultsEl = document.getElementById('results');
+const nsfwResultsEl = document.getElementById('nsfwResults');
+const activityRecentEl = document.getElementById('activityRecent');
+const activityFavouritesEl = document.getElementById('activityFavourites');
 
-// Dictionary
-const searchInput = document.getElementById("searchInput");
-const translateSelect = document.getElementById("translateSelect");
-const slangLangSelect = document.getElementById("slangLangSelect");
-const categorySelect = document.getElementById("categorySelect");
-const officeSafeOnlyCheckbox = document.getElementById("officeSafeOnly");
-const resultsEl = document.getElementById("results");
-const nsfwResultsEl = document.getElementById("nsfwResults");
+// ======================
+// FIREBASE FUNCTIONS
+// ======================
 
-// Activity
-const activityRecentEl = document.getElementById("activityRecent");
-const activityFavouritesEl = document.getElementById("activityFavourites");
-const recentSearchSection = document.getElementById("recentSearchSection");
-const recentSearchList = document.getElementById("recentSearchList");
-
-// Quiz
-const startQuizBtn = document.getElementById("startQuizBtn");
-const quizQuestionEl = document.getElementById("quizQuestion");
-const quizOptionsEl = document.getElementById("quizOptions");
-const quizScoreEl = document.getElementById("quizScore");
-
-// Settings
-const defaultExplainSelect = document.getElementById("defaultExplainSelect");
-const voiceGenderSelect = document.getElementById("voiceGenderSelect");
-const showNsfwLinkCheckbox = document.getElementById("showNsfwLink");
-const clearDataBtn = document.getElementById("clearDataBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-// User & modal
-const userGreetingEl = document.getElementById("userGreeting");
-const loginOpenBtn = document.getElementById("loginOpenBtn");
-const loginModal = document.getElementById("loginModal");
-const loginNameInput = document.getElementById("loginName");
-const loginEmailInput = document.getElementById("loginEmail");
-const loginSubmitBtn = document.getElementById("loginSubmitBtn");
-const loginSkipBtn = document.getElementById("loginSkipBtn");
-
-// Premium modal
-const premiumModal = document.getElementById("premiumModal");
-const premiumEmailInput = document.getElementById("premiumEmail");
-const premiumNotifyBtn = document.getElementById("premiumNotifyBtn");
-const premiumCloseBtn = document.getElementById("premiumCloseBtn");
-const premiumMsg = document.getElementById("premiumMsg");
-
-// ----------------------
-// Utility Functions
-// ----------------------
-function getUserSettingsKey() {
-  if (!currentUser || !currentUser.email) return STORAGE_KEYS.SETTINGS_PREFIX + "guest";
-  return STORAGE_KEYS.SETTINGS_PREFIX + currentUser.email;
+// Load slang from Firestore
+async function loadSlangFromFirestore() {
+  try {
+    console.log("Loading slang from Firestore...");
+    
+    const snapshot = await firebaseDB.collection('slang_entries')
+      .where('verified', '==', true)
+      .limit(100)
+      .get();
+    
+    SLANGS = [];
+    snapshot.forEach(doc => {
+      SLANGS.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    console.log(`Loaded ${SLANGS.length} slang terms from Firestore`);
+    renderDictionary();
+    
+  } catch (error) {
+    console.error("Error loading slang:", error);
+    // Fallback to local data
+    loadLocalSlang();
+  }
 }
 
-function getUserFavsKey() {
-  if (!currentUser || !currentUser.email) return STORAGE_KEYS.FAVS_PREFIX + "guest";
-  return STORAGE_KEYS.FAVS_PREFIX + currentUser.email;
+// Load fallback local data
+function loadLocalSlang() {
+  SLANGS = [
+    {
+      id: "adulting",
+      word: "Adulting",
+      lang: "en",
+      category: "life",
+      officeSafe: "yes",
+      explicit: false,
+      meaning: {
+        hinglish: "Adulting ka matlab hai woh saare boring but important kaam jo bade log karte hain – bills pay karna, kaam pe time se jaana, ghar manage karna.",
+        en: "Doing responsible grown-up tasks like paying bills, working, managing a home."
+      },
+      example: {
+        hinglish: "“Kal raat party nahi gayi, pura din adulting hi chal raha tha – rent, laundry, sab.”"
+      },
+      origin: "Millennial internet slang",
+      verified: true
+    },
+    {
+      id: "rizz",
+      word: "Rizz",
+      lang: "en",
+      category: "genz",
+      officeSafe: "caution",
+      explicit: false,
+      meaning: {
+        hinglish: "Charisma, charm – kisi mein aisa swag ho ki dusre attract ho jaye.",
+        en: "Charisma or romantic charm that attracts others."
+      },
+      example: {
+        hinglish: "“Uska rizz crazy hai, sab uske piche pagal hain.”"
+      },
+      origin: "Gen Z internet slang from 'charisma'",
+      verified: true
+    },
+    {
+      id: "jugaad",
+      word: "Jugaad",
+      lang: "hi",
+      category: "desi",
+      officeSafe: "yes",
+      explicit: false,
+      meaning: {
+        hinglish: "Limited resources mein smart, creative hack se kaam chala lena.",
+        en: "A clever low-cost workaround or hack using limited resources."
+      },
+      example: {
+        hinglish: "“Yeh portable stand pura jugaad aur dedication ka result hai.”"
+      },
+      origin: "Hindi word, celebrated in Indian startup culture",
+      verified: true
+    }
+  ];
+  console.log(`Loaded ${SLANGS.length} local slang terms`);
+  renderDictionary();
 }
 
-function getUserRecentKey() {
-  if (!currentUser || !currentUser.email) return STORAGE_KEYS.RECENT_PREFIX + "guest";
-  return STORAGE_KEYS.RECENT_PREFIX + currentUser.email;
-}
-
-function saveState() {
-  if (currentUser) {
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
+// Load user data
+async function loadUserData() {
+  if (firebaseAuth.currentUser) {
+    currentUser = firebaseAuth.currentUser;
+    try {
+      const userDoc = await firebaseDB.collection('users').doc(currentUser.uid).get();
+      if (userDoc.exists) {
+        const data = userDoc.data();
+        favourites = data.favorites || [];
+        recentSearches = data.recentSearches || [];
+        settings = data.settings || settings;
+      }
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
   } else {
-    localStorage.removeItem(STORAGE_KEYS.USER);
-  }
-  localStorage.setItem(getUserSettingsKey(), JSON.stringify(settings));
-  localStorage.setItem(getUserFavsKey(), JSON.stringify(favourites));
-  localStorage.setItem(getUserRecentKey(), JSON.stringify(recentSearches));
-}
-
-function loadState() {
-  try {
-    const userRaw = localStorage.getItem(STORAGE_KEYS.USER);
-    if (userRaw) {
-      currentUser = JSON.parse(userRaw);
-    }
-  } catch {
-    currentUser = null;
-  }
-  try {
-    const sRaw = localStorage.getItem(getUserSettingsKey());
-    if (sRaw) {
-      settings = { ...settings, ...JSON.parse(sRaw) };
-    }
-  } catch {
-    // ignore
-  }
-  try {
-    const fRaw = localStorage.getItem(getUserFavsKey());
-    favourites = fRaw ? JSON.parse(fRaw) : [];
-  } catch {
-    favourites = [];
-  }
-  try {
-    const rRaw = localStorage.getItem(getUserRecentKey());
-    recentSearches = rRaw ? JSON.parse(rRaw) : [];
-  } catch {
-    recentSearches = [];
+    // Guest mode
+    favourites = JSON.parse(localStorage.getItem('sa_favs')) || [];
+    recentSearches = JSON.parse(localStorage.getItem('sa_recent')) || [];
   }
 }
 
-// ----------------------
-// Rendering helpers
-// ----------------------
-function renderUserGreeting() {
-  if (currentUser && currentUser.name) {
-    userGreetingEl.textContent = `Hi, ${currentUser.name}`;
-  } else {
-    userGreetingEl.textContent = "Hi, Guest";
-  }
-}
-
-function officeSafeBadge(safe) {
-  if (safe === "yes") {
-    return `<span class="badge-office-safe">Office-safe ✅</span>`;
-  }
-  if (safe === "caution") {
-    return `<span class="badge-office-caution">Use with caution ⚠</span>`;
-  }
-  return `<span class="badge-office-no">Not office-safe ❌</span>`;
-}
-
-function langTagLabel(lang) {
-  switch (lang) {
-    case "hi":
-      return "Hinglish / Hindi";
-    case "en":
-      return "English / Global";
-    case "ta":
-      return "Tamil";
-    case "mr":
-      return "Marathi";
-    case "bhojpuri":
-      return "Bhojpuri";
-    default:
-      return "Mixed";
-  }
-}
-
-/**
- * Meaning selection logic:
- * 1. Try requested language (settings.explainLang)
- * 2. If missing -> try Hinglish
- * 3. If still missing -> try English
- * 4. Else -> first available meaning
- */
-function getMeaningInLang(item, langKey) {
-  const m = item.meaning || {};
-  if (m[langKey]) return m[langKey];
-  if (m.hinglish) return m.hinglish;
-  if (m.en) return m.en;
-  const vals = Object.values(m);
-  return vals[0] || "";
-}
-
-/**
- * Same idea for examples.
- */
-function getExampleInLang(item, langKey) {
-  const e = item.example || {};
-  if (e[langKey]) return e[langKey];
-  if (e.hinglish) return e.hinglish;
-  if (e.en) return e.en;
-  const vals = Object.values(e);
-  return vals[0] || "";
-}
-
-function matchesFilters(item, filters) {
-  const { text, slangLang, category, officeSafeOnly } = filters;
-  if (officeSafeOnly && item.officeSafe === "no") return false;
-  if (slangLang !== "all" && item.lang !== slangLang) return false;
-  if (category !== "all" && item.category !== category) return false;
-  if (!text) return true;
-  const t = text.toLowerCase();
-  const meaningTxt = getMeaningInLang(item, settings.explainLang).toLowerCase();
-  return (
-    item.word.toLowerCase().includes(t) ||
-    meaningTxt.includes(t)
-  );
-}
-
-function renderCards(container, data, { mode = "normal" } = {}) {
-  container.innerHTML = "";
-  if (!data.length) {
-    const msgColour = "#374151";
-    container.innerHTML =
-      `<p style="grid-column:1 / -1; color:${msgColour};">Koi result nahi mila. Filters ya spelling change karke try karo.</p>`;
-    // show Ask SlangAdda link if helper exists
-    if (window._updateAskMeaningLink) {
-      const term = (document.getElementById("searchInput")?.value || "").trim();
-      window._updateAskMeaningLink(term);
-    }
+// Save user data
+async function saveUserData() {
+  if (!currentUser) {
+    localStorage.setItem('sa_favs', JSON.stringify(favourites));
+    localStorage.setItem('sa_recent', JSON.stringify(recentSearches));
     return;
   }
-
-  // if we have results, hide ask-meaning section
-  if (window._updateAskMeaningLink) {
-    window._updateAskMeaningLink("");
+  
+  try {
+    await firebaseDB.collection('users').doc(currentUser.uid).update({
+      favorites: favourites,
+      recentSearches: recentSearches,
+      settings: settings
+    });
+  } catch (error) {
+    console.error("Error saving user data:", error);
   }
+}
 
-  data.forEach((item) => {
-    const card = document.createElement("article");
-    card.className = "card";
+// Add new slang (admin function)
+async function addNewSlang(slangData) {
+  try {
+    const docRef = await firebaseDB.collection('slang_entries').add({
+      ...slangData,
+      verified: false,
+      addedBy: currentUser ? currentUser.uid : 'guest',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    console.log("New slang added with ID:", docRef.id);
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error("Error adding slang:", error);
+    return { success: false, error: error.message };
+  }
+}
 
-    const tagLabel = langTagLabel(item.lang);
-    const officeBadgeHtml = officeSafeBadge(item.officeSafe);
-    const isFav = favourites.includes(item.id);
-    const favClass = isFav ? "fav-btn faved" : "fav-btn";
+// ======================
+// UI FUNCTIONS
+// ======================
 
-    const fullMeaning = getMeaningInLang(item, settings.explainLang);
-    const example = getExampleInLang(item, settings.explainLang);
-
-    let extraContent = "";
-    extraContent += `<p><span class="card-label">Meaning:</span> ${fullMeaning}</p>`;
-    extraContent += `<p><span class="card-label">Example:</span> ${example}</p>`;
-    if (item.origin) {
-      extraContent += `<p><span class="card-label">Origin:</span> ${item.origin}</p>`;
-    }
-    if (mode === "nsfw") {
-      extraContent += `
-        <p class="small-note"><span class="card-label">Reminder:</span> Yeh word zyada respectful nahi hai. Samajhne ke liye theek, but use karne se pehle context socho.</p>
-      `;
-    }
-
-    card.innerHTML = `
-      <div class="card-header">
-        <h3 class="card-title">${item.word}</h3>
-        <span class="card-tag">${tagLabel}</span>
+// Render slang cards
+function renderCards(container, data) {
+  container.innerHTML = '';
+  
+  if (!data || data.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6b7280;">
+        <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+        <p>No slang found. Try a different search.</p>
       </div>
-      <p class="card-short">Click / tap karke meaning aur example dekho.</p>
-      <div class="card-extra">
-        ${extraContent}
-        <div class="card-footer-row">
-          <div style="display:flex; gap:0.3rem; align-items:center; flex-wrap:wrap;">
-            <button class="audio-btn" data-id="${item.id}">🔊 Example suno</button>
-            <button class="${favClass}" data-id="${item.id}">⭐ Save</button>
-          </div>
-          <div style="display:flex; gap:0.2rem; align-items:center; flex-wrap:wrap;">
-            ${officeBadgeHtml}
-            ${item.explicit ? '<span class="badge-explicit">18+ / Explicit</span>' : ""}
-          </div>
+    `;
+    return;
+  }
+  
+  data.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+        <h3 style="margin: 0; color: #1f2937;">${item.word}</h3>
+        <span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.75rem;">
+          ${item.lang === 'hi' ? 'Hindi' : 'English'}
+        </span>
+      </div>
+      
+      <p style="color: #4b5563; margin-bottom: 1rem; font-size: 0.95rem;">
+        ${item.meaning?.hinglish || item.meaning?.en || 'No meaning available'}
+      </p>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <button class="fav-btn ${favourites.includes(item.id) ? 'faved' : ''}" 
+                  data-id="${item.id}" 
+                  style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+            ${favourites.includes(item.id) ? '★' : '☆'}
+          </button>
+          <button class="audio-btn" data-id="${item.id}" 
+                  style="background: none; border: none; cursor: pointer; font-size: 1rem; margin-left: 0.5rem;">
+            🔊
+          </button>
+        </div>
+        
+        <div>
+          <span style="background: ${item.officeSafe === 'yes' ? '#d1fae5' : '#fef3c7'}; 
+                      color: ${item.officeSafe === 'yes' ? '#065f46' : '#92400e'}; 
+                      padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.75rem;">
+            ${item.officeSafe === 'yes' ? 'Office-safe ✅' : 'Use caution ⚠'}
+          </span>
         </div>
       </div>
     `;
-
-    card.addEventListener("click", (e) => {
-      // avoid toggle when clicking buttons
-      if (e.target.closest("button")) return;
-      card.classList.toggle("open");
-    });
-
+    
     container.appendChild(card);
   });
-
-  // attach audio & fav listeners after DOM added
-  container.querySelectorAll(".audio-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const id = btn.dataset.id;
-      const item = SLANGS.find((s) => s.id === id);
-      if (item) speakSlang(item);
-    });
-  });
-
-  container.querySelectorAll(".fav-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const id = btn.dataset.id;
-      toggleFavourite(id);
-      btn.classList.toggle("faved");
-      renderActivity(); // update fav list
-      maybeShowPremium("favs");
+  
+  // Add event listeners
+  container.querySelectorAll('.fav-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = e.target.dataset.id;
+      toggleFavorite(id);
+      e.target.classList.toggle('faved');
+      e.target.innerHTML = e.target.classList.contains('faved') ? '★' : '☆';
     });
   });
 }
 
-function renderDictionary() {
-  const text = searchInput.value.trim();
-  const slangLang = slangLangSelect.value;
-  const category = categorySelect.value;
-  const officeSafeOnly = officeSafeOnlyCheckbox.checked;
-
-  const filters = { text, slangLang, category, officeSafeOnly };
-  const filtered = SLANGS.filter((item) =>
-    matchesFilters(item, filters)
-  );
-
-  renderCards(resultsEl, filtered, { mode: "normal" });
-}
-
-function renderNsfw() {
-  const nsfw = SLANGS.filter((s) => s.explicit);
-  renderCards(nsfwResultsEl, nsfw, { mode: "nsfw" });
-}
-
-function renderActivity() {
-  // recent searches chips
-  activityRecentEl.innerHTML = "";
-  recentSearchList.innerHTML = "";
-  if (!recentSearches.length) {
-    activityRecentEl.innerHTML = '<span class="small-note">Abhi tak kuch search nahi kiya.</span>';
-    recentSearchSection.classList.add("hidden");
-  } else {
-    recentSearchSection.classList.remove("hidden");
-    recentSearches.slice().reverse().forEach((term) => {
-      const chip = document.createElement("button");
-      chip.className = "chip";
-      chip.textContent = term;
-      chip.addEventListener("click", () => {
-        searchInput.value = term;
-        renderDictionary();
-      });
-      activityRecentEl.appendChild(chip);
-
-      const chip2 = chip.cloneNode(true);
-      chip2.addEventListener("click", () => {
-        searchInput.value = term;
-        renderDictionary();
-      });
-      recentSearchList.appendChild(chip2);
-    });
-  }
-
-  // favourites as cards
-  const favItems = SLANGS.filter((s) => favourites.includes(s.id));
-  renderCards(activityFavouritesEl, favItems, { mode: "normal" });
-}
-
-// ----------------------
-// Audio (Text-to-Speech)
-// ----------------------
-let voices = [];
-function loadVoices() {
-  if (!("speechSynthesis" in window)) return;
-  voices = window.speechSynthesis.getVoices();
-}
-if ("speechSynthesis" in window) {
-  window.speechSynthesis.onvoiceschanged = loadVoices;
-  loadVoices();
-}
-
-function pickVoiceFor(langCode) {
-  if (!voices.length) return null;
-  const preferredGender = settings.voiceGender;
-
-  const langMatch = voices.filter((v) => v.lang.toLowerCase().startsWith(langCode));
-
-  if (!langMatch.length) return voices[0];
-
-  if (preferredGender !== "neutral") {
-    const genderMatch = langMatch.find((v) =>
-      v.name.toLowerCase().includes(preferredGender)
-    );
-    if (genderMatch) return genderMatch;
-  }
-
-  return langMatch[0];
-}
-
-function speakSlang(item) {
-  if (!("speechSynthesis" in window)) {
-    alert("Text-to-speech browser mein available nahi hai.");
-    return;
-  }
-
-  const langMap = {
-    hinglish: "en-IN",
-    en: "en-IN",
-    hi: "hi-IN",
-    ta: "ta-IN",
-    mr: "mr-IN",
-    bhojpuri: "hi-IN"
-  };
-  const langKey = settings.explainLang;
-  const langCode = langMap[langKey] || "en-IN";
-
-  const text = `${item.word}. ${getExampleInLang(item, langKey)}`;
-
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = langCode;
-
-  const voice = pickVoiceFor(langCode);
-  if (voice) utter.voice = voice;
-
-  utter.rate = 0.95;
-  utter.pitch = 1.0;
-  utter.volume = 1.0;
-
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
-}
-
-// ----------------------
-// Favourites & Recent Searches
-// ----------------------
-function toggleFavourite(id) {
+// Toggle favorite
+function toggleFavorite(id) {
   if (favourites.includes(id)) {
-    favourites = favourites.filter((x) => x !== id);
+    favourites = favourites.filter(fav => fav !== id);
   } else {
     favourites.push(id);
   }
-  saveState();
+  saveUserData();
 }
 
+// Render dictionary
+function renderDictionary() {
+  const searchTerm = searchInput.value.toLowerCase();
+  
+  let filtered = SLANGS;
+  
+  // Apply search filter
+  if (searchTerm) {
+    filtered = SLANGS.filter(item => 
+      item.word.toLowerCase().includes(searchTerm) ||
+      (item.meaning?.hinglish && item.meaning.hinglish.toLowerCase().includes(searchTerm)) ||
+      (item.meaning?.en && item.meaning.en.toLowerCase().includes(searchTerm))
+    );
+  }
+  
+  // Apply other filters (you can add more filters here)
+  const categorySelect = document.getElementById('categorySelect');
+  const officeSafeOnly = document.getElementById('officeSafeOnly');
+  
+  if (categorySelect && categorySelect.value !== 'all') {
+    filtered = filtered.filter(item => item.category === categorySelect.value);
+  }
+  
+  if (officeSafeOnly && officeSafeOnly.checked) {
+    filtered = filtered.filter(item => item.officeSafe === 'yes');
+  }
+  
+  renderCards(resultsEl, filtered);
+  
+  // Add to recent searches
+  if (searchTerm) {
+    addRecentSearch(searchTerm);
+  }
+}
+
+// Add to recent searches
 function addRecentSearch(term) {
   const clean = term.trim();
   if (!clean) return;
-  recentSearches = recentSearches.filter((t) => t !== clean);
+  
+  recentSearches = recentSearches.filter(t => t !== clean);
   recentSearches.push(clean);
+  
   if (recentSearches.length > 10) {
     recentSearches.shift();
   }
-  saveState();
+  
+  saveUserData();
+  renderRecentSearches();
 }
 
-// ----------------------
-// Quiz Logic
-// ----------------------
-const quizState = {
-  score: 0,
-  total: 0,
-  current: null
-};
-
-function startQuiz() {
-  quizState.score = 0;
-  quizState.total = 0;
-  quizScoreEl.textContent = "Score: 0 / 0";
-  nextQuizQuestion();
-}
-
-function nextQuizQuestion() {
-  if (!SLANGS.length) return;
-  const idx = Math.floor(Math.random() * SLANGS.length);
-  const current = SLANGS[idx];
-  quizState.current = current;
-  quizState.total += 1;
-
-  quizQuestionEl.textContent = `“${current.word}” ka approx meaning kya hai?`;
-
-  const options = new Set();
-  options.add(current.meaning.hinglish || current.meaning.en);
-
-  while (options.size < 4 && options.size < SLANGS.length) {
-    const rand = SLANGS[Math.floor(Math.random() * SLANGS.length)];
-    if (rand.id !== current.id) {
-      options.add(rand.meaning.hinglish || rand.meaning.en);
-    }
-  }
-
-  const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
-  quizOptionsEl.innerHTML = "";
-  shuffled.forEach((opt) => {
-    const btn = document.createElement("button");
-    btn.className = "quiz-option-btn";
-    btn.textContent = opt;
-    btn.addEventListener("click", () => {
-      const isCorrect =
-        opt === (current.meaning.hinglish || current.meaning.en);
-      if (isCorrect) {
-        quizState.score += 1;
-        btn.classList.add("correct");
-      } else {
-        btn.classList.add("wrong");
-      }
-      quizScoreEl.textContent = `Score: ${quizState.score} / ${quizState.total}`;
-      setTimeout(nextQuizQuestion, 700);
-    });
-    quizOptionsEl.appendChild(btn);
-  });
-}
-
-// ----------------------
-// Premium Popup Logic (placeholder)
-// ----------------------
-function showPremiumModal() {
-  premiumModal.classList.remove("hidden");
-}
-
-function hidePremiumModal() {
-  premiumModal.classList.add("hidden");
-  premiumMsg.textContent = "";
-  premiumEmailInput.value = "";
-}
-
-function maybeShowPremium(reason) {
-  // placeholder for future premium logic
-}
-
-// ----------------------
-// Tabs
-// ----------------------
-tabButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const tab = btn.dataset.tab;
-
-    tabButtons.forEach((b) => b.classList.remove("active"));
-    tabs.forEach((t) => t.classList.remove("active"));
-
-    btn.classList.add("active");
-    document.getElementById(`tab-${tab}`).classList.add("active");
-
-    if (tab === "activity") {
-      renderActivity();
-    } else if (tab === "nsfw") {
-      nsfwViewsCount += 1;
-      renderNsfw();
-      maybeShowPremium("nsfw");
-    }
-  });
-});
-
-// ----------------------
-// Events & Initialization
-// ----------------------
-searchInput.addEventListener("input", () => {
-  renderDictionary();
-});
-
-searchInput.addEventListener("change", () => {
-  addRecentSearch(searchInput.value);
-  renderActivity();
-});
-
-translateSelect.addEventListener("change", () => {
-  settings.explainLang = translateSelect.value;
-  saveState();
-  renderDictionary();
-  renderNsfw();
-});
-
-slangLangSelect.addEventListener("change", renderDictionary);
-categorySelect.addEventListener("change", renderDictionary);
-officeSafeOnlyCheckbox.addEventListener("change", renderDictionary);
-
-startQuizBtn.addEventListener("click", () => {
-  startQuiz();
-});
-
-defaultExplainSelect.addEventListener("change", () => {
-  settings.explainLang = defaultExplainSelect.value;
-  translateSelect.value = settings.explainLang;
-  saveState();
-  renderDictionary();
-});
-
-voiceGenderSelect.addEventListener("change", () => {
-  settings.voiceGender = voiceGenderSelect.value;
-  saveState();
-});
-
-showNsfwLinkCheckbox.addEventListener("change", () => {
-  settings.showNsfwLink = showNsfwLinkCheckbox.checked;
-  const nsfwTabBtn = Array.from(tabButtons).find((b) => b.dataset.tab === "nsfw");
-  if (nsfwTabBtn) {
-    nsfwTabBtn.style.display = settings.showNsfwLink ? "" : "none";
-  }
-  saveState();
-});
-
-clearDataBtn.addEventListener("click", () => {
-  favourites = [];
-  recentSearches = [];
-  saveState();
-  renderDictionary();
-  renderActivity();
-  alert("Search history aur favourites clear ho gaye.");
-});
-
-logoutBtn.addEventListener("click", () => {
-  currentUser = null;
-  favourites = [];
-  recentSearches = [];
-  saveState();
-  renderUserGreeting();
-  loginModal.style.display = "flex";
-});
-
-// Login modal
-loginOpenBtn.addEventListener("click", () => {
-  loginModal.style.display = "flex";
-});
-
-loginSubmitBtn.addEventListener("click", () => {
-  const name = loginNameInput.value.trim();
-  const email = loginEmailInput.value.trim();
-  if (!email) {
-    alert("Email daalna zaroori hai.");
+// Render recent searches
+function renderRecentSearches() {
+  if (!activityRecentEl) return;
+  
+  activityRecentEl.innerHTML = '';
+  
+  if (recentSearches.length === 0) {
+    activityRecentEl.innerHTML = '<p style="color: #6b7280;">No recent searches</p>';
     return;
   }
-  currentUser = { name: name || "User", email };
-  favourites = [];
-  recentSearches = [];
-  saveState();
-  renderUserGreeting();
-  loginModal.style.display = "none";
-});
+  
+  recentSearches.reverse().forEach(term => {
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.textContent = term;
+    chip.style.margin = '0.3rem';
+    chip.onclick = () => {
+      searchInput.value = term;
+      renderDictionary();
+    };
+    activityRecentEl.appendChild(chip);
+  });
+}
 
-loginSkipBtn.addEventListener("click", () => {
-  currentUser = null;
-  saveState();
-  renderUserGreeting();
-  loginModal.style.display = "none";
-});
+// Render favorites
+function renderFavorites() {
+  if (!activityFavouritesEl) return;
+  
+  const favItems = SLANGS.filter(item => favourites.includes(item.id));
+  renderCards(activityFavouritesEl, favItems);
+}
 
-// Premium modal events
-premiumNotifyBtn.addEventListener("click", () => {
-  if (!premiumEmailInput.value.trim()) return;
-  premiumMsg.textContent =
-    "Shukriya! Premium launch hote hi email aa jayega. 🙌";
-});
-
-premiumCloseBtn.addEventListener("click", hidePremiumModal);
-
-// ----------------------
-// Initial load
-// ----------------------
-(function init() {
-  loadState();
-
-  // apply settings to controls
-  translateSelect.value = settings.explainLang || "hinglish";
-  defaultExplainSelect.value = settings.explainLang || "hinglish";
-  voiceGenderSelect.value = settings.voiceGender || "neutral";
-  showNsfwLinkCheckbox.checked = settings.showNsfwLink !== false;
-
-  if (!settings.showNsfwLink) {
-    const nsfwTabBtn = Array.from(tabButtons).find((b) => b.dataset.tab === "nsfw");
-    if (nsfwTabBtn) nsfwTabBtn.style.display = "none";
+// Speak text
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-IN';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
   }
+}
 
-  renderUserGreeting();
+// ======================
+// INITIALIZATION
+// ======================
+
+async function initApp() {
+  console.log("Initializing SlangAdda...");
+  
+  // Check if Firebase is loaded
+  if (!window.firebaseDB) {
+    console.error("Firebase not loaded. Check firebase-config.js");
+    loadLocalSlang();
+    return;
+  }
+  
+  // Load user data
+  await loadUserData();
+  
+  // Load slang data
+  await loadSlangFromFirestore();
+  
+  // Render UI
   renderDictionary();
-  renderActivity();
-
-  // show login for first-time users
-  if (!currentUser) {
-    loginModal.style.display = "flex";
-  } else {
-    loginModal.style.display = "none";
+  renderRecentSearches();
+  renderFavorites();
+  
+  // Setup event listeners
+  if (searchInput) {
+    searchInput.addEventListener('input', renderDictionary);
   }
-})();
+  
+  // Listen for auth state changes
+  firebaseAuth.onAuthStateChanged((user) => {
+    currentUser = user;
+    loadUserData().then(() => {
+      renderRecentSearches();
+      renderFavorites();
+    });
+  });
+  
+  console.log("SlangAdda initialized successfully!");
+}
+
+// Start the app when DOM is loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+// Make functions available globally
+window.toggleFavorite = toggleFavorite;
+window.speakText = speakText;
+window.addNewSlang = addNewSlang;

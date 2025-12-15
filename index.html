@@ -6,6 +6,13 @@
   <title>SlangAdda AI | Modern Hinglish & Indian Slang Dictionary</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <meta name="description" content="SlangAdda AI — AI-powered Hinglish & Indian slang dictionary with context-aware explanations, regional audio, quizzes and more." />
+  
+  <!-- Firebase SDK (IMPORTANT: Use CDN version for browser compatibility) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+  
   <style>
     :root{
       --primary:#06b6d4; /* teal */
@@ -100,6 +107,14 @@
     .form-row{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.6rem}
     input[type=email],input[type=password],input[type=text]{padding:.6rem .75rem;border-radius:8px;border:1px solid rgba(2,6,23,.06);outline:none}
     .muted-small{font-size:.875rem;color:var(--muted)}
+    
+    /* Auth Tabs */
+    .auth-tabs{display:flex;gap:0;border-bottom:1px solid #e5e7eb;margin-bottom:1.5rem}
+    .auth-tab{flex:1;padding:0.8rem;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-weight:600}
+    .auth-tab.active{border-bottom-color:#06b6d4;color:#06b6d4}
+    .auth-form{display:none}
+    .auth-form:first-of-type{display:block}
+    
     /* responsive */
     @media (max-width:1000px){.hero-inner{grid-template-columns:1fr}.features-grid{grid-template-columns:1fr 1fr}.test-grid{grid-template-columns:1fr}}
     @media (max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr);}.footer-inner{grid-template-columns:repeat(2,1fr)}.context-quiz{grid-template-columns:1fr}}
@@ -357,29 +372,336 @@
     <div style="text-align:center;margin-top:1.25rem;color:#94a3b8">&copy; <span id="year"></span> SlangAdda AI. Built with ❤️ for India's digital culture.</div>
   </footer>
 
-  <!-- LOGIN MODAL -->
+  <!-- UPDATED LOGIN MODAL WITH FIREBASE -->
   <div class="modal" id="modal">
-    <div class="modal-card">
-      <h3 style="margin-top:0">Login / Register</h3>
-      <div class="form-row">
-        <label class="muted-small">Email</label>
-        <input id="emailField" type="email" placeholder="you@domain.com">
+    <div class="modal-card" style="width: 380px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Login / Register</h3>
+        <button id="closeModal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted);">&times;</button>
       </div>
-      <div class="form-row">
-        <label class="muted-small">Password</label>
-        <input id="passField" type="password" placeholder="password">
+      
+      <!-- Tab Navigation -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="email">Email</button>
+        <button class="auth-tab" data-tab="phone">Phone</button>
       </div>
-      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
-        <button class="btn btn-ghost" id="closeModal">Cancel</button>
-        <button class="btn btn-primary" id="doLogin">Continue</button>
+      
+      <!-- Email Login Form -->
+      <div id="emailForm" class="auth-form">
+        <div class="form-row">
+          <label class="muted-small">Email</label>
+          <input id="loginEmail" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-row">
+          <label class="muted-small">Password</label>
+          <input id="loginPassword" type="password" placeholder="••••••••">
+        </div>
+        <button id="doLogin" class="btn btn-primary" style="width: 100%; margin-bottom: 0.8rem;">Login</button>
+        <div style="text-align: center; margin-bottom: 1rem; color: #6b7280; font-size: 0.9rem;">or</div>
+        <button id="doRegister" class="btn btn-ghost" style="width: 100%;">Create New Account</button>
       </div>
-      <p class="muted-small" style="margin-top:.8rem">No backend yet — this modal mocks login. We'll plug Firebase auth later.</p>
+      
+      <!-- Phone Login Form -->
+      <div id="phoneForm" class="auth-form" style="display: none;">
+        <div class="form-row">
+          <label class="muted-small">Phone Number</label>
+          <input id="phoneNumber" type="tel" placeholder="+91 9876543210">
+        </div>
+        <div id="recaptcha-container"></div>
+        <button id="sendOTP" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Send OTP</button>
+        
+        <div id="otpSection" style="display: none;">
+          <div class="form-row">
+            <label class="muted-small">Enter OTP</label>
+            <input id="otpCode" type="text" placeholder="123456">
+          </div>
+          <button id="verifyOTP" class="btn btn-primary" style="width: 100%;">Verify OTP</button>
+        </div>
+      </div>
+      
+      <div style="margin-top: 1rem; font-size: 0.8rem; color: #6b7280; text-align: center;">
+        By continuing, you agree to our Terms & Privacy Policy
+      </div>
     </div>
   </div>
 
+  <!-- FIREBASE AND APP SCRIPT -->
   <script>
+    // ======================
+    // FIREBASE CONFIGURATION
+    // ======================
+    // YOUR ACTUAL FIREBASE CONFIG (from your provided code)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAUit5I8Qml9wWIsKATJkwOhOdlCw06irg",
+      authDomain: "slangaddaai.firebaseapp.com",
+      projectId: "slangaddaai",
+      storageBucket: "slangaddaai.firebasestorage.app",
+      messagingSenderId: "633159892736",
+      appId: "1:633159892736:web:b33c2d89f3cba1f609fde5",
+      measurementId: "G-LG4J2DX0H9"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const analytics = firebase.analytics();
+    
+    console.log("🔥 Firebase initialized successfully!");
+    console.log("📊 Analytics enabled");
+    
+    // ======================
+    // AUTHENTICATION MANAGER
+    // ======================
+    class AuthManager {
+      constructor() {
+        this.currentUser = null;
+        this.init();
+      }
+
+      init() {
+        // Listen for auth state changes
+        auth.onAuthStateChanged((user) => {
+          this.currentUser = user;
+          this.updateUI();
+          
+          if (user) {
+            console.log("✅ User logged in:", user.email);
+            // Track login event in analytics
+            if (analytics) {
+              analytics.logEvent('login', { method: user.providerId });
+            }
+            this.loadUserData(user.uid);
+          } else {
+            console.log("👋 User logged out");
+          }
+        });
+      }
+
+      updateUI() {
+        const loginBtn = document.getElementById('loginBtn');
+        
+        if (this.currentUser) {
+          if (loginBtn) {
+            const displayName = this.currentUser.displayName || this.currentUser.email.split('@')[0];
+            loginBtn.innerHTML = `<i class="fas fa-user"></i> ${displayName}`;
+            loginBtn.onclick = () => this.showUserMenu();
+            loginBtn.style.background = 'linear-gradient(135deg, #10b981, #06b6d4)';
+          }
+        } else {
+          if (loginBtn) {
+            loginBtn.innerHTML = `<i class="fas fa-user"></i> Login / Register`;
+            loginBtn.onclick = () => this.showLoginModal();
+            loginBtn.style.background = 'var(--gradient)';
+          }
+        }
+      }
+
+      async login(email, password) {
+        try {
+          const userCredential = await auth.signInWithEmailAndPassword(email, password);
+          showNotification(`Welcome back, ${email.split('@')[0]}! 🎉`);
+          return { success: true, user: userCredential.user };
+        } catch (error) {
+          console.error("Login error:", error);
+          return { success: false, error: this.getFriendlyError(error.code) };
+        }
+      }
+
+      async register(email, password, name) {
+        try {
+          // Validate password
+          if (password.length < 6) {
+            return { success: false, error: "Password must be at least 6 characters" };
+          }
+          
+          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          
+          // Update user profile
+          await userCredential.user.updateProfile({
+            displayName: name
+          });
+          
+          // Create user document in Firestore
+          await db.collection('users').doc(userCredential.user.uid).set({
+            name: name,
+            email: email,
+            plan: 'free',
+            favorites: [],
+            recentSearches: [],
+            settings: {
+              explainLang: 'hinglish',
+              voiceGender: 'neutral',
+              showNsfwLink: true
+            },
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          
+          showNotification(`Account created! Welcome to SlangAdda, ${name}! 🎊`);
+          
+          // Track registration event
+          if (analytics) {
+            analytics.logEvent('sign_up', { method: 'email' });
+          }
+          
+          return { success: true, user: userCredential.user };
+        } catch (error) {
+          console.error("Registration error:", error);
+          return { success: false, error: this.getFriendlyError(error.code) };
+        }
+      }
+
+      async loginWithPhone(phoneNumber) {
+        try {
+          // Setup reCAPTCHA
+          const recaptchaContainer = document.getElementById('recaptcha-container');
+          if (!recaptchaContainer.innerHTML) {
+            const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+              size: 'normal',
+              callback: function(response) {
+                console.log("reCAPTCHA solved");
+              },
+              'expired-callback': function() {
+                console.log("reCAPTCHA expired");
+              }
+            });
+            
+            const confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, appVerifier);
+            window.phoneConfirmationResult = confirmationResult;
+            
+            showNotification('OTP sent to your phone! 📱');
+            return { success: true, confirmationResult: confirmationResult };
+          }
+        } catch (error) {
+          console.error("Phone login error:", error);
+          return { success: false, error: this.getFriendlyError(error.code) };
+        }
+      }
+
+      async verifyPhoneCode(code) {
+        try {
+          const credential = await window.phoneConfirmationResult.confirm(code);
+          showNotification('Phone verification successful! ✅');
+          return { success: true, user: credential.user };
+        } catch (error) {
+          console.error("OTP verification error:", error);
+          return { success: false, error: "Invalid OTP. Please try again." };
+        }
+      }
+
+      async logout() {
+        try {
+          await auth.signOut();
+          showNotification('Logged out successfully. See you soon! 👋');
+          return { success: true };
+        } catch (error) {
+          console.error("Logout error:", error);
+          return { success: false, error: error.message };
+        }
+      }
+
+      async loadUserData(uid) {
+        try {
+          const userDoc = await db.collection('users').doc(uid).get();
+          if (userDoc.exists) {
+            console.log("User data loaded:", userDoc.data());
+            return userDoc.data();
+          }
+          return null;
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          return null;
+        }
+      }
+
+      getFriendlyError(errorCode) {
+        const errors = {
+          'auth/invalid-email': 'Please enter a valid email address',
+          'auth/user-disabled': 'This account has been disabled',
+          'auth/user-not-found': 'No account found with this email',
+          'auth/wrong-password': 'Incorrect password',
+          'auth/email-already-in-use': 'Email already registered. Try logging in instead.',
+          'auth/weak-password': 'Password should be at least 6 characters',
+          'auth/operation-not-allowed': 'Email/password accounts are not enabled',
+          'auth/too-many-requests': 'Too many attempts. Please try again later.',
+          'auth/invalid-verification-code': 'Invalid OTP code',
+          'auth/invalid-phone-number': 'Invalid phone number format'
+        };
+        return errors[errorCode] || 'An error occurred. Please try again.';
+      }
+
+      showLoginModal() {
+        const modal = document.getElementById('modal');
+        if (modal) {
+          modal.classList.add('active');
+          // Reset forms
+          document.getElementById('loginEmail').value = '';
+          document.getElementById('loginPassword').value = '';
+          document.getElementById('phoneNumber').value = '';
+          document.getElementById('otpCode').value = '';
+          document.getElementById('otpSection').style.display = 'none';
+          document.getElementById('sendOTP').style.display = 'block';
+          
+          // Clear reCAPTCHA
+          const recaptchaContainer = document.getElementById('recaptcha-container');
+          if (recaptchaContainer) {
+            recaptchaContainer.innerHTML = '';
+          }
+        }
+      }
+
+      showUserMenu() {
+        if (!this.currentUser) return;
+        
+        const userMenu = `
+          <div style="position: absolute; top: 70px; right: 20px; background: white; border-radius: 12px; box-shadow: var(--shadow); padding: 1rem; min-width: 200px; z-index: 1000;">
+            <div style="margin-bottom: 1rem;">
+              <strong>${this.currentUser.displayName || this.currentUser.email.split('@')[0]}</strong>
+              <div style="font-size: 0.8rem; color: var(--muted);">${this.currentUser.email}</div>
+            </div>
+            <button onclick="authManager.logout()" class="btn btn-ghost" style="width: 100%; margin-bottom: 0.5rem;">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+            <button onclick="window.location.href='app.html'" class="btn btn-ghost" style="width: 100%;">
+              <i class="fas fa-book"></i> My Dictionary
+            </button>
+          </div>
+        `;
+        
+        // Remove existing menu if any
+        const existingMenu = document.getElementById('userMenuPopup');
+        if (existingMenu) existingMenu.remove();
+        
+        // Create new menu
+        const menuDiv = document.createElement('div');
+        menuDiv.id = 'userMenuPopup';
+        menuDiv.innerHTML = userMenu;
+        document.body.appendChild(menuDiv);
+        
+        // Close menu when clicking outside
+        setTimeout(() => {
+          const closeMenu = (e) => {
+            if (!menuDiv.contains(e.target) && e.target.id !== 'loginBtn') {
+              menuDiv.remove();
+              document.removeEventListener('click', closeMenu);
+            }
+          };
+          document.addEventListener('click', closeMenu);
+        }, 100);
+      }
+    }
+
+    // Create global instance
+    const authManager = new AuthManager();
+
+    // ======================
+    // ORIGINAL PAGE FUNCTIONS
+    // ======================
+    
     // initial numbers target
     const TARGETS = { s1:1250, s2:23400, s3:1850, s4:98 };
+    
     // animate counters when visible
     function animateNum(id, target, duration=1400){
       const el = document.getElementById(id);
@@ -390,6 +712,7 @@
         el.textContent = (id==='s4') ? start + '%' : start.toLocaleString();
       },16);
     }
+    
     const obs = new IntersectionObserver(entries=>{
       entries.forEach(e=>{
         if(e.isIntersecting){
@@ -401,6 +724,7 @@
         }
       });
     },{threshold:.5});
+    
     const statsEl = document.querySelector('.stats-wrap');
     if(statsEl) obs.observe(statsEl);
 
@@ -411,36 +735,137 @@
     // footer year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Login modal logic (mock)
-    const modal = document.getElementById('modal'), loginBtn=document.getElementById('loginBtn');
-    loginBtn.addEventListener('click', ()=> modal.classList.add('active'));
-    document.getElementById('closeModal').addEventListener('click', ()=> modal.classList.remove('active'));
-    document.getElementById('doLogin').addEventListener('click', ()=>{
-      const email = document.getElementById('emailField').value || 'you';
-      modal.classList.remove('active');
-      alert('Mock login success for ' + email + '. We'll add Firebase auth next.');
-      // set login flag for demo (localStorage)
-      localStorage.setItem('slang_user', email);
-      updateTriesDisplay();
+    // ======================
+    // LOGIN MODAL HANDLERS
+    // ======================
+    
+    // Tab switching
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        document.getElementById('emailForm').style.display = 
+          tab.dataset.tab === 'email' ? 'block' : 'none';
+        document.getElementById('phoneForm').style.display = 
+          tab.dataset.tab === 'phone' ? 'block' : 'none';
+      });
     });
 
-    // Search & Context logic (simple client-side mock)
-    // We maintain a small dictionary sample here for demo. Real app will use DB/API + AI.
+    // Email Login
+    document.getElementById('doLogin').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        showNotification('Please enter email and password');
+        return;
+      }
+      
+      const result = await authManager.login(email, password);
+      if (result.success) {
+        document.getElementById('modal').classList.remove('active');
+      } else {
+        showNotification(`Login failed: ${result.error}`);
+      }
+    });
+
+    // Register
+    document.getElementById('doRegister').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const name = email.split('@')[0]; // Use email prefix as name
+      
+      if (!email || !password) {
+        showNotification('Please enter email and password');
+        return;
+      }
+      
+      const result = await authManager.register(email, password, name);
+      if (result.success) {
+        document.getElementById('modal').classList.remove('active');
+      } else {
+        showNotification(`Registration failed: ${result.error}`);
+      }
+    });
+
+    // Phone OTP
+    document.getElementById('sendOTP').addEventListener('click', async () => {
+      const phoneNumber = document.getElementById('phoneNumber').value;
+      
+      if (!phoneNumber) {
+        showNotification('Please enter phone number');
+        return;
+      }
+      
+      const result = await authManager.loginWithPhone(phoneNumber);
+      if (result.success) {
+        document.getElementById('otpSection').style.display = 'block';
+        document.getElementById('sendOTP').style.display = 'none';
+      } else {
+        showNotification(`Failed to send OTP: ${result.error}`);
+      }
+    });
+
+    document.getElementById('verifyOTP').addEventListener('click', async () => {
+      const otp = document.getElementById('otpCode').value;
+      
+      if (!otp) {
+        showNotification('Please enter OTP');
+        return;
+      }
+      
+      try {
+        const result = await authManager.verifyPhoneCode(otp);
+        if (result.success) {
+          document.getElementById('modal').classList.remove('active');
+        } else {
+          showNotification(`OTP verification failed: ${result.error}`);
+        }
+      } catch (error) {
+        showNotification(`OTP verification failed: ${error.message}`);
+      }
+    });
+
+    // Close modal
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('modal').classList.remove('active');
+    });
+
+    // Open modal when login button clicked
+    document.getElementById('loginBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!authManager.currentUser) {
+        document.getElementById('modal').classList.add('active');
+      }
+    });
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('modal');
+      const modalCard = document.querySelector('.modal-card');
+      if (modal && modal.classList.contains('active') && 
+          !modalCard.contains(e.target) && 
+          e.target.id !== 'loginBtn') {
+        modal.classList.remove('active');
+      }
+    });
+
+    // ======================
+    // SEARCH & CONTEXT FUNCTIONS
+    // ======================
+    
     const DICT = [
       {id:'rizz',word:'rizz',lang:'en',mean_h:'Charisma, charm',mean_en:'Charisma or romantic charm',example:'His rizz is insane',tags:['internet','genz'],office:'caution',explicit:false,origin:'Gen Z internet slang',audio:false},
       {id:'jugaad',word:'jugaad',lang:'hi',mean_h:'Desi fix or hack',mean_en:'A clever or resourceful solution',example:'Desi jugaad se kaam ho gaya',tags:['desi','innovation'],office:'caution',explicit:false,origin:'Hindi/Urdu South Asia',audio:false},
       {id:'adulting',word:'adulting',lang:'en',mean_h:'Bade aadmi jaise kaam karna',mean_en:'Doing grown-up responsibilities',example:'Paid the rent — adulting!',tags:['life'],office:'yes',explicit:false,origin:'Millennial internet slang',audio:false},
-      // add more as you upload
     ];
 
-    // Utility: try to detect slang token from sentence by matching keys
     function findBestMatch(sentence){
       const s = sentence.toLowerCase();
-      // direct match any word
       for(const item of DICT){
         if(s.includes(item.word)) return item;
       }
-      // try token heuristics - return first word as fallback
       const tokens = s.split(/\W+/).filter(Boolean);
       if(tokens.length){
         const token = tokens[0];
@@ -455,11 +880,9 @@
 
     function doSearch(){
       const q = document.getElementById('searchInput').value.trim();
-      if(!q) { alert('Type a word or sentence first'); return; }
-      // simulate search & show context - prefer sentence-level logic
+      if(!q) { showNotification('Type a word or sentence first'); return; }
       const match = findBestMatch(q);
       showContext(match, q);
-      // create a slide-in notification
       showNotification(`Searching & updating context for: "${q}"`);
     }
 
@@ -470,7 +893,6 @@
       if(!item){ cw.textContent = 'No result'; cm.textContent='We could not find a match.'; tagsArea.innerHTML=''; return; }
       cw.textContent = item.word ? `"${item.word}"` : query;
       cm.innerHTML = `<strong>Meaning:</strong> ${item.mean_en || item.mean_h || 'Not available.'}<br><strong>Example:</strong> ${item.example || '—'}<br><strong>Origin:</strong> ${item.origin || '—'}<br><strong>Office:</strong> ${item.office || '—'}`;
-      // tags
       tagsArea.innerHTML = '';
       if(item.tags && item.tags.length){
         item.tags.forEach(t=>{
@@ -480,12 +902,10 @@
           tagsArea.appendChild(el);
         });
       }
-      // if audio available, enable play
       const play = document.getElementById('playExample');
       if(item.audio){
         play.disabled = false;
       } else {
-        // demo: generate TTS using SpeechSynthesis (Indian-ish voice selection best-effort)
         play.disabled = false;
         play.onclick = ()=> {
           const text = (item.example || item.mean_en || item.mean_h || item.word);
@@ -494,30 +914,42 @@
       }
     }
 
-    // SpeechSynthesis simple helper (browser-based TTS)
+    // SpeechSynthesis helper
     function speakText(txt){
       try{
         const msg = new SpeechSynthesisUtterance(txt);
-        // try to prefer 'Google' / Indian voices where available
         const voices = window.speechSynthesis.getVoices();
-        // pick a voice with 'en-IN' or fallback to any english voice
         let v = voices.find(x=>x.lang && x.lang.toLowerCase().includes('en-in'));
         if(!v) v = voices.find(x=>x.lang && x.lang.toLowerCase().startsWith('en'));
         if(v) msg.voice = v;
         msg.rate = 0.95; msg.pitch = 1;
         window.speechSynthesis.cancel(); window.speechSynthesis.speak(msg);
-      } catch(err){ console.warn('TTS not supported', err); alert('Audio not supported in this browser'); }
+      } catch(err){ console.warn('TTS not supported', err); showNotification('Audio not supported in this browser'); }
     }
 
     // small notification
     function showNotification(txt){
+      // Remove existing notifications
+      document.querySelectorAll('.slang-notification').forEach(n => n.remove());
+      
       const n = document.createElement('div');
-      n.style.cssText = 'position:fixed;right:20px;bottom:20px;background:linear-gradient(90deg,#06b6d4,#6366f1);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,.25);z-index:2000';
+      n.className = 'slang-notification';
+      n.style.cssText = 'position:fixed;right:20px;bottom:20px;background:linear-gradient(90deg,#06b6d4,#6366f1);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,.25);z-index:2000;animation: slideIn 0.3s ease';
       n.textContent = txt;
       document.body.appendChild(n);
       setTimeout(()=>n.style.opacity=0,2800);
       setTimeout(()=>n.remove(),3200);
     }
+
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
 
     // example quick apply
     function applyExample(q){ document.getElementById('searchInput').value = q; doSearch(); }
@@ -526,7 +958,7 @@
     function openDictionary(){ window.location.href = 'app.html'; }
     function openRequests(){ window.location.href = 'requests.html'; }
 
-    // QUIZ sample logic (3 question demo) with tries limiter (10 free tries), ad unlock simulation
+    // QUIZ sample logic
     const SAMPLE_QUIZ = [
       {q:"What does 'rizz' mean?", options:["Money","Charisma","Problem-solver"], a:1},
       {q:"'Jugaad' best describes:", options:["Formal plan","Creative hack","Technology only"], a:1},
@@ -540,10 +972,10 @@
 
     document.getElementById('startQuizBtn').addEventListener('click', startQuizSample);
     document.getElementById('watchAdBtn').addEventListener('click', simulateAdUnlock);
-    document.getElementById('getPremiumBtn').addEventListener('click', ()=> alert('Premium flow not active — will integrate payments later.'));
+    document.getElementById('getPremiumBtn').addEventListener('click', ()=> showNotification('Premium coming soon! 🚀'));
 
     function startQuizSample(){
-      if(triesLeft<=0){ alert('No free tries left. Watch ad to unlock temporary access or subscribe.'); return; }
+      if(triesLeft<=0){ showNotification('No free tries left. Watch ad to unlock temporary access or subscribe.'); return; }
       triesLeft--; updateTriesDisplay();
       runQuizSession(SAMPLE_QUIZ);
     }
@@ -563,13 +995,28 @@
           b.className='quiz-btn'; b.style.display='block'; b.style.width='100%'; b.style.marginBottom='8px';
           b.textContent = op;
           b.onclick = ()=> {
-            if(i===questions[idx].a) score++;
-            idx++;
-            if(idx<questions.length){ qText.textContent = questions[idx].q; renderOptions(); } else {
-              opts.innerHTML = `<div style="padding:8px;background:rgba(6,182,212,.06);border-radius:8px">Sample finished — Score: ${score}/${questions.length}</div>`;
-              // if user got x correct, reward small theme unlock — demo message
-              if(score >= 2) showNotification('Nice! You earned a theme snippet unlock!');
+            if(i===questions[idx].a) {
+              score++;
+              b.style.background = '#d1fae5';
+              b.style.color = '#065f46';
+            } else {
+              b.style.background = '#fee2e2';
+              b.style.color = '#991b1b';
             }
+            idx++;
+            setTimeout(() => {
+              if(idx<questions.length){ 
+                qText.textContent = questions[idx].q; 
+                renderOptions(); 
+              } else {
+                opts.innerHTML = `<div style="padding:8px;background:rgba(6,182,212,.06);border-radius:8px">Sample finished — Score: ${score}/${questions.length}</div>`;
+                if(score >= 2) showNotification('Nice! You earned a theme snippet unlock! 🎁');
+                // Track quiz completion
+                if (analytics && authManager.currentUser) {
+                  analytics.logEvent('quiz_completed', { score: score, total: questions.length });
+                }
+              }
+            }, 800);
           };
           opts.appendChild(b);
         });
@@ -577,13 +1024,13 @@
     }
 
     function simulateAdUnlock(){
-      // ad unlock: award 1 premium slang OR 1 quiz session (we give 1 quiz session)
-      if(localStorage.getItem('ad_unlocked')){ alert('Ad reward already used (demo limit).'); return; }
-      // simulate short "ad" then grant 1 quiz session + 30 mins premium demo
-      showNotification('Playing short ad...'); setTimeout(()=>{
-        showNotification('Unlocked: 1 quiz session + 30 min premium demo (mock)');
+      if(localStorage.getItem('ad_unlocked')){ showNotification('Ad reward already used (demo limit).'); return; }
+      showNotification('Playing short ad... ⏳'); 
+      setTimeout(()=>{
+        showNotification('Unlocked: 1 quiz session + 30 min premium demo 🎉');
         localStorage.setItem('ad_unlocked', '1');
-        triesLeft = Math.max(triesLeft, 1); updateTriesDisplay();
+        triesLeft = Math.max(triesLeft, 1); 
+        updateTriesDisplay();
       },2000);
     }
 
@@ -593,8 +1040,14 @@
     // when page loaded, show intro context example
     document.addEventListener('DOMContentLoaded', ()=>{
       applyExample('What does rizz mean?');
-      // ensure speechSynthesis voices are loaded
-      if(window.speechSynthesis && typeof window.speechSynthesis.getVoices === 'function'){ window.speechSynthesis.getVoices(); }
+      if(window.speechSynthesis && typeof window.speechSynthesis.getVoices === 'function'){ 
+        window.speechSynthesis.getVoices(); 
+      }
+      
+      // Track page view
+      if (analytics) {
+        analytics.logEvent('page_view', { page_title: 'Homepage' });
+      }
     });
 
     // expose small functions for debug/demo
@@ -602,6 +1055,7 @@
     window.applyExample = applyExample;
     window.startQuizSample = startQuizSample;
     window.updateTriesDisplay = updateTriesDisplay;
+    window.authManager = authManager; // Expose auth manager for debugging
   </script>
 </body>
 </html>

@@ -1,1544 +1,384 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SlangAdda AI | Slang Dictionary</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - SlangAdda AI</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    :root {
-      --primary: #06b6d4;
-      --primary-dark: #0f766e;
-      --primary-light: #a5f3fc;
-      --secondary: #f9fafb;
-      --accent: #f97316;
-      --accent-light: #fff7ed;
-      --text: #020617;
-      --text-light: #475569;
-      --card-bg: #ffffff;
-      --border: #e2e8f0;
-      --shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15),
-                0 10px 10px -5px rgba(15, 23, 42, 0.08);
-      --radius: 20px;
-      --gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #ec4899 100%);
-      --gradient-subtle: radial-gradient(circle at top left, #e0f2fe 0%, #f9fafb 45%, #fef3c7 100%);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--gradient-subtle);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Custom Cursor */
-    .cursor {
-      width: 18px;
-      height: 18px;
-      border: 2px solid var(--primary);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.08s ease-out;
-      mix-blend-mode: difference;
-    }
-
-    .cursor-follower {
-      width: 36px;
-      height: 36px;
-      background: rgba(6, 182, 212, 0.14);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: all 0.25s ease-out;
-    }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
-    }
-
-    /* Header */
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      padding: 1rem 0;
-      transition: all 0.3s ease;
-    }
-
-    .header.scrolled {
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-    }
-
-    .header-inner {
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: #f3f4f6; 
+      padding: 2rem;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 2rem;
     }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--gradient);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    
+    .admin-header {
+      background: linear-gradient(135deg, #06b6d4, #6366f1);
       color: white;
-      font-size: 1.25rem;
-      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.45);
-    }
-
-    .logo-text {
-      font-size: 1.5rem;
-      font-weight: 800;
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: -0.5px;
-    }
-
-    .main-nav {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-    }
-
-    .nav-link {
-      text-decoration: none;
-      color: var(--text-light);
-      font-weight: 500;
-      padding: 0.5rem 0.75rem;
-      position: relative;
-      border-radius: 999px;
-      transition: all 0.3s ease;
-    }
-
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 2px;
-      background: var(--gradient);
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-
-    .nav-link:hover {
-      color: var(--primary);
-    }
-
-    .nav-link:hover::after {
-      width: 70%;
-    }
-
-    .nav-link.active {
-      color: var(--primary-dark);
-      background: rgba(6, 182, 212, 0.08);
-    }
-
-    .nav-link.active::after {
-      width: 70%;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.9rem 1.8rem;
+      padding: 1.5rem;
       border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    
+    .admin-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
       font-weight: 600;
-      font-size: 0.95rem;
+    }
+    
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .btn-admin {
+      background: #06b6d4;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::after {
-      content: '';
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 50%;
-      transform: scale(0);
-      opacity: 0;
-      transition: transform 0.5s, opacity 0.5s;
-      pointer-events: none;
-    }
-
-    .btn:active::after {
-      transform: scale(15);
-      opacity: 0;
-    }
-
-    .btn-primary {
-      background: var(--gradient);
-      color: white;
-      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.5);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.65);
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--text);
-      border: 2px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(148, 163, 184, 0.4);
-    }
-
-    /* Layout */
-    .app-wrapper {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 7rem 2rem 3rem;
-    }
-
-    .app-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 1.5rem;
-      align-items: flex-start;
-      margin-bottom: 2.5rem;
-    }
-
-    .app-title-block h1 {
-      font-size: 2.4rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #0ea5e9, #6366f1, #ec4899);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .app-title-block p {
-      margin-top: 0.5rem;
-      color: var(--text-light);
-      max-width: 500px;
-      font-size: 0.98rem;
-    }
-
-    .app-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: flex-end;
-    }
-
-    .app-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--text-light);
-    }
-
-    .app-badge i {
-      font-size: 0.85rem;
-    }
-
-    /* Filters & Search */
-    .filters-card {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
-      gap: 1.75rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .card {
-      background: white;
-      border-radius: var(--radius);
-      padding: 1.6rem 1.5rem;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-    }
-
-    .card-title {
-      font-size: 1rem;
       font-weight: 600;
-      margin-bottom: 0.75rem;
     }
-
-    .search-box {
-      display: flex;
-      align-items: center;
-      background: #fff;
-      border-radius: 14px;
-      padding: 0.4rem;
-      border: 2px solid var(--border);
-      transition: all 0.3s ease;
+    
+    .btn-admin:hover {
+      background: #0e7490;
     }
-
-    .search-box:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
-    }
-
-    .search-icon {
-      padding: 0.6rem 0.9rem;
-      color: var(--text-light);
-      font-size: 1rem;
-    }
-
-    .search-input {
-      flex: 1;
-      border: none;
-      outline: none;
-      padding: 0.6rem 0;
-      font-size: 0.95rem;
-      background: transparent;
-    }
-
-    .search-input::placeholder {
-      color: var(--text-light);
-    }
-
-    .search-actions {
-      display: flex;
-      gap: 0.4rem;
-      padding-right: 0.4rem;
-      align-items: center;
-    }
-
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
       margin-top: 1rem;
     }
-
-    .chip {
-      padding: 0.3rem 0.8rem;
-      border-radius: 999px;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      font-size: 0.8rem;
-      color: var(--text-light);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .chip:hover {
-      background: var(--primary);
-      color: white;
-      border-color: transparent;
-      box-shadow: 0 8px 18px rgba(8, 145, 178, 0.35);
-      transform: translateY(-1px);
-    }
-
-    .chip.active {
-      background: var(--primary-dark);
-      color: white;
-      border-color: transparent;
-    }
-
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 0.8rem;
-    }
-
-    .filter-select {
-      padding: 0.5rem 0.75rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      font-size: 0.85rem;
-      background: white;
-      color: var(--text);
-      outline: none;
-    }
-
-    /* AI explainer side card */
-    .ai-side-card {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .ai-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.3rem 0.7rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      background: rgba(34, 197, 94, 0.14);
-      color: #14532d;
-      margin-bottom: 0.4rem;
-    }
-
-    .ai-label i {
-      font-size: 0.8rem;
-    }
-
-    .ai-side-card p {
-      font-size: 0.85rem;
-      color: var(--text-light);
-    }
-
-    .ai-side-card ul {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      padding-left: 1.1rem;
-      margin-top: 0.5rem;
-      display: grid;
-      gap: 0.25rem;
-    }
-
-    .ai-side-footer {
-      margin-top: auto;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .ai-mini-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.35rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      font-size: 0.75rem;
-      background: white;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: var(--text-light);
-    }
-
-    .ai-mini-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary-dark);
-      box-shadow: 0 8px 18px rgba(8, 145, 178, 0.25);
-      transform: translateY(-1px);
-    }
-
-    /* Results layout */
-    .results-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr);
-      gap: 1.75rem;
-      margin-bottom: 3rem;
-    }
-
-    .results-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      gap: 1rem;
-    }
-
-    .results-header h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .results-meta {
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    .results-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .slang-card {
-      background: white;
-      border-radius: 16px;
-      padding: 1rem 1rem;
-      border: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.1fr);
-      gap: 1rem;
-      align-items: flex-start;
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .slang-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .slang-card:hover {
-      box-shadow: var(--shadow);
-      transform: translateY(-2px);
-    }
-
-    .slang-card:hover::before {
-      opacity: 1;
-    }
-
-    .slang-main {
-      position: relative;
-      z-index: 1;
-    }
-
-    .slang-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.3rem;
-    }
-
-    .slang-word {
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-
-    .slang-pron {
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    .slang-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.5rem;
-    }
-
-    .slang-tag {
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      background: #eff6ff;
-      color: #1d4ed8;
-    }
-
-    .slang-tag.office {
-      background: #dcfce7;
-      color: #15803d;
-    }
-
-    .slang-tag.warn {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .slang-meaning {
-      margin-top: 0.35rem;
-      font-size: 0.9rem;
-      color: var(--text-light);
-    }
-
-    .slang-expander {
-      margin-top: 0.4rem;
-      font-size: 0.8rem;
-      color: #0ea5e9;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .slang-ai-extra {
-      position: relative;
-      z-index: 1;
-      font-size: 0.85rem;
-      color: var(--text-light);
-      padding-left: 0.7rem;
-      border-left: 2px dashed #bfdbfe;
-      display: grid;
-      gap: 0.35rem;
-    }
-
-    .slang-example {
-      font-size: 0.83rem;
-      color: #0f172a;
-    }
-
-    .slang-meta-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      color: var(--text-light);
-    }
-
-    .slang-meta-row span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.15rem;
-    }
-
-    /* Right panel - AI deep dive */
-    .explain-card {
-      background: white;
-      border-radius: 16px;
-      padding: 1.3rem 1.3rem;
-      border: 1px solid var(--border);
-      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
-      position: sticky;
-      top: 90px;
-      display: flex;
-      flex-direction: column;
-      gap: 0.7rem;
-    }
-
-    .explain-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .explain-title {
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .explain-pill {
-      font-size: 0.75rem;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(6, 182, 212, 0.12);
-      color: var(--primary-dark);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .explain-body {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      display: grid;
-      gap: 0.35rem;
-    }
-
-    .explain-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.3rem;
-    }
-
-    .explain-badge {
-      font-size: 0.75rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-    }
-
-    .explain-footer {
-      margin-top: 0.5rem;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .small-btn {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 0.35rem 0.8rem;
-      font-size: 0.8rem;
-      background: white;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .small-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary-dark);
-      box-shadow: 0 8px 16px rgba(148, 163, 184, 0.4);
-      transform: translateY(-1px);
-    }
-
-    /* Footer */
-    .footer {
-      background: #020617;
-      color: #cbd5e1;
-      padding: 4rem 2rem 2rem;
-      margin-top: 3rem;
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 3rem;
-    }
-
-    .footer-section h3 {
-      color: white;
-      margin-bottom: 1.5rem;
-      font-size: 1.25rem;
-    }
-
-    .footer-links {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .footer-links a {
-      color: #cbd5e1;
-      text-decoration: none;
-      transition: color 0.3s ease;
-      font-size: 0.9rem;
-    }
-
-    .footer-links a:hover {
-      color: #38bdf8;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .social-link {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(15, 23, 42, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .social-link:hover {
-      background: var(--primary);
-      transform: translateY(-3px) scale(1.05);
-    }
-
-    /* Chat */
-    .chat-container {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      z-index: 1000;
-    }
-
-    .chat-btn {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: var(--gradient);
-      color: white;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.55);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .chat-btn:hover {
-      transform: scale(1.05) translateY(-3px);
-    }
-
-    .chat-window {
-      position: absolute;
-      bottom: 80px;
-      right: 0;
-      width: 400px;
-      height: 500px;
-      background: white;
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .chat-window.active {
-      display: flex;
-    }
-
-    .chat-header {
-      background: var(--gradient);
-      color: white;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .chat-messages {
-      flex: 1;
-      padding: 1rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    
+    .stat-box {
       background: #f8fafc;
-    }
-
-    .message {
-      max-width: 80%;
-      padding: 0.75rem 1rem;
-      border-radius: 18px;
-      line-height: 1.4;
-      font-size: 0.9rem;
-    }
-
-    .message.ai {
-      background: #e2f3ff;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-      color: #0f172a;
-    }
-
-    .message.user {
-      background: var(--primary);
-      color: white;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-
-    .chat-input-container {
       padding: 1rem;
-      border-top: 1px solid var(--border);
-      background: white;
+      border-radius: 8px;
+      text-align: center;
     }
-
-    .chat-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      outline: none;
-      font-size: 0.95rem;
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #06b6d4;
     }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .app-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .app-badges {
-        justify-content: flex-start;
-      }
-
-      .filters-card,
-      .results-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .explain-card {
-        position: static;
-      }
-
-      .main-nav {
-        display: none;
-      }
-
-      .chat-window {
-        width: 340px;
-        height: 460px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .app-wrapper {
-        padding: 6rem 1rem 3rem;
-      }
-
-      .slang-card {
-        grid-template-columns: 1fr;
-      }
-
-      .chat-window {
-        width: 320px;
-      }
+    
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <!-- Custom Cursor -->
-  <div class="cursor"></div>
-  <div class="cursor-follower"></div>
-
-  <!-- Header -->
-  <header class="header glass" id="header">
-    <div class="header-inner">
-      <a href="index.html" class="logo">
-        <div class="logo-icon">
-          <i class="fas fa-comments"></i>
-        </div>
-        <span class="logo-text">SlangAdda AI</span>
-      </a>
-      
-      <nav class="main-nav">
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="app.html" class="nav-link active">Dictionary</a>
-        <a href="contact.html" class="nav-link">Contact</a>
-        <a href="app.html" class="btn btn-primary">
-          <i class="fas fa-book-open"></i>
-          Open Dictionary
-        </a>
-      </nav>
+  <div class="admin-header">
+    <h1>SlangAdda Admin Panel</h1>
+    <p>Manage slang entries, users, and content</p>
+  </div>
+  
+  <!-- Admin Login (will be hidden after login) -->
+  <div id="adminLogin" class="admin-card">
+    <h2>Admin Login</h2>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="adminEmail" placeholder="admin@email.com">
     </div>
-  </header>
-
-  <!-- Main App Wrapper -->
-  <main class="app-wrapper">
-    <!-- Top info -->
-    <div class="app-header">
-      <div class="app-title-block">
-        <h1>Slang Dictionary</h1>
-        <p>
-          Search, explore, and understand modern Indian slang with AI-powered meanings, 
-          usage examples, safety tags, and regional context.
-        </p>
-      </div>
-      <div class="app-badges">
-        <div class="app-badge">
-          <i class="fas fa-bolt"></i> AI Context Engine
-        </div>
-        <div class="app-badge">
-          <i class="fas fa-language"></i> Hinglish + Regional Slang
-        </div>
-        <div class="app-badge">
-          <i class="fas fa-shield-alt"></i> Office & Family Safe Filters
-        </div>
-      </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="adminPassword" placeholder="••••••••">
     </div>
-
-    <!-- Filters + AI overview -->
-    <section class="filters-card">
-      <!-- Left: Search + filters -->
-      <div class="card">
-        <div class="card-title">Search Slang</div>
-        <div class="search-box">
-          <div class="search-icon">
-            <i class="fas fa-search"></i>
-          </div>
-          <input 
-            type="text"
-            id="searchInput"
-            class="search-input"
-            placeholder="Type a slang word or question (e.g. 'What does OP mean?' or 'Explain jugaad')"
-          />
-          <div class="search-actions">
-            <button class="btn btn-secondary" style="padding:0.5rem 1rem;" onclick="runSearch()">
-              <i class="fas fa-magnifying-glass"></i> Search
-            </button>
-          </div>
+    <button class="btn-admin" onclick="adminLogin()">Login as Admin</button>
+  </div>
+  
+  <!-- Admin Dashboard (hidden initially) -->
+  <div id="adminDashboard" style="display: none;">
+    <!-- Stats -->
+    <div class="admin-card">
+      <h2>Dashboard Stats</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-number" id="totalSlang">0</div>
+          <div class="stat-label">Total Slang Words</div>
         </div>
-
-        <div class="chip-row" style="margin-top:0.9rem;">
-          <span style="font-size:0.8rem; font-weight:600; color:var(--text-light);">
-            Quick examples:
-          </span>
-          <div class="chip" onclick="setExample('rizz')">rizz</div>
-          <div class="chip" onclick="setExample('jugaad')">jugaad</div>
-          <div class="chip" onclick="setExample('OP')">OP</div>
-          <div class="chip" onclick="setExample('vibe check')">vibe check</div>
-          <div class="chip" onclick="setExample('adulting')">adulting</div>
+        <div class="stat-box">
+          <div class="stat-number" id="totalUsers">0</div>
+          <div class="stat-label">Total Users</div>
         </div>
-
-        <div style="margin-top:1.2rem; border-top:1px dashed #e2e8f0; padding-top:1rem;">
-          <span style="font-size:0.8rem; font-weight:600; color:var(--text-light); display:block; margin-bottom:0.3rem;">
-            Filters
-          </span>
-          <div class="filter-row">
-            <select id="languageFilter" class="filter-select">
-              <option value="all">All languages</option>
-              <option value="hinglish">Hinglish</option>
-              <option value="hindi">Hindi</option>
-              <option value="tamil">Tamil</option>
-              <option value="marathi">Marathi</option>
-              <option value="bhojpuri">Bhojpuri</option>
-            </select>
-
-            <select id="contextFilter" class="filter-select">
-              <option value="all">All contexts</option>
-              <option value="casual">Casual / Friends</option>
-              <option value="office">Office-safe</option>
-              <option value="family">Family-safe</option>
-              <option value="18plus">18+ / Sensitive</option>
-            </select>
-
-            <select id="sourceFilter" class="filter-select">
-              <option value="all">All sources</option>
-              <option value="reels">Reels / Shorts</option>
-              <option value="gaming">Gaming</option>
-              <option value="reddit">Reddit / Forums</option>
-              <option value="college">College slang</option>
-            </select>
-          </div>
+        <div class="stat-box">
+          <div class="stat-number" id="pendingApprovals">0</div>
+          <div class="stat-label">Pending Approvals</div>
         </div>
-      </div>
-
-      <!-- Right: AI explainer overview -->
-      <div class="card ai-side-card">
-        <div class="ai-label">
-          <i class="fas fa-robot"></i>
-          SlangAdda AI Explainer
-        </div>
-        <p>
-          Type natural questions like:
-        </p>
-        <ul>
-          <li>“Is ‘rizz’ office safe?”</li>
-          <li>“Explain jugaad with Hinglish examples.”</li>
-          <li>“Difference between OP and GOAT?”</li>
-        </ul>
-        <p>
-          The AI combines dictionary, context, and social trends to give you 
-          <strong>realistic, Indian usage</strong> instead of dry textbook definitions.
-        </p>
-
-        <div class="ai-side-footer">
-          <button class="ai-mini-btn" onclick="setExample('Explain rizz with an example sentence')">
-            <i class="fas fa-wand-magic-sparkles"></i> Try sample
-          </button>
-          <button class="ai-mini-btn" onclick="setExample('Is adulting office safe?')">
-            <i class="fas fa-building"></i> Office safety check
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Results + AI deep dive -->
-    <section class="results-layout">
-      <div>
-        <div class="results-header">
-          <h2>Results</h2>
-          <div class="results-meta" id="resultsMeta">Showing popular entries</div>
-        </div>
-
-        <div class="results-list" id="resultsList">
-          <!-- JS fills slang cards here -->
-        </div>
-      </div>
-
-      <aside class="explain-card" id="explainCard">
-        <div class="explain-header">
-          <div>
-            <div class="explain-title" id="explainTitle">AI Deep Dive</div>
-            <div style="font-size:0.8rem; color:var(--text-light);" id="explainSubtitle">
-              Select a slang on the left to see a detailed AI explanation.
-            </div>
-          </div>
-          <div class="explain-pill">
-            <i class="fas fa-bolt"></i>
-            Live context
-          </div>
-        </div>
-
-        <div class="explain-body" id="explainBody">
-          <p>
-            You’ll see:
-          </p>
-          <ul style="padding-left:1.1rem; margin:0; display:grid; gap:0.25rem;">
-            <li>Where the slang is most used (city, community, online spaces)</li>
-            <li>How tone changes meaning (funny, sarcastic, insulting, etc.)</li>
-            <li>When to <strong>avoid</strong> using it (office, elders, formal calls)</li>
-          </ul>
-        </div>
-
-        <div class="explain-badges" id="explainBadges">
-          <span class="explain-badge">Hinglish friendly</span>
-          <span class="explain-badge">India-specific usage</span>
-          <span class="explain-badge">Context-sensitive</span>
-        </div>
-
-        <div class="explain-footer">
-          <button class="small-btn" onclick="explainWithAI()">
-            <i class="fas fa-brain"></i>
-            Explain with AI
-          </button>
-          <button class="small-btn" onclick="copyExplain()">
-            <i class="fas fa-copy"></i>
-            Copy explanation
-          </button>
-        </div>
-      </aside>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>SlangAdda AI</h3>
-        <p>Your AI-powered guide to modern Indian slang. Understand, learn, and master the language of today's India.</p>
-        <div class="social-links">
-          <a href="#" class="social-link">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="social-link">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="#" class="social-link">
-            <i class="fab fa-linkedin"></i>
-          </a>
-          <a href="#" class="social-link">
-            <i class="fab fa-github"></i>
-          </a>
-        </div>
-      </div>
-      
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul class="footer-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="app.html">Dictionary</a></li>
-          <li><a href="#">Slang Requests</a></li>
-          <li><a href="#">Quiz Zone</a></li>
-          <li><a href="#">Audio Library</a></li>
-        </ul>
-      </div>
-      
-      <div class="footer-section">
-        <h3>Resources</h3>
-        <ul class="footer-links">
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Slang Guide</a></li>
-          <li><a href="#">Gen Z Dictionary</a></li>
-          <li><a href="#">Teacher Resources</a></li>
-          <li><a href="#">API Access</a></li>
-        </ul>
-      </div>
-      
-      <div class="footer-section">
-        <h3>Legal</h3>
-        <ul class="footer-links">
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="terms.html">Terms of Service</a></li>
-          <li><a href="#">Cookie Policy</a></li>
-          <li><a href="#">Community Guidelines</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
-        </ul>
       </div>
     </div>
     
-    <div style="text-align:center; margin-top:3rem; padding-top:2rem; border-top:1px solid rgba(148,163,184,0.4);">
-      <p>&copy; 2024 SlangAdda AI. All rights reserved. Built with ❤️ for India's digital culture.</p>
+    <!-- Add New Slang -->
+    <div class="admin-card">
+      <h2>Add New Slang</h2>
+      <div class="form-group">
+        <label>Word/Phrase</label>
+        <input type="text" id="newWord" placeholder="e.g., rizz, jugaad">
+      </div>
+      <div class="form-group">
+        <label>Language</label>
+        <select id="newLang">
+          <option value="en">English</option>
+          <option value="hi">Hindi/Hinglish</option>
+          <option value="ta">Tamil</option>
+          <option value="mr">Marathi</option>
+          <option value="bhojpuri">Bhojpuri</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Meaning (Hinglish)</label>
+        <textarea id="newMeaningHinglish" placeholder="Explain in Hinglish..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Meaning (English)</label>
+        <textarea id="newMeaningEnglish" placeholder="Explain in English..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Example Sentence</label>
+        <input type="text" id="newExample" placeholder="e.g., His rizz is insane!">
+      </div>
+      <button class="btn-admin" onclick="addSlang()">Add Slang to Database</button>
     </div>
-  </footer>
-
-  <!-- Chat Assistant -->
-  <div class="chat-container">
-    <button class="chat-btn" id="chatToggle">
-      <i class="fas fa-robot"></i>
-    </button>
     
-    <div class="chat-window" id="chatWindow">
-      <div class="chat-header">
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <i class="fas fa-robot"></i>
-          <span>SlangAdda AI Assistant</span>
-        </div>
-        <button class="chat-close" onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer;">
-          <i class="fas fa-times"></i>
-        </button>
+    <!-- Pending Approvals -->
+    <div class="admin-card">
+      <h2>Pending Approvals</h2>
+      <div id="pendingList">
+        <p>Loading pending submissions...</p>
       </div>
-      
-      <div class="chat-messages" id="chatMessages">
-        <div class="message ai">
-          Hey! Ask me about any slang, office-safe meanings, or how to use a term in real conversations. 😄
-        </div>
-      </div>
-      
-      <div class="chat-input-container">
-        <input type="text" 
-               class="chat-input" 
-               id="chatInput"
-               placeholder="Type your question about slang..."
-               onkeypress="handleChatInput(event)">
+    </div>
+    
+    <!-- All Slang Entries -->
+    <div class="admin-card">
+      <h2>All Slang Entries</h2>
+      <input type="text" id="searchAll" placeholder="Search all entries..." style="width: 100%; padding: 0.75rem; margin-bottom: 1rem;">
+      <div id="allEntries">
+        <p>Loading slang entries...</p>
       </div>
     </div>
   </div>
-
+  
+  <!-- Firebase and scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+  
   <script>
-    // Custom cursor
-    const cursor = document.querySelector('.cursor');
-    const cursorFollower = document.querySelector('.cursor-follower');
-    document.addEventListener('mousemove', (e) => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-      setTimeout(() => {
-        cursorFollower.style.left = e.clientX + 'px';
-        cursorFollower.style.top = e.clientY + 'px';
-      }, 60);
-    });
-
-    // Header scroll
-    window.addEventListener('scroll', function() {
-      const header = document.getElementById('header');
-      if (window.scrollY > 50) header.classList.add('scrolled');
-      else header.classList.remove('scrolled');
-    });
-
-    // Sample data for dictionary
-    const slangData = [
-      {
-        word: 'rizz',
-        pronunciation: 'riz',
-        meaning: 'Charisma, charm, or the ability to attract someone romantically.',
-        language: 'hinglish',
-        context: 'casual',
-        source: 'reels',
-        examples: [
-          'Uska rizz itna strong hai ki sab impress ho jaate hain.',
-          'Tera rizz aaj kal low lag raha hai, kya scene hai?'
-        ],
-        tags: ['Gen Z', 'Dating', 'Internet'],
-        officeSafe: false,
-        familySafe: false,
-        regions: 'Metro cities, college culture, online communities'
-      },
-      {
-        word: 'jugaad',
-        pronunciation: 'ju-gaad',
-        meaning: 'Creative, low-cost workaround or hack to solve a problem.',
-        language: 'hindi',
-        context: 'office',
-        source: 'everywhere',
-        examples: [
-          'Presentation crash ho gaya, par hamne last-minute jugaad se sab save kar liya.',
-          'Indian startups are famous for their jugaad mindset.'
-        ],
-        tags: ['Innovation', 'Indian culture', 'Work'],
-        officeSafe: true,
-        familySafe: true,
-        regions: 'Pan-India, corporate & everyday life'
-      },
-      {
-        word: 'OP',
-        pronunciation: 'oh-pee',
-        meaning: 'Overpowered; used to praise something that is exceptionally good or impressive.',
-        language: 'hinglish',
-        context: 'casual',
-        source: 'gaming',
-        examples: [
-          'Tera gameplay OP tha, sab hil gaye.',
-          'Ye edit OP lag raha hai, full cinematic vibes.'
-        ],
-        tags: ['Gaming', 'Compliment', 'Online'],
-        officeSafe: true,
-        familySafe: true,
-        regions: 'Gamers, streamers, meme pages'
-      },
-      {
-        word: 'adulting',
-        pronunciation: 'uh-dult-ing',
-        meaning: 'Doing responsible grown-up tasks like paying bills, cooking, or managing work.',
-        language: 'hinglish',
-        context: 'office',
-        source: 'reels',
-        examples: [
-          'Aaj maine khud se bill pay kiya, adulting level unlocked.',
-          '9-5 job + rent + taxes = non-stop adulting.'
-        ],
-        tags: ['Lifestyle', 'Work-life', 'Relatable'],
-        officeSafe: true,
-        familySafe: true,
-        regions: 'Urban millennials, young professionals'
-      },
-      {
-        word: 'vibe check',
-        pronunciation: 'vaib chek',
-        meaning: 'Checking someone’s energy, mood, or intentions in a situation.',
-        language: 'hinglish',
-        context: 'casual',
-        source: 'reels',
-        examples: [
-          'Pehle vibe check kar le, phir decide karein party ka.',
-          'Uska vibe check fail ho gaya, thoda sus lag raha tha.'
-        ],
-        tags: ['Social', 'Friends', 'Internet'],
-        officeSafe: true,
-        familySafe: depends = false
+    // Check if user is admin
+    firebaseAuth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // Check if user is admin
+        const userDoc = await firebaseDB.collection('users').doc(user.uid).get();
+        if (userDoc.exists && userDoc.data().isAdmin === true) {
+          document.getElementById('adminLogin').style.display = 'none';
+          document.getElementById('adminDashboard').style.display = 'block';
+          loadAdminData();
+        }
       }
-    ];
-
-    // Results rendering
-    const resultsList = document.getElementById('resultsList');
-    const resultsMeta = document.getElementById('resultsMeta');
-    const explainTitle = document.getElementById('explainTitle');
-    const explainSubtitle = document.getElementById('explainSubtitle');
-    const explainBody = document.getElementById('explainBody');
-    const explainBadges = document.getElementById('explainBadges');
-
-    function renderResults(data, isSearch = false) {
-      resultsList.innerHTML = '';
-      if (!data.length) {
-        resultsList.innerHTML = '<p style="font-size:0.9rem; color:var(--text-light);">No slang found. Try a different spelling or a more general word.</p>';
-        resultsMeta.textContent = 'No matches found';
+    });
+    
+    async function adminLogin() {
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      
+      try {
+        await firebaseAuth.signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        alert('Admin login failed: ' + error.message);
+      }
+    }
+    
+    async function loadAdminData() {
+      // Load stats
+      const slangCount = await firebaseDB.collection('slang_entries').count().get();
+      const usersCount = await firebaseDB.collection('users').count().get();
+      const pendingCount = await firebaseDB.collection('slang_entries').where('verified', '==', false).count().get();
+      
+      document.getElementById('totalSlang').textContent = slangCount.data().count;
+      document.getElementById('totalUsers').textContent = usersCount.data().count;
+      document.getElementById('pendingApprovals').textContent = pendingCount.data().count;
+      
+      // Load pending entries
+      loadPendingEntries();
+      loadAllEntries();
+    }
+    
+    async function loadPendingEntries() {
+      const snapshot = await firebaseDB.collection('slang_entries')
+        .where('verified', '==', false)
+        .limit(20)
+        .get();
+      
+      const pendingList = document.getElementById('pendingList');
+      pendingList.innerHTML = '';
+      
+      if (snapshot.empty) {
+        pendingList.innerHTML = '<p>No pending approvals</p>';
         return;
       }
-
-      resultsMeta.textContent = isSearch 
-        ? `Showing ${data.length} result(s)` 
-        : 'Showing popular entries';
-
-      data.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'slang-card';
-        card.onclick = () => selectSlang(item);
-
-        const left = document.createElement('div');
-        left.className = 'slang-main';
-        left.innerHTML = `
-          <div class="slang-header-row">
+      
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement('div');
+        div.className = 'admin-card';
+        div.style.marginBottom = '1rem';
+        div.innerHTML = `
+          <h3>${data.word}</h3>
+          <p>${data.meaning?.hinglish || 'No meaning'}</p>
+          <p><small>Submitted by: ${data.addedBy || 'unknown'}</small></p>
+          <div>
+            <button onclick="approveSlang('${doc.id}')" class="btn-admin" style="background: #10b981;">Approve</button>
+            <button onclick="rejectSlang('${doc.id}')" class="btn-admin" style="background: #ef4444; margin-left: 0.5rem;">Reject</button>
+          </div>
+        `;
+        pendingList.appendChild(div);
+      });
+    }
+    
+    async function loadAllEntries() {
+      const snapshot = await firebaseDB.collection('slang_entries')
+        .orderBy('createdAt', 'desc')
+        .limit(50)
+        .get();
+      
+      const allEntries = document.getElementById('allEntries');
+      allEntries.innerHTML = '';
+      
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement('div');
+        div.className = 'admin-card';
+        div.style.marginBottom = '0.5rem';
+        div.innerHTML = `
+          <div style="display: flex; justify-content: space-between;">
             <div>
-              <div class="slang-word">${item.word}</div>
-              <div class="slang-pron">/${item.pronunciation}/ • ${item.language.toUpperCase()}</div>
+              <strong>${data.word}</strong> 
+              <span style="color: ${data.verified ? '#10b981' : '#f59e0b'};">${data.verified ? '✓' : '⏳'}</span>
+              <p style="color: #6b7280; margin: 0.3rem 0;">${data.meaning?.hinglish?.substring(0, 100)}...</p>
+            </div>
+            <div>
+              <button onclick="deleteSlang('${doc.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer;">🗑️</button>
             </div>
           </div>
-          <div class="slang-meaning">${item.meaning}</div>
-          <div class="slang-tags">
-            <span class="slang-tag">${item.context}</span>
-            <span class="slang-tag">${item.source}</span>
-            <span class="slang-tag office">${item.officeSafe ? 'Office-safe' : 'Not office-safe'}</span>
-            <span class="slang-tag ${item.familySafe ? 'office' : 'warn'}">${item.familySafe ? 'Family-safe' : 'Not family-safe'}</span>
-          </div>
         `;
-
-        const right = document.createElement('div');
-        right.className = 'slang-ai-extra';
-        right.innerHTML = `
-          <div style="font-size:0.8rem; font-weight:600;">Examples</div>
-          ${item.examples.map(ex => `<div class="slang-example">• ${ex}</div>`).join('')}
-          <div class="slang-meta-row" style="margin-top:0.5rem;">
-            <span><i class="fas fa-location-dot"></i>${item.regions || 'Pan-India'}</span>
-            <span><i class="fas fa-hashtag"></i>${item.tags.slice(0,2).join(', ')}</span>
-          </div>
-        `;
-
-        card.appendChild(left);
-        card.appendChild(right);
-        resultsList.appendChild(card);
-
-        // highlight first entry in AI panel on initial render
-        if (!isSearch && index === 0) {
-          selectSlang(item, false);
-        }
+        allEntries.appendChild(div);
       });
     }
-
-    function runSearch() {
-      const query = document.getElementById('searchInput').value.trim().toLowerCase();
-      const language = document.getElementById('languageFilter').value;
-      const context = document.getElementById('contextFilter').value;
-      const source = document.getElementById('sourceFilter').value;
-
-      let filtered = slangData.filter(item => {
-        const matchQuery = !query || item.word.toLowerCase().includes(query) || item.meaning.toLowerCase().includes(query);
-        const matchLang = language === 'all' || item.language === language;
-        const matchContext = context === 'all' || item.context === context;
-        const matchSource = source === 'all' || item.source === source || (source === 'reels' && item.source === 'everywhere');
-        return matchQuery && matchLang && matchContext && matchSource;
-      });
-
-      renderResults(filtered, true);
-
-      // Show search notification
-      if (query) {
-        showSearchNotification('Searching for "' + query + '" with filters applied...');
-      }
-    }
-
-    function setExample(text) {
-      const input = document.getElementById('searchInput');
-      input.value = text;
-      input.focus();
-      showSearchNotification('Example added: "' + text + '". Press Search or hit Enter.');
-    }
-
-    function selectSlang(item, notify = true) {
-      explainTitle.textContent = `AI Deep Dive: "${item.word}"`;
-      explainSubtitle.textContent = `Context, safety, and regional usage for "${item.word}".`;
-
-      explainBody.innerHTML = `
-        <p><strong>Core idea:</strong> ${item.meaning}</p>
-        <p><strong>Where you’ll hear it:</strong> ${item.regions || 'Used widely across India in casual conversation.'}</p>
-        <p><strong>Best used with:</strong> friends, peers, online chats${
-          item.officeSafe ? ', and sometimes in chill office conversations.' : '.'
-        }</p>
-        <p><strong>Where to avoid:</strong> ${
-          item.officeSafe ? 'Formal meetings, interviews, and conversations with elders.' 
-          : 'Office emails, formal calls, or with people who may not get modern slang.'
-        }</p>
-      `;
-
-      explainBadges.innerHTML = `
-        <span class="explain-badge">${item.language.toUpperCase()} slang</span>
-        <span class="explain-badge">${item.context.charAt(0).toUpperCase() + item.context.slice(1)} context</span>
-        <span class="explain-badge">${item.source === 'everywhere' ? 'Pan-India usage' : item.source + ' origin'}</span>
-        <span class="explain-badge">${item.officeSafe ? 'Office-safe' : 'Casual only'}</span>
-      `;
-
-      document.getElementById('explainCard').dataset.selected = item.word;
-
-      if (notify) {
-        showSearchNotification('Updated AI deep dive for "' + item.word + '".');
-      }
-    }
-
-    function explainWithAI() {
-      const selected = document.getElementById('explainCard').dataset.selected;
-      if (!selected) {
-        showSearchNotification('Select a slang first to get a detailed AI explanation.');
+    
+    async function addSlang() {
+      const word = document.getElementById('newWord').value;
+      const lang = document.getElementById('newLang').value;
+      const meaningHinglish = document.getElementById('newMeaningHinglish').value;
+      const meaningEnglish = document.getElementById('newMeaningEnglish').value;
+      const example = document.getElementById('newExample').value;
+      
+      if (!word || !meaningHinglish) {
+        alert('Please enter at least the word and Hinglish meaning');
         return;
       }
-      showSearchNotification('Generating deeper explanation for "' + selected + '" using SlangAdda AI...');
-    }
-
-    function copyExplain() {
-      const body = explainBody.innerText || '';
-      if (!body.trim()) return;
-      navigator.clipboard?.writeText(body).then(() => {
-        showSearchNotification('AI explanation copied to clipboard ✅');
-      }).catch(() => {
-        showSearchNotification('Copied text. (If clipboard blocked, please copy manually.)');
-      });
-    }
-
-    function showSearchNotification(text) {
-      const notification = document.createElement('div');
-      notification.style.position = 'fixed';
-      notification.style.bottom = '24px';
-      notification.style.right = '24px';
-      notification.style.background = 'linear-gradient(135deg, #06b6d4, #6366f1, #ec4899)';
-      notification.style.color = 'white';
-      notification.style.padding = '0.9rem 1.3rem';
-      notification.style.borderRadius = '16px';
-      notification.style.boxShadow = '0 20px 40px rgba(15,23,42,0.45)';
-      notification.style.zIndex = '9999';
-      notification.style.maxWidth = '360px';
-      notification.style.fontSize = '0.9rem';
-      notification.style.animation = 'slideIn 0.3s ease forwards';
-      notification.innerHTML = `
-        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.3rem;">
-          <i class="fas fa-robot"></i>
-          <strong>SlangAdda AI</strong>
-        </div>
-        <div>${text}</div>
-      `;
-      document.body.appendChild(notification);
-      setTimeout(() => notification.remove(), 2800);
-    }
-
-    // Chat
-    function toggleChat() {
-      const chatWindow = document.getElementById('chatWindow');
-      chatWindow.classList.toggle('active');
-    }
-
-    function handleChatInput(event) {
-      if (event.key === 'Enter') {
-        const input = document.getElementById('chatInput');
-        const message = input.value.trim();
-        if (!message) return;
-        addMessage(message, 'user');
-        input.value = '';
-        setTimeout(() => generateAIResponse(message), 800);
+      
+      const user = firebaseAuth.currentUser;
+      
+      try {
+        await firebaseDB.collection('slang_entries').add({
+          word: word,
+          lang: lang,
+          meaning: {
+            hinglish: meaningHinglish,
+            en: meaningEnglish
+          },
+          example: {
+            hinglish: example
+          },
+          category: 'general',
+          officeSafe: 'yes',
+          explicit: false,
+          verified: true, // Auto-verify since admin is adding
+          addedBy: user.uid,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        alert('Slang added successfully!');
+        
+        // Clear form
+        document.getElementById('newWord').value = '';
+        document.getElementById('newMeaningHinglish').value = '';
+        document.getElementById('newMeaningEnglish').value = '';
+        document.getElementById('newExample').value = '';
+        
+        // Reload data
+        loadAdminData();
+        
+      } catch (error) {
+        alert('Error adding slang: ' + error.message);
       }
     }
-
-    function addMessage(text, sender) {
-      const messages = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
-      messageDiv.className = 'message ' + sender;
-      messageDiv.textContent = text;
-      messages.appendChild(messageDiv);
-      messages.scrollTop = messages.scrollHeight;
+    
+    async function approveSlang(id) {
+      try {
+        await firebaseDB.collection('slang_entries').doc(id).update({
+          verified: true,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert('Slang approved!');
+        loadAdminData();
+      } catch (error) {
+        alert('Error approving: ' + error.message);
+      }
     }
-
-    function generateAIResponse(query) {
-      const responses = [
-        `Good one! "${query.split(' ')[0]}" often depends on tone & context. Check the left panel to see usage and examples.`,
-        `SlangAdda tip: not every slang is office-safe 😄. Use filters above to see where "${query.split(' ')[0]}" fits.`,
-        `I can break this into meaning + usage + safety. Try typing the slang directly into the search bar too.`,
-        `Nice question! Many Indians mix English + regional words, so "${query}" may have multiple meanings based on region.`,
-        `Want a deeper explanation? Click on any slang card and hit "Explain with AI".`
-      ];
-      const reply = responses[Math.floor(Math.random() * responses.length)];
-      addMessage(reply, 'ai');
+    
+    async function rejectSlang(id) {
+      if (confirm('Are you sure you want to reject this slang entry?')) {
+        try {
+          await firebaseDB.collection('slang_entries').doc(id).delete();
+          alert('Slang rejected and deleted');
+          loadAdminData();
+        } catch (error) {
+          alert('Error rejecting: ' + error.message);
+        }
+      }
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // initial render
-      renderResults(slangData, false);
-
-      // Search enter key
-      document.getElementById('searchInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') runSearch();
-      });
-
-      document.getElementById('chatToggle').addEventListener('click', toggleChat);
-    });
+    
+    async function deleteSlang(id) {
+      if (confirm('Delete this slang entry permanently?')) {
+        try {
+          await firebaseDB.collection('slang_entries').doc(id).delete();
+          loadAdminData();
+        } catch (error) {
+          alert('Error deleting: ' + error.message);
+        }
+      }
+    }
   </script>
 </body>
 </html>

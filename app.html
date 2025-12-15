@@ -3,382 +3,1755 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - SlangAdda AI</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Dictionary | SlangAdda AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  
   <style>
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background: #f3f4f6; 
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+    :root {
+      --primary: #06b6d4;
+      --primary-dark: #0f766e;
+      --accent: #f97316;
+      --bg-grad: radial-gradient(circle at top left, #e0f2fe 0%, #f9fafb 45%, #fff7ed 100%);
+      --glass: rgba(255,255,255,0.84);
+      --card-bg: #ffffff;
+      --text: #020617;
+      --muted: #475569;
+      --radius: 16px;
+      --shadow: 0 18px 40px rgba(15,23,42,0.12);
+      --gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #ec4899 100%);
     }
     
-    .admin-header {
-      background: linear-gradient(135deg, #06b6d4, #6366f1);
-      color: white;
-      padding: 1.5rem;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-grad);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      background: transparent;
+      padding: 1rem 1.5rem;
+      transition: all 0.25s ease;
+    }
+    
+    header.scrolled {
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.08);
+    }
+    
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+    
+    .logo-icon {
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.18);
+    }
+    
+    .logo-text {
+      font-weight: 800;
+      font-size: 1.25rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .nav a {
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--muted);
+      padding: 0.4rem 0.6rem;
+      border-radius: 10px;
+      transition: all 0.18s;
+    }
+    
+    .nav a:hover {
+      color: var(--primary);
+      background: rgba(6, 182, 212, 0.06);
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 1.2rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: var(--gradient);
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(6, 182, 212, 0.18);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(6, 182, 212, 0.25);
+    }
+    
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      color: var(--muted);
+    }
+    
+    .btn-ghost:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+    
+    /* Main Container */
+    .dictionary-container {
+      max-width: 1200px;
+      margin: 80px auto 2rem;
+      padding: 0 1.5rem;
+    }
+    
+    /* Search Section */
+    .search-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
       margin-bottom: 2rem;
     }
     
-    .admin-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    
-    .form-group label {
-      display: block;
+    .search-header h1 {
+      font-size: 2rem;
       margin-bottom: 0.5rem;
-      font-weight: 600;
     }
     
-    .form-group input, 
-    .form-group select, 
-    .form-group textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 1rem;
+    .search-header p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
     }
     
-    .form-group textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    .btn-admin {
-      background: #06b6d4;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    
-    .btn-admin:hover {
-      background: #0e7490;
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    .search-bar {
+      display: flex;
       gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+    }
+    
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
       margin-top: 1rem;
     }
     
-    .stat-box {
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 180px;
+    }
+    
+    .filter-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .filter-select {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    .filter-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .filter-checkbox input {
+      width: 18px;
+      height: 18px;
+    }
+    
+    /* Results Grid */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    /* Slang Card */
+    .slang-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(2, 6, 23, 0.03);
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .slang-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(2, 6, 23, 0.15);
+    }
+    
+    .slang-card.open {
+      transform: translateY(-5px);
+    }
+    
+    .slang-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    
+    .slang-word {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    
+    .slang-lang {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--primary-dark);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .slang-category {
+      display: inline-block;
+      background: rgba(249, 115, 22, 0.1);
+      color: #ea580c;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    
+    .slang-meaning {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 1rem 0;
+    }
+    
+    .slang-example {
       background: #f8fafc;
       padding: 1rem;
       border-radius: 8px;
-      text-align: center;
+      font-style: italic;
+      margin: 1rem 0;
+      border-left: 3px solid var(--primary);
     }
     
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 700;
+    .slang-details {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .detail-label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    
+    .detail-value {
+      color: var(--text);
+    }
+    
+    .office-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    
+    .office-safe {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .office-caution {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .office-no {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .action-btn:hover {
+      background: #e5e7eb;
+      color: var(--text);
+    }
+    
+    .action-btn.favorite {
+      color: #f59e0b;
+    }
+    
+    .action-btn.favorite:hover {
+      background: #fef3c7;
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #e5e7eb;
+      margin-top: 2rem;
+    }
+    
+    .tab-btn {
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    
+    .tab-btn:hover:not(.active) {
+      color: var(--text);
+    }
+    
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Favorites Section */
+    .favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+    }
+    
+    /* NSFW Warning */
+    .nsfw-warning {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    /* Footer */
+    footer {
+      background: #020617;
+      color: #cbd5e1;
+      padding: 2.4rem 1rem;
+      margin-top: 4rem;
+    }
+    
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+    
+    .footer h4 {
+      color: #fff;
+      margin-bottom: 0.6rem;
+    }
+    
+    .footer a {
+      display: block;
+      color: #cbd5e1;
+      text-decoration: none;
+      margin-bottom: 0.45rem;
+      transition: color 0.2s;
+    }
+    
+    .footer a:hover {
       color: #06b6d4;
     }
     
-    .stat-label {
-      color: #6b7280;
-      font-size: 0.9rem;
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.45);
+      z-index: 1200;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 16px;
+      width: 400px;
+      max-width: 90vw;
+      box-shadow: 0 20px 50px rgba(2, 6, 23, 0.25);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .nav {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .search-bar {
+        flex-direction: column;
+      }
+      
+      .filters {
+        flex-direction: column;
+      }
+      
+      .filter-group {
+        min-width: 100%;
+      }
+      
+      .results-grid,
+      .favorites-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-inner {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+      
+      .tabs {
+        flex-direction: column;
+      }
+      
+      .tab-btn {
+        text-align: left;
+        border-bottom: none;
+        border-left: 3px solid transparent;
+      }
+      
+      .tab-btn.active {
+        border-left-color: var(--primary);
+      }
+    }
+    
+    /* Loading Animation */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e5e7eb;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="admin-header">
-    <h1>SlangAdda Admin Panel</h1>
-    <p>Manage slang entries, users, and content</p>
-  </div>
-  
-  <!-- Admin Login (will be hidden after login) -->
-  <div id="adminLogin" class="admin-card">
-    <h2>Admin Login</h2>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="adminEmail" placeholder="admin@email.com">
+  <!-- Header -->
+  <header id="mainHeader">
+    <div class="header-inner">
+      <a class="logo" href="index.html">
+        <div class="logo-icon"><i class="fas fa-comments"></i></div>
+        <div class="logo-text">SlangAdda AI</div>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="app.html" style="color:var(--primary);">Dictionary</a>
+        <a href="quiz.html">Quiz Zone</a>
+        <a href="audio.html">Audio Library</a>
+        <a href="contact.html">Contact</a>
+        <button class="btn btn-primary" id="loginBtn"><i class="fas fa-user"></i> Login</button>
+      </nav>
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="adminPassword" placeholder="••••••••">
-    </div>
-    <button class="btn-admin" onclick="adminLogin()">Login as Admin</button>
-  </div>
-  
-  <!-- Admin Dashboard (hidden initially) -->
-  <div id="adminDashboard" style="display: none;">
-    <!-- Stats -->
-    <div class="admin-card">
-      <h2>Dashboard Stats</h2>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-number" id="totalSlang">0</div>
-          <div class="stat-label">Total Slang Words</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dictionary-container">
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-header">
+        <h1>Slang Dictionary</h1>
+        <p>Search and explore modern Indian slang terms with meanings, examples, and audio</p>
+      </div>
+      
+      <div class="search-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Type a word or phrase (e.g., rizz, jugaad, adulting)">
+        <button class="btn btn-primary" id="searchBtn">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </div>
+      
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-group">
+          <label class="filter-label">Language</label>
+          <select id="langFilter" class="filter-select">
+            <option value="all">All Languages</option>
+            <option value="en">English</option>
+            <option value="hi">Hindi/Hinglish</option>
+            <option value="ta">Tamil</option>
+            <option value="mr">Marathi</option>
+            <option value="bhojpuri">Bhojpuri</option>
+          </select>
         </div>
-        <div class="stat-box">
-          <div class="stat-number" id="totalUsers">0</div>
-          <div class="stat-label">Total Users</div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Category</label>
+          <select id="categoryFilter" class="filter-select">
+            <option value="all">All Categories</option>
+            <option value="genz">Gen Z</option>
+            <option value="desi">Desi</option>
+            <option value="internet">Internet</option>
+            <option value="life">Life</option>
+            <option value="work">Work/Office</option>
+          </select>
         </div>
-        <div class="stat-box">
-          <div class="stat-number" id="pendingApprovals">0</div>
-          <div class="stat-label">Pending Approvals</div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Sort By</label>
+          <select id="sortFilter" class="filter-select">
+            <option value="popular">Most Popular</option>
+            <option value="newest">Newest First</option>
+            <option value="alphabetical">A to Z</option>
+          </select>
+        </div>
+        
+        <div class="filter-checkbox">
+          <input type="checkbox" id="officeSafeFilter">
+          <label for="officeSafeFilter">Show only office-safe terms</label>
         </div>
       </div>
     </div>
-    
-    <!-- Add New Slang -->
-    <div class="admin-card">
-      <h2>Add New Slang</h2>
-      <div class="form-group">
-        <label>Word/Phrase</label>
-        <input type="text" id="newWord" placeholder="e.g., rizz, jugaad">
-      </div>
-      <div class="form-group">
-        <label>Language</label>
-        <select id="newLang">
-          <option value="en">English</option>
-          <option value="hi">Hindi/Hinglish</option>
-          <option value="ta">Tamil</option>
-          <option value="mr">Marathi</option>
-          <option value="bhojpuri">Bhojpuri</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Meaning (Hinglish)</label>
-        <textarea id="newMeaningHinglish" placeholder="Explain in Hinglish..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Meaning (English)</label>
-        <textarea id="newMeaningEnglish" placeholder="Explain in English..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Example Sentence</label>
-        <input type="text" id="newExample" placeholder="e.g., His rizz is insane!">
-      </div>
-      <button class="btn-admin" onclick="addSlang()">Add Slang to Database</button>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="dictionary">Dictionary</button>
+      <button class="tab-btn" data-tab="favorites">Favorites</button>
+      <button class="tab-btn" data-tab="recent">Recent</button>
+      <button class="tab-btn" data-tab="nsfw">18+ Slang</button>
     </div>
-    
-    <!-- Pending Approvals -->
-    <div class="admin-card">
-      <h2>Pending Approvals</h2>
-      <div id="pendingList">
-        <p>Loading pending submissions...</p>
+
+    <!-- Dictionary Tab -->
+    <div id="tab-dictionary" class="tab-content active">
+      <div id="resultsCount" style="margin: 1rem 0; color: var(--muted);">
+        Loading slang terms...
+      </div>
+      
+      <div id="resultsGrid" class="results-grid">
+        <!-- Slang cards will be inserted here -->
       </div>
     </div>
-    
-    <!-- All Slang Entries -->
-    <div class="admin-card">
-      <h2>All Slang Entries</h2>
-      <input type="text" id="searchAll" placeholder="Search all entries..." style="width: 100%; padding: 0.75rem; margin-bottom: 1rem;">
-      <div id="allEntries">
-        <p>Loading slang entries...</p>
+
+    <!-- Favorites Tab -->
+    <div id="tab-favorites" class="tab-content">
+      <h2 style="margin: 1rem 0;">Your Favorite Slang Terms</h2>
+      <div id="favoritesGrid" class="favorites-grid">
+        <!-- Favorites will be inserted here -->
+      </div>
+    </div>
+
+    <!-- Recent Tab -->
+    <div id="tab-recent" class="tab-content">
+      <h2 style="margin: 1rem 0;">Recently Viewed</h2>
+      <div id="recentGrid" class="results-grid">
+        <!-- Recent items will be inserted here -->
+      </div>
+    </div>
+
+    <!-- NSFW Tab -->
+    <div id="tab-nsfw" class="tab-content">
+      <div class="nsfw-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+          <strong>Warning:</strong> This section contains explicit slang terms. 
+          These are for informational purposes only. Use discretion.
+        </div>
+      </div>
+      
+      <div id="nsfwGrid" class="results-grid">
+        <!-- NSFW terms will be inserted here -->
+      </div>
+    </div>
+
+    <!-- Add Slang Button -->
+    <button id="addSlangBtn" class="btn btn-primary" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 100;">
+      <i class="fas fa-plus"></i> Add Slang
+    </button>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <h4>SlangAdda AI</h4>
+        <p style="color:#94a3b8">AI-powered guide to modern Indian slang — Hinglish, regional pronunciation, quizzes & more.</p>
+        <div style="margin-top:.6rem">
+          <a href="https://twitter.com" target="_blank" rel="noopener"><i class="fab fa-twitter"></i> Twitter</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> Instagram</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i> LinkedIn</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Quick Links</h4>
+        <a href="app.html"><i class="fas fa-book"></i> Dictionary</a>
+        <a href="requests.html"><i class="fas fa-plus-circle"></i> Slang Requests</a>
+        <a href="quiz.html"><i class="fas fa-brain"></i> Quiz Zone</a>
+        <a href="audio.html"><i class="fas fa-volume-up"></i> Audio Library</a>
+      </div>
+
+      <div>
+        <h4>Resources</h4>
+        <a href="blog.html"><i class="fas fa-blog"></i> Blog</a>
+        <a href="slang-guide.html"><i class="fas fa-graduation-cap"></i> Slang Guide</a>
+        <a href="genz.html"><i class="fas fa-users"></i> Gen Z Dictionary</a>
+        <a href="teacher.html"><i class="fas fa-chalkboard-teacher"></i> Teacher Resources</a>
+        <a href="api.html"><i class="fas fa-code"></i> API Access</a>
+      </div>
+
+      <div>
+        <h4>Legal</h4>
+        <a href="privacy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="terms.html"><i class="fas fa-file-contract"></i> Terms of Service</a>
+        <a href="cookie.html"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
+        <a href="guidelines.html"><i class="fas fa-hands-helping"></i> Community Guidelines</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> Contact Us</a>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:1.25rem;color:#94a3b8">
+      &copy; <span id="year"></span> SlangAdda AI. Built with ❤️ for India's digital culture.
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-card">
+      <h3 style="margin-top:0">Login / Register</h3>
+      <div class="form-row" style="margin-bottom:1rem;">
+        <label style="font-size:0.875rem;color:var(--muted);margin-bottom:0.25rem;">Email</label>
+        <input type="email" id="loginEmail" placeholder="you@domain.com" style="padding:0.6rem;border:1px solid #e5e7eb;border-radius:8px;">
+      </div>
+      <div class="form-row" style="margin-bottom:1.5rem;">
+        <label style="font-size:0.875rem;color:var(--muted);margin-bottom:0.25rem;">Password</label>
+        <input type="password" id="loginPassword" placeholder="password" style="padding:0.6rem;border:1px solid #e5e7eb;border-radius:8px;">
+      </div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end">
+        <button class="btn btn-ghost" id="closeModal">Cancel</button>
+        <button class="btn btn-primary" id="doLogin">Login</button>
+        <button class="btn btn-ghost" id="doRegister">Register</button>
       </div>
     </div>
   </div>
-  
-  <!-- Firebase and scripts -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script src="firebase-config.js"></script>
-  
+
+  <!-- Add Slang Modal -->
+  <div class="modal" id="addSlangModal">
+    <div class="modal-card">
+      <h3 style="margin-top:0">Submit New Slang</h3>
+      <div style="display:grid;gap:1rem;">
+        <div>
+          <label style="display:block;font-size:0.875rem;margin-bottom:0.25rem;">Word/Phrase</label>
+          <input type="text" id="newWord" placeholder="e.g., rizz, jugaad" style="width:100%;padding:0.6rem;border:1px solid #e5e7eb;border-radius:8px;">
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div>
+            <label style="display:block;font-size:0.875rem;margin-bottom:0.25rem;">Language</label>
+            <select id="newLang" style="width:100%;padding:0.6rem;border:1px solid #e5e7eb;border-radius:8px;">
+              <option value="en">English</option>
+              <option value="hi">Hindi/Hinglish</option>
+            </select>
+          </div>
+          
+          <div>
+            <label style="display:block;font-size:0.875rem;margin-bottom:0.25rem;">Category</label>
+            <select id="newCategory" style="width:100%;padding:0.6rem;border:1px solid #e5e7eb;border-radius:8px;">
+              <option value="genz">Gen Z</option>
+              <option value="desi">Desi</option>
+              <option value="internet">Internet</option>
+              <option value="life">Life</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label style="display:block;font-size:0.875rem;margin-bottom:0.25rem;">Meaning (English)</label>
+          <textarea id="newMeaning" placeholder="Explain the meaning" style="width:100%;padding:0.6rem;border:1px solid #e5e7eb;border-radius:8px;min-height:80px;"></textarea>
+        </div>
+        
+        <div>
+          <label style="display:block;font-size:0.875rem;margin-bottom:0.25rem;">Example Sentence</label>
+          <input type="text" id="newExample" placeholder="e.g., His rizz is insane!" style="width:100%;padding:0.6rem;border:1px solid #e5e7eb;border-radius:8px;">
+        </div>
+      </div>
+      
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-ghost" id="closeAddModal">Cancel</button>
+        <button class="btn btn-primary" id="submitSlang">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
   <script>
-    // Check if user is admin
-    firebaseAuth.onAuthStateChanged(async (user) => {
-      if (user) {
-        // Check if user is admin
-        const userDoc = await firebaseDB.collection('users').doc(user.uid).get();
-        if (userDoc.exists && userDoc.data().isAdmin === true) {
-          document.getElementById('adminLogin').style.display = 'none';
-          document.getElementById('adminDashboard').style.display = 'block';
-          loadAdminData();
-        }
+    // ======================
+    // FIREBASE CONFIGURATION
+    // ======================
+    const firebaseConfig = {
+      apiKey: "AIzaSyAUit5I8Qml9wWIsKATJkwOhOdlCw06irg",
+      authDomain: "slangaddaai.firebaseapp.com",
+      projectId: "slangaddaai",
+      storageBucket: "slangaddaai.firebasestorage.app",
+      messagingSenderId: "633159892736",
+      appId: "1:633159892736:web:b33c2d89f3cba1f609fde5"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    console.log("🔥 Dictionary Firebase initialized!");
+    
+    // ======================
+    // GLOBAL VARIABLES
+    // ======================
+    let currentUser = null;
+    let favorites = [];
+    let recentSearches = [];
+    let allSlang = [];
+    let filteredSlang = [];
+    
+    // ======================
+    // INITIALIZATION
+    // ======================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set footer year
+      document.getElementById('year').textContent = new Date().getFullYear();
+      
+      // Initialize auth
+      initAuth();
+      
+      // Load slang data
+      loadSlangData();
+      
+      // Setup event listeners
+      setupEventListeners();
+      
+      // Setup header scroll
+      setupHeaderScroll();
+      
+      // Load user data if logged in
+      if (currentUser) {
+        loadUserData();
       }
     });
     
-    async function adminLogin() {
-      const email = document.getElementById('adminEmail').value;
-      const password = document.getElementById('adminPassword').value;
+    // ======================
+    // AUTHENTICATION
+    // ======================
+    function initAuth() {
+      auth.onAuthStateChanged((user) => {
+        currentUser = user;
+        updateAuthUI();
+        
+        if (user) {
+          console.log("✅ User logged in:", user.email);
+          loadUserData();
+        } else {
+          console.log("👋 User logged out");
+          favorites = JSON.parse(localStorage.getItem('sa_favorites')) || [];
+          recentSearches = JSON.parse(localStorage.getItem('sa_recent')) || [];
+        }
+        
+        renderFavorites();
+        renderRecent();
+      });
+    }
+    
+    function updateAuthUI() {
+      const loginBtn = document.getElementById('loginBtn');
+      const addSlangBtn = document.getElementById('addSlangBtn');
       
+      if (currentUser) {
+        const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+        loginBtn.innerHTML = `<i class="fas fa-user"></i> ${displayName}`;
+        loginBtn.onclick = () => showUserMenu();
+        addSlangBtn.style.display = 'flex';
+      } else {
+        loginBtn.innerHTML = `<i class="fas fa-user"></i> Login`;
+        loginBtn.onclick = () => document.getElementById('loginModal').classList.add('active');
+        addSlangBtn.style.display = 'none';
+      }
+    }
+    
+    function showUserMenu() {
+      const menu = `
+        <div style="position:absolute;top:60px;right:20px;background:white;border-radius:12px;box-shadow:var(--shadow);padding:1rem;min-width:200px;z-index:1000;">
+          <div style="margin-bottom:1rem;">
+            <strong>${currentUser.displayName || currentUser.email.split('@')[0]}</strong>
+            <div style="font-size:0.8rem;color:var(--muted);">${currentUser.email}</div>
+          </div>
+          <button onclick="logout()" class="btn btn-ghost" style="width:100%;margin-bottom:0.5rem;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      `;
+      
+      // Remove existing menu
+      const existing = document.getElementById('userMenu');
+      if (existing) existing.remove();
+      
+      const menuDiv = document.createElement('div');
+      menuDiv.id = 'userMenu';
+      menuDiv.innerHTML = menu;
+      document.body.appendChild(menuDiv);
+      
+      // Close on outside click
+      setTimeout(() => {
+        document.addEventListener('click', function closeMenu(e) {
+          if (!menuDiv.contains(e.target) && e.target.id !== 'loginBtn') {
+            menuDiv.remove();
+            document.removeEventListener('click', closeMenu);
+          }
+        });
+      }, 100);
+    }
+    
+    async function logout() {
       try {
-        await firebaseAuth.signInWithEmailAndPassword(email, password);
+        await auth.signOut();
+        showNotification('Logged out successfully!');
       } catch (error) {
-        alert('Admin login failed: ' + error.message);
+        showNotification('Logout failed: ' + error.message);
       }
     }
     
-    async function loadAdminData() {
-      // Load stats
-      const slangCount = await firebaseDB.collection('slang_entries').count().get();
-      const usersCount = await firebaseDB.collection('users').count().get();
-      const pendingCount = await firebaseDB.collection('slang_entries').where('verified', '==', false).count().get();
-      
-      document.getElementById('totalSlang').textContent = slangCount.data().count;
-      document.getElementById('totalUsers').textContent = usersCount.data().count;
-      document.getElementById('pendingApprovals').textContent = pendingCount.data().count;
-      
-      // Load pending entries
-      loadPendingEntries();
-      loadAllEntries();
-    }
-    
-    async function loadPendingEntries() {
-      const snapshot = await firebaseDB.collection('slang_entries')
-        .where('verified', '==', false)
-        .limit(20)
-        .get();
-      
-      const pendingList = document.getElementById('pendingList');
-      pendingList.innerHTML = '';
-      
-      if (snapshot.empty) {
-        pendingList.innerHTML = '<p>No pending approvals</p>';
-        return;
-      }
-      
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement('div');
-        div.className = 'admin-card';
-        div.style.marginBottom = '1rem';
-        div.innerHTML = `
-          <h3>${data.word}</h3>
-          <p>${data.meaning?.hinglish || 'No meaning'}</p>
-          <p><small>Submitted by: ${data.addedBy || 'unknown'}</small></p>
-          <div>
-            <button onclick="approveSlang('${doc.id}')" class="btn-admin" style="background: #10b981;">Approve</button>
-            <button onclick="rejectSlang('${doc.id}')" class="btn-admin" style="background: #ef4444; margin-left: 0.5rem;">Reject</button>
-          </div>
-        `;
-        pendingList.appendChild(div);
-      });
-    }
-    
-    async function loadAllEntries() {
-      const snapshot = await firebaseDB.collection('slang_entries')
-        .orderBy('createdAt', 'desc')
-        .limit(50)
-        .get();
-      
-      const allEntries = document.getElementById('allEntries');
-      allEntries.innerHTML = '';
-      
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement('div');
-        div.className = 'admin-card';
-        div.style.marginBottom = '0.5rem';
-        div.innerHTML = `
-          <div style="display: flex; justify-content: space-between;">
-            <div>
-              <strong>${data.word}</strong> 
-              <span style="color: ${data.verified ? '#10b981' : '#f59e0b'};">${data.verified ? '✓' : '⏳'}</span>
-              <p style="color: #6b7280; margin: 0.3rem 0;">${data.meaning?.hinglish?.substring(0, 100)}...</p>
-            </div>
-            <div>
-              <button onclick="deleteSlang('${doc.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer;">🗑️</button>
-            </div>
-          </div>
-        `;
-        allEntries.appendChild(div);
-      });
-    }
-    
-    async function addSlang() {
-      const word = document.getElementById('newWord').value;
-      const lang = document.getElementById('newLang').value;
-      const meaningHinglish = document.getElementById('newMeaningHinglish').value;
-      const meaningEnglish = document.getElementById('newMeaningEnglish').value;
-      const example = document.getElementById('newExample').value;
-      
-      if (!word || !meaningHinglish) {
-        alert('Please enter at least the word and Hinglish meaning');
-        return;
-      }
-      
-      const user = firebaseAuth.currentUser;
+    // ======================
+    // LOAD DATA
+    // ======================
+    async function loadSlangData() {
+      showLoading();
       
       try {
-        await firebaseDB.collection('slang_entries').add({
-          word: word,
-          lang: lang,
-          meaning: {
-            hinglish: meaningHinglish,
-            en: meaningEnglish
-          },
-          example: {
-            hinglish: example
-          },
-          category: 'general',
+        // Try to load from Firestore first
+        const snapshot = await db.collection('slang_entries')
+          .where('verified', '==', true)
+          .limit(50)
+          .get();
+        
+        if (!snapshot.empty) {
+          allSlang = [];
+          snapshot.forEach(doc => {
+            allSlang.push({ id: doc.id, ...doc.data() });
+          });
+          console.log(`✅ Loaded ${allSlang.length} slang terms from Firestore`);
+        } else {
+          // Fallback to local data
+          allSlang = getLocalSlangData();
+          console.log(`📁 Loaded ${allSlang.length} local slang terms`);
+        }
+        
+        filteredSlang = [...allSlang];
+        renderSlangGrid();
+        updateResultsCount();
+        
+      } catch (error) {
+        console.error("Error loading slang:", error);
+        // Use local data as fallback
+        allSlang = getLocalSlangData();
+        filteredSlang = [...allSlang];
+        renderSlangGrid();
+        updateResultsCount();
+        showNotification('Using offline data. Some features may be limited.');
+      }
+    }
+    
+    function getLocalSlangData() {
+      return [
+        {
+          id: 'rizz',
+          word: 'Rizz',
+          lang: 'en',
+          category: 'genz',
+          meaning_en: 'Charisma or romantic charm that attracts others',
+          meaning_hinglish: 'Charisma, charm – kisi mein aisa swag ho ki dusre attract ho jaye',
+          example: 'His rizz is insane, everyone wants to be around him',
+          origin: 'Gen Z internet slang, short for "charisma"',
+          officeSafe: 'caution',
+          explicit: false,
+          tags: ['internet', 'genz', 'dating'],
+          popularity: 95
+        },
+        {
+          id: 'jugaad',
+          word: 'Jugaad',
+          lang: 'hi',
+          category: 'desi',
+          meaning_en: 'A clever low-cost workaround or hack using limited resources',
+          meaning_hinglish: 'Limited resources mein smart, creative hack se kaam chala lena',
+          example: 'Desi jugaad se pura setup banaya for only ₹500',
+          origin: 'Hindi word, celebrated in Indian startup and management culture',
           officeSafe: 'yes',
           explicit: false,
-          verified: true, // Auto-verify since admin is adding
-          addedBy: user.uid,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          tags: ['innovation', 'desi', 'hack'],
+          popularity: 88
+        },
+        {
+          id: 'adulting',
+          word: 'Adulting',
+          lang: 'en',
+          category: 'life',
+          meaning_en: 'Doing responsible grown-up tasks like paying bills, working, managing a home',
+          meaning_hinglish: 'Adulting ka matlab hai woh saare boring but important kaam jo bade log karte hain',
+          example: 'Today\'s adulting win: paid all bills and did laundry!',
+          origin: 'Millennial internet slang for describing everyday responsibilities',
+          officeSafe: 'yes',
+          explicit: false,
+          tags: ['life', 'responsibility', 'millennial'],
+          popularity: 82
+        },
+        {
+          id: 'fomo',
+          word: 'FOMO',
+          lang: 'en',
+          category: 'internet',
+          meaning_en: 'Fear Of Missing Out on something fun or important that others are doing',
+          meaning_hinglish: 'Jab lagta hai ki koi fun ya important cheez ho rahi hai jisme tum nahi ho',
+          example: 'I got FOMO seeing all the party pictures on Instagram',
+          origin: 'Internet acronym popularized by social media',
+          officeSafe: 'yes',
+          explicit: false,
+          tags: ['social', 'anxiety', 'internet'],
+          popularity: 78
+        },
+        {
+          id: 'ghosting',
+          word: 'Ghosting',
+          lang: 'en',
+          category: 'internet',
+          meaning_en: 'When someone suddenly stops responding without any explanation',
+          meaning_hinglish: 'Koi achanak reply karna band kar de – na message, na call, zero explanation',
+          example: 'He was interested, but after the interview he started ghosting',
+          origin: 'Dating app culture, later adopted in work conversations',
+          officeSafe: 'caution',
+          explicit: false,
+          tags: ['dating', 'work', 'communication'],
+          popularity: 75
+        },
+        {
+          id: 'vibecheck',
+          word: 'Vibe Check',
+          lang: 'en',
+          category: 'life',
+          meaning_en: 'A quick test of the mood or energy of a person or situation',
+          meaning_hinglish: 'Quick mood test – banda ya situation positive feel ho raha hai ya off lag raha hai',
+          example: 'Let\'s do a quick vibe check before the meeting starts',
+          origin: 'Social media & meme culture, now used in workplaces',
+          officeSafe: 'yes',
+          explicit: false,
+          tags: ['social', 'work', 'mood'],
+          popularity: 70
+        },
+        {
+          id: 'scene',
+          word: 'Scene Kya Hai',
+          lang: 'hi',
+          category: 'desi',
+          meaning_en: 'Casual way of asking "What\'s the plan/situation?"',
+          meaning_hinglish: 'Overall plan ya situation kya chal rahi hai, party ho, drama ho, ya trip',
+          example: 'Kal office ke baad kuch scene hai ya seedha ghar?',
+          origin: 'Bollywood, college culture and Indian meme pages',
+          officeSafe: 'caution',
+          explicit: false,
+          tags: ['desi', 'casual', 'planning'],
+          popularity: 68
+        },
+        {
+          id: 'op',
+          word: 'OP',
+          lang: 'en',
+          category: 'internet',
+          meaning_en: 'Short for "overpowered" – used to praise something as extremely good',
+          meaning_hinglish: 'Kuch ya koi itna accha ho ki next-level lage',
+          example: 'Your presentation was OP, clients loved it!',
+          origin: 'Gaming language, now common in Indian YouTube & meme slang',
+          officeSafe: 'yes',
+          explicit: false,
+          tags: ['gaming', 'praise', 'internet'],
+          popularity: 65
+        },
+        {
+          id: 'machaa',
+          word: 'Machaa',
+          lang: 'ta',
+          category: 'desi',
+          meaning_en: 'Tamil slang used like "bro" or "dude" for a close friend',
+          meaning_hinglish: 'Tamil slang for close friend – jaise \'bro\' ya \'dude\'',
+          example: 'Machaa, aaj shaam ko free hai kya?',
+          origin: 'Tamil college culture & movies',
+          officeSafe: 'caution',
+          explicit: false,
+          tags: ['tamil', 'friendship', 'casual'],
+          popularity: 60
+        },
+        {
+          id: 'doomscrolling',
+          word: 'Doomscrolling',
+          lang: 'en',
+          category: 'life',
+          meaning_en: 'Endlessly scrolling through negative news or content',
+          meaning_hinglish: 'Raat ko social media pe itna scroll karna ki sirf negative content dekhte jao',
+          example: 'Started doomscrolling at 11 PM, now it\'s 2 AM and I\'m depressed',
+          origin: 'Rose during pandemic times when news feeds felt constantly negative',
+          officeSafe: 'yes',
+          explicit: false,
+          tags: ['mental health', 'internet', 'habit'],
+          popularity: 58
+        }
+      ];
+    }
+    
+    async function loadUserData() {
+      if (!currentUser) return;
+      
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+          const data = userDoc.data();
+          favorites = data.favorites || [];
+          recentSearches = data.recentSearches || [];
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    }
+    
+    // ======================
+    // RENDER FUNCTIONS
+    // ======================
+    function renderSlangGrid() {
+      const grid = document.getElementById('resultsGrid');
+      if (!grid) return;
+      
+      if (filteredSlang.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:3rem;">
+            <i class="fas fa-search" style="font-size:3rem;color:#cbd5e1;margin-bottom:1rem;"></i>
+            <h3>No slang found</h3>
+            <p style="color:var(--muted);">Try changing your search or filters</p>
+          </div>
+        `;
+        return;
+      }
+      
+      grid.innerHTML = filteredSlang.map(slang => createSlangCard(slang)).join('');
+      
+      // Add click listeners to cards
+      document.querySelectorAll('.slang-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          if (!e.target.closest('.action-btn')) {
+            this.classList.toggle('open');
+          }
         });
+      });
+    }
+    
+    function createSlangCard(slang) {
+      const isFavorite = favorites.includes(slang.id);
+      const officeClass = `office-${slang.officeSafe}`;
+      const officeText = slang.officeSafe === 'yes' ? 'Office-safe ✅' : 
+                        slang.officeSafe === 'caution' ? 'Use with caution ⚠' : 'Not office-safe ❌';
+      
+      return `
+        <div class="slang-card" data-id="${slang.id}">
+          <div class="slang-header">
+            <div>
+              <div class="slang-word">${slang.word}</div>
+              <div class="slang-category">${getCategoryName(slang.category)}</div>
+            </div>
+            <div class="slang-lang">${getLangName(slang.lang)}</div>
+          </div>
+          
+          <div class="slang-meaning">
+            ${slang.meaning_en || slang.meaning_hinglish}
+          </div>
+          
+          <div class="slang-example">
+            "${slang.example}"
+          </div>
+          
+          <div class="slang-details">
+            <div class="detail-row">
+              <span class="detail-label">Origin:</span>
+              <span class="detail-value">${slang.origin}</span>
+            </div>
+            
+            <div class="office-badge ${officeClass}">
+              ${officeText}
+            </div>
+            
+            ${slang.tags ? `
+              <div style="margin-top:0.5rem;">
+                ${slang.tags.map(tag => `<span style="display:inline-block;padding:2px 8px;background:#f1f5f9;border-radius:999px;font-size:0.75rem;margin-right:4px;">${tag}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+          
+          <div class="card-actions">
+            <button class="action-btn favorite ${isFavorite ? 'favorite' : ''}" data-id="${slang.id}" onclick="toggleFavorite('${slang.id}')">
+              <i class="fas fa-star"></i> ${isFavorite ? 'Favorited' : 'Favorite'}
+            </button>
+            <button class="action-btn" onclick="playAudio('${slang.word}', '${slang.example}')">
+              <i class="fas fa-volume-up"></i> Listen
+            </button>
+            <button class="action-btn" onclick="shareSlang('${slang.word}')">
+              <i class="fas fa-share"></i> Share
+            </button>
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderFavorites() {
+      const grid = document.getElementById('favoritesGrid');
+      if (!grid) return;
+      
+      const favoriteSlang = allSlang.filter(slang => favorites.includes(slang.id));
+      
+      if (favoriteSlang.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="far fa-star"></i>
+            <h3>No favorites yet</h3>
+            <p>Click the star icon on any slang term to add it here</p>
+          </div>
+        `;
+        return;
+      }
+      
+      grid.innerHTML = favoriteSlang.map(slang => createSlangCard(slang)).join('');
+    }
+    
+    function renderRecent() {
+      const grid = document.getElementById('recentGrid');
+      if (!grid) return;
+      
+      const recentSlang = allSlang.filter(slang => recentSearches.includes(slang.id));
+      
+      if (recentSlang.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="far fa-clock"></i>
+            <h3>No recent views</h3>
+            <p>Slang terms you view will appear here</p>
+          </div>
+        `;
+        return;
+      }
+      
+      grid.innerHTML = recentSlang.map(slang => createSlangCard(slang)).join('');
+    }
+    
+    function renderNSFW() {
+      const grid = document.getElementById('nsfwGrid');
+      if (!grid) return;
+      
+      const nsfwSlang = allSlang.filter(slang => slang.explicit);
+      
+      if (nsfwSlang.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-ban"></i>
+            <h3>No explicit content</h3>
+            <p>All our slang terms are currently family-friendly</p>
+          </div>
+        `;
+        return;
+      }
+      
+      grid.innerHTML = nsfwSlang.map(slang => createSlangCard(slang)).join('');
+    }
+    
+    // ======================
+    // FILTER & SEARCH
+    // ======================
+    function filterSlang() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const langFilter = document.getElementById('langFilter').value;
+      const categoryFilter = document.getElementById('categoryFilter').value;
+      const sortFilter = document.getElementById('sortFilter').value;
+      const officeSafeOnly = document.getElementById('officeSafeFilter').checked;
+      
+      filteredSlang = allSlang.filter(slang => {
+        // Search term
+        if (searchTerm && 
+            !slang.word.toLowerCase().includes(searchTerm) && 
+            !slang.meaning_en?.toLowerCase().includes(searchTerm) &&
+            !slang.meaning_hinglish?.toLowerCase().includes(searchTerm)) {
+          return false;
+        }
         
-        alert('Slang added successfully!');
+        // Language filter
+        if (langFilter !== 'all' && slang.lang !== langFilter) {
+          return false;
+        }
+        
+        // Category filter
+        if (categoryFilter !== 'all' && slang.category !== categoryFilter) {
+          return false;
+        }
+        
+        // Office-safe filter
+        if (officeSafeOnly && slang.officeSafe !== 'yes') {
+          return false;
+        }
+        
+        return true;
+      });
+      
+      // Sort results
+      switch(sortFilter) {
+        case 'newest':
+          // Assuming newer items have higher IDs or timestamps
+          break;
+        case 'alphabetical':
+          filteredSlang.sort((a, b) => a.word.localeCompare(b.word));
+          break;
+        case 'popular':
+        default:
+          filteredSlang.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+          break;
+      }
+      
+      renderSlangGrid();
+      updateResultsCount();
+    }
+    
+    function updateResultsCount() {
+      const countElement = document.getElementById('resultsCount');
+      if (countElement) {
+        countElement.textContent = `Showing ${filteredSlang.length} of ${allSlang.length} slang terms`;
+      }
+    }
+    
+    // ======================
+    // USER ACTIONS
+    // ======================
+    function toggleFavorite(slangId) {
+      if (favorites.includes(slangId)) {
+        favorites = favorites.filter(id => id !== slangId);
+      } else {
+        favorites.push(slangId);
+      }
+      
+      // Update UI
+      const favoriteBtn = document.querySelector(`.action-btn[data-id="${slangId}"]`);
+      if (favoriteBtn) {
+        favoriteBtn.innerHTML = favorites.includes(slangId) ? 
+          '<i class="fas fa-star"></i> Favorited' : 
+          '<i class="fas fa-star"></i> Favorite';
+        favoriteBtn.classList.toggle('favorite', favorites.includes(slangId));
+      }
+      
+      // Save to Firebase or localStorage
+      saveFavorites();
+      
+      // Update favorites tab
+      renderFavorites();
+      
+      showNotification(favorites.includes(slangId) ? 'Added to favorites!' : 'Removed from favorites');
+    }
+    
+    async function saveFavorites() {
+      if (currentUser) {
+        try {
+          await db.collection('users').doc(currentUser.uid).update({
+            favorites: favorites
+          });
+        } catch (error) {
+          console.error("Error saving favorites:", error);
+        }
+      } else {
+        localStorage.setItem('sa_favorites', JSON.stringify(favorites));
+      }
+    }
+    
+    function addToRecent(slangId) {
+      if (!recentSearches.includes(slangId)) {
+        recentSearches.unshift(slangId);
+        if (recentSearches.length > 10) {
+          recentSearches.pop();
+        }
+        
+        // Save to Firebase or localStorage
+        saveRecentSearches();
+        
+        // Update recent tab
+        renderRecent();
+      }
+    }
+    
+    async function saveRecentSearches() {
+      if (currentUser) {
+        try {
+          await db.collection('users').doc(currentUser.uid).update({
+            recentSearches: recentSearches
+          });
+        } catch (error) {
+          console.error("Error saving recent searches:", error);
+        }
+      } else {
+        localStorage.setItem('sa_recent', JSON.stringify(recentSearches));
+      }
+    }
+    
+    function playAudio(word, example) {
+      if ('speechSynthesis' in window) {
+        const text = `${word}. ${example}`;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-IN';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+        showNotification('Playing audio...');
+      } else {
+        showNotification('Audio not supported in this browser');
+      }
+    }
+    
+    function shareSlang(word) {
+      if (navigator.share) {
+        navigator.share({
+          title: `SlangAdda: ${word}`,
+          text: `Check out the meaning of "${word}" on SlangAdda AI`,
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(`${word} - SlangAdda AI\n${window.location.href}`);
+        showNotification('Link copied to clipboard!');
+      }
+    }
+    
+    // ======================
+    // MODAL FUNCTIONS
+    // ======================
+    async function submitNewSlang() {
+      const word = document.getElementById('newWord').value.trim();
+      const lang = document.getElementById('newLang').value;
+      const category = document.getElementById('newCategory').value;
+      const meaning = document.getElementById('newMeaning').value.trim();
+      const example = document.getElementById('newExample').value.trim();
+      
+      if (!word || !meaning) {
+        showNotification('Please fill in at least the word and meaning');
+        return;
+      }
+      
+      if (!currentUser) {
+        showNotification('Please login to submit slang');
+        return;
+      }
+      
+      try {
+        const slangData = {
+          word: word,
+          lang: lang,
+          category: category,
+          meaning_en: meaning,
+          example: example,
+          officeSafe: 'yes',
+          explicit: false,
+          verified: false,
+          submittedBy: currentUser.uid,
+          submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          popularity: 0
+        };
+        
+        await db.collection('slang_entries').add(slangData);
+        
+        showNotification('Slang submitted for review! Thank you!');
+        document.getElementById('addSlangModal').classList.remove('active');
         
         // Clear form
         document.getElementById('newWord').value = '';
-        document.getElementById('newMeaningHinglish').value = '';
-        document.getElementById('newMeaningEnglish').value = '';
+        document.getElementById('newMeaning').value = '';
         document.getElementById('newExample').value = '';
         
-        // Reload data
-        loadAdminData();
-        
       } catch (error) {
-        alert('Error adding slang: ' + error.message);
+        showNotification('Error submitting slang: ' + error.message);
       }
     }
     
-    async function approveSlang(id) {
-      try {
-        await firebaseDB.collection('slang_entries').doc(id).update({
-          verified: true,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    // ======================
+    // HELPER FUNCTIONS
+    // ======================
+    function getCategoryName(category) {
+      const categories = {
+        'genz': 'Gen Z',
+        'desi': 'Desi',
+        'internet': 'Internet',
+        'life': 'Life',
+        'work': 'Work'
+      };
+      return categories[category] || category;
+    }
+    
+    function getLangName(lang) {
+      const languages = {
+        'en': 'English',
+        'hi': 'Hindi',
+        'ta': 'Tamil',
+        'mr': 'Marathi',
+        'bhojpuri': 'Bhojpuri'
+      };
+      return languages[lang] || lang;
+    }
+    
+    function showLoading() {
+      const grid = document.getElementById('resultsGrid');
+      if (grid) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:3rem;">
+            <div class="spinner"></div>
+            <p>Loading slang terms...</p>
+          </div>
+        `;
+      }
+    }
+    
+    function showNotification(message) {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--gradient);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(2,6,23,.25);
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        max-width: 300px;
+      `;
+      notification.textContent = message;
+      
+      // Add to page
+      document.body.appendChild(notification);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+    
+    // ======================
+    // EVENT LISTENERS SETUP
+    // ======================
+    function setupEventListeners() {
+      // Search button
+      document.getElementById('searchBtn').addEventListener('click', filterSlang);
+      
+      // Search input
+      document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') filterSlang();
+      });
+      
+      // Filter changes
+      document.getElementById('langFilter').addEventListener('change', filterSlang);
+      document.getElementById('categoryFilter').addEventListener('change', filterSlang);
+      document.getElementById('sortFilter').addEventListener('change', filterSlang);
+      document.getElementById('officeSafeFilter').addEventListener('change', filterSlang);
+      
+      // Tab switching
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Update active tab button
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // Show corresponding content
+          const tabId = btn.dataset.tab;
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+          });
+          document.getElementById(`tab-${tabId}`).classList.add('active');
+          
+          // Load content for tab if needed
+          if (tabId === 'favorites') {
+            renderFavorites();
+          } else if (tabId === 'recent') {
+            renderRecent();
+          } else if (tabId === 'nsfw') {
+            renderNSFW();
+          }
         });
-        alert('Slang approved!');
-        loadAdminData();
-      } catch (error) {
-        alert('Error approving: ' + error.message);
-      }
+      });
+      
+      // Login modal
+      document.getElementById('doLogin').addEventListener('click', async () => {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+          showNotification('Please enter email and password');
+          return;
+        }
+        
+        try {
+          await auth.signInWithEmailAndPassword(email, password);
+          document.getElementById('loginModal').classList.remove('active');
+          showNotification('Welcome back!');
+        } catch (error) {
+          showNotification('Login failed: ' + error.message);
+        }
+      });
+      
+      document.getElementById('doRegister').addEventListener('click', async () => {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+          showNotification('Please enter email and password');
+          return;
+        }
+        
+        if (password.length < 6) {
+          showNotification('Password must be at least 6 characters');
+          return;
+        }
+        
+        try {
+          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          
+          // Create user document
+          await db.collection('users').doc(userCredential.user.uid).set({
+            email: email,
+            name: email.split('@')[0],
+            favorites: [],
+            recentSearches: [],
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          
+          document.getElementById('loginModal').classList.remove('active');
+          showNotification('Account created! Welcome!');
+        } catch (error) {
+          showNotification('Registration failed: ' + error.message);
+        }
+      });
+      
+      document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('loginModal').classList.remove('active');
+      });
+      
+      // Add slang modal
+      document.getElementById('addSlangBtn').addEventListener('click', () => {
+        if (!currentUser) {
+          showNotification('Please login to submit slang');
+          return;
+        }
+        document.getElementById('addSlangModal').classList.add('active');
+      });
+      
+      document.getElementById('closeAddModal').addEventListener('click', () => {
+        document.getElementById('addSlangModal').classList.remove('active');
+      });
+      
+      document.getElementById('submitSlang').addEventListener('click', submitNewSlang);
+      
+      // Close modals on outside click
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('active');
+          }
+        });
+      });
     }
     
-    async function rejectSlang(id) {
-      if (confirm('Are you sure you want to reject this slang entry?')) {
-        try {
-          await firebaseDB.collection('slang_entries').doc(id).delete();
-          alert('Slang rejected and deleted');
-          loadAdminData();
-        } catch (error) {
-          alert('Error rejecting: ' + error.message);
-        }
-      }
+    function setupHeaderScroll() {
+      const header = document.getElementById('mainHeader');
+      window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 20);
+      });
     }
     
-    async function deleteSlang(id) {
-      if (confirm('Delete this slang entry permanently?')) {
-        try {
-          await firebaseDB.collection('slang_entries').doc(id).delete();
-          loadAdminData();
-        } catch (error) {
-          alert('Error deleting: ' + error.message);
-        }
+    // Add fadeOut animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(10px); }
       }
-    }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
